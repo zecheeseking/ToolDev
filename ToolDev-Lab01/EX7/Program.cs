@@ -1,15 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace EX7
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
+            Soldiercs s = new Soldiercs("Steve");
+            Console.WriteLine(s.ToString());
+            s.ShootAt(s);
+            Console.WriteLine(s.ToString());
+
+            Console.ReadLine();
         }
     }
 }
