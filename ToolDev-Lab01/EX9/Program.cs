@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace EX9
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
+            Crowd crowd = new Crowd();
         }
     }
 }
