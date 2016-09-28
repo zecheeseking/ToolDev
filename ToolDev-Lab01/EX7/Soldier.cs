@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EX7
 {
-    public class Soldiercs
+    public class Soldier
     {
         private static Random rand = new Random();
         private int _health = 100;
@@ -15,7 +15,7 @@ namespace EX7
         public int Health { get { return _health; } set { } }
         public bool IsDead { get; private set; }
 
-        public Soldiercs(string name)
+        public Soldier(string name)
         {
             Name = name;
         }
@@ -28,7 +28,7 @@ namespace EX7
                 IsDead = true;
         }
 
-        public void ShootAt(Soldiercs target)
+        public void ShootAt(Soldier target)
         {
             target.Hit(rand.Next(0, 3));
         }

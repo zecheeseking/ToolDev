@@ -7,7 +7,7 @@ namespace EX7
     {
         private static void Main(string[] args)
         {
-            Soldiercs s = new Soldiercs("Steve");
+            Soldier s = new Soldier("Steve");
             Console.WriteLine(s.ToString());
             s.ShootAt(s);
             Console.WriteLine(s.ToString());
