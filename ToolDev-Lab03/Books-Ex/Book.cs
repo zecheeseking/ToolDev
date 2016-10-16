@@ -8,12 +8,17 @@ namespace Books_Ex
 {
     internal class Book
     {
-        private string id;
-        private string author;
-        private string title;
-        private string genre;
-        private double price;
-        private DateTime publishedDate;
-        private string desc;
+        public string Id { get; set; }
+        public string Author { get; set; }
+        public string Title { get; set; }
+        public string Genre { get; set; }
+        public double Price { get; set; }
+        public DateTime PublishedDate { get; set; }
+        public string Desc { get; set; }
+
+        public string Print()
+        {
+            return Title + " " + PublishedDate.ToString("dddd d MMMM yyyy");
+        }
     }
 }
