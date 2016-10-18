@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Streams-Ex", "Streams-Ex\St
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Books-Ex", "Books-Ex\Books-Ex.csproj", "{944D0FFC-E8D0-48A8-9949-C670CC12C541}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IO-LINQ-WPF", "IO-LINQ-WPF\IO-LINQ-WPF.csproj", "{E4E1D594-590E-44D3-B962-B935063D038F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{944D0FFC-E8D0-48A8-9949-C670CC12C541}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{944D0FFC-E8D0-48A8-9949-C670CC12C541}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{944D0FFC-E8D0-48A8-9949-C670CC12C541}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4E1D594-590E-44D3-B962-B935063D038F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4E1D594-590E-44D3-B962-B935063D038F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4E1D594-590E-44D3-B962-B935063D038F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4E1D594-590E-44D3-B962-B935063D038F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

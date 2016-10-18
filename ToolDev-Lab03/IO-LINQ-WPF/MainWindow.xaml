@@ -1,0 +1,45 @@
+﻿<Window x:Class="IO_LINQ_WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:IO_LINQ_WPF"
+        mc:Ignorable="d"
+        Title="IO-LINQ-WPF" Height="312" Width="416">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="180" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ListBox x:Name="Listbox_Display" Width="390" Height="165" HorizontalAlignment="Center" VerticalAlignment="Center" SelectedIndex="0" />
+
+        <Grid Margin="0,172,0,0" Grid.RowSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="204" />
+                <ColumnDefinition Width="204" />
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="Btn_Order" Grid.Column="0" Width="80" Content="Order" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="14,14,0,0" Click="Btn_OrderClick" />
+            <ComboBox Grid.Column="0" Height="21" Width="88" SelectedIndex="0" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,14,14,0">
+                <ComboBoxItem x:Name="CBI_SortAscending" Content="Ascending" Selected="SortAscending" />
+                <ComboBoxItem x:Name="CBI_SortDescending" Content="Descending" Selected="SortDescending" />
+            </ComboBox>
+            <Button x:Name="Btn_ShowDesc" Grid.Column="0" Width="176" Content="Show Description" VerticalAlignment="Top" Margin="14,41,14,0" Height="22" Click="Btn_ShowDescClick" />
+            <Button x:Name="Btn_Load" Grid.Column="0" Height="22" Width="80" Content="Load" VerticalAlignment="Top" HorizontalAlignment="Left" Click="LoadFile" Margin="14,77,0,0"></Button>
+            <Button Grid.Column="0" Height="22" Width="80" Content="Save" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,77,22,0"></Button>
+
+            <Button x:Name="Btn_Filter" Grid.Column="1" Width="80" Content="Filter" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="14,14,0,0" Click="BtnFilterListbox" />
+            <ComboBox x:Name="ComboBox_Genre" Grid.Column="1" Height="22" Width="88" Margin="0,14,19,0" VerticalAlignment="Top" HorizontalAlignment="Right" SelectedIndex="0" SelectionChanged="BtnSetQuery">
+                <ComboBoxItem x:Name="CBI_QueryAll" Content="All" />
+                <ComboBoxItem x:Name="CBI_QueryComp" Content="Computer" />
+                <ComboBoxItem x:Name="CBI_QueryFant" Content="Fantasy" />
+                <ComboBoxItem x:Name="CBI_QueryRom" Content="Romance" />
+                <ComboBoxItem x:Name="CBI_QueryHorr" Content="Horror" />
+                <ComboBoxItem x:Name="CBI_QuerySciFi" Content="Science Fiction" />
+            </ComboBox>
+            <Button Grid.Column="1" Width="80" Content="Search" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="14,41,0,0" Height="22" />
+            <TextBox Grid.Column="1" Width="88" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,41,19,0" Height="22"></TextBox>
+        </Grid>
+    </Grid>
+</Window>
