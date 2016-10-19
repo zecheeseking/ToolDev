@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heroes-Exercise", "Heroes-Exercise\Heroes-Exercise.csproj", "{323A8641-5371-4510-A6C6-7A033B153FFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarSimulation", "WarSimulation\WarSimulation.csproj", "{487CD8C5-F05F-4CC1-9425-693AFFF4E302}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{323A8641-5371-4510-A6C6-7A033B153FFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{323A8641-5371-4510-A6C6-7A033B153FFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{323A8641-5371-4510-A6C6-7A033B153FFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{323A8641-5371-4510-A6C6-7A033B153FFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{487CD8C5-F05F-4CC1-9425-693AFFF4E302}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{487CD8C5-F05F-4CC1-9425-693AFFF4E302}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{487CD8C5-F05F-4CC1-9425-693AFFF4E302}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{487CD8C5-F05F-4CC1-9425-693AFFF4E302}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
