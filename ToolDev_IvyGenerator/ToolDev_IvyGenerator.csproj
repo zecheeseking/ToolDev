@@ -63,12 +63,16 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DX10Viewport.cs" />
+    <Compile Include="Effects\IEffect.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\IModel.cs" />
+    <Compile Include="Models\VertexData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -94,6 +98,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Models\BOX_DATA.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="DaeSharpWpf\DaeSharpWpf.csproj">
+      <Project>{21273032-1502-4310-a7be-ce6cf3bca16f}</Project>
+      <Name>DaeSharpWpf</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

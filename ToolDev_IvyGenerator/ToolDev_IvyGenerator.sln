@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolDev_IvyGenerator", "ToolDev_IvyGenerator.csproj", "{8711BCD8-5393-4DE5-99F9-829C9D0762FD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DaeSharpWpf", "DaeSharpWpf\DaeSharpWpf.csproj", "{21273032-1502-4310-A7BE-CE6CF3BCA16F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{8711BCD8-5393-4DE5-99F9-829C9D0762FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8711BCD8-5393-4DE5-99F9-829C9D0762FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8711BCD8-5393-4DE5-99F9-829C9D0762FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21273032-1502-4310-A7BE-CE6CF3BCA16F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21273032-1502-4310-A7BE-CE6CF3BCA16F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21273032-1502-4310-A7BE-CE6CF3BCA16F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21273032-1502-4310-A7BE-CE6CF3BCA16F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
