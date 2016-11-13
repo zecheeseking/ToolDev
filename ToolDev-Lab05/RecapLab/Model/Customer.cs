@@ -22,9 +22,25 @@ namespace RecapLab
         public string Country { get { return _country; } set { _country = value; OnPropertyChanged("Country"); } }
         public string Phone { get { return _phone; } set { _phone = value; OnPropertyChanged("Phone"); } }
 
-        public Customer(int id)
+        public Customer()
         {
-            _id = id;
+            _id = GenerateId();
+        }
+
+        private int GenerateId()
+        {
+            int tmp = 0;
+
+            Random rand = new Random();
+
+            for (int i = 0; i < 9; ++i)
+            {
+                int r = rand.Next(10);
+                tmp *= 10;
+                tmp += r;
+            }
+
+            return tmp;
         }
 
         public override string ToString()
@@ -41,6 +57,7 @@ namespace RecapLab
             }
         }
 
+        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

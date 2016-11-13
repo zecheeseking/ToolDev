@@ -11,60 +11,27 @@ namespace RecapLab
     /// </summary>
     public partial class CustomerWindow : Window
     {
-        private Customer _customer;
+        private CustomerDetailsViewModel viewModel;
 
         public CustomerWindow(Customer cust = null)
         {
             InitializeComponent();
-
+            viewModel = new CustomerDetailsViewModel();
+            this.DataContext = viewModel;
 
             if (cust == null)
             {
-                _customer = new Customer(GenerateId());
-                TxtB_ID.Text = _customer.Id.ToString();
+                viewModel.Customer = new Customer();
             }
             else
-            {
-                _customer = cust;
-                TxtB_ID.Text = _customer.Id.ToString();
-                Txtbox_Name.Text = _customer.Surname;
-                Txtbox_FirstName.Text = _customer.Firstname;
-                Txtbox_Street.Text = _customer.Street;
-                Txtbox_City.Text = _customer.City;
-                Txtbox_Country.Text = _customer.Country;
-                Txtbox_Phone.Text = _customer.Phone;
-            }
-        }
-
-        private int GenerateId()
-        {
-            int tmp = 0;
-
-            Random rand = new Random();
-
-            for (int i = 0; i < 9; ++i)
-            {
-                int r = rand.Next(10);
-                tmp *= 10;
-                tmp += r;
-            }
-
-            return tmp;
+                viewModel.Customer = cust;
         }
 
         private void btn_NewCustomerOkClick(object sender, RoutedEventArgs e)
         {
-            _customer.Surname = Txtbox_Name.Text;
-            _customer.Firstname = Txtbox_FirstName.Text;
-            _customer.Street = Txtbox_Street.Text;
-            _customer.City = Txtbox_City.Text;
-            _customer.Country = Txtbox_Country.Text;
-            _customer.Phone = Txtbox_Phone.Text;
-
-            MainWindowViewModel dataContext = Application.Current.MainWindow.DataContext as MainWindowViewModel;
-            dataContext.AddCustomer(_customer);
-
-            string path = MainWindow.m_Path + _customer.Id + MainWindow.m_Extension;
+            MainWindowViewModel vm = Application.Current.MainWindow.DataContext as MainWindowViewModel;
+            string path = MainWindow.m_Path + viewModel.Customer.Id + MainWindow.m_Extension;
+            vm.AddCustomer(viewModel.Customer);
 
             if (File.Exists(path))
                 File.Delete(path);
@@ -72,7 +39,7 @@ namespace RecapLab
             using (var stream = File.Create(path))
             {
                 var formatter = new BinaryFormatter();
-                formatter.Serialize(stream, _customer);
+                formatter.Serialize(stream, viewModel.Customer);
             }
 
             this.Close();
