@@ -37,7 +37,7 @@ namespace ToolDev_IvyGenerator
             //WORLD MATRIX SETUP
             _worldMatrix = Matrix.Identity;
             _worldMatrix *= Matrix.Scaling(1.0f);
-            _worldMatrix *= Matrix.RotationY(45.0f);
+            _worldMatrix *= Matrix.RotationY(0.0f);
 
             Shader = new PosNormColEffect();
             Shader.Create(device);
@@ -53,10 +53,10 @@ namespace ToolDev_IvyGenerator
             _camera.Update(deltaT);
             if (Model != null && Shader != null)
             {
-                var viewMat = Matrix.LookAtLH(_camera.Position, Vector3.Zero, Vector3.UnitY);
+                //var viewMat = Matrix.LookAtLH(_camera.Position, Vector3.Zero, Vector3.UnitY);
 
                 Shader.SetWorld(_worldMatrix);
-                Shader.SetWorldViewProjection(_worldMatrix * viewMat*_camera.ProjectionMatrix);
+                Shader.SetWorldViewProjection(_worldMatrix * _camera.ViewMatrix *_camera.ProjectionMatrix);
             }
         }
 
