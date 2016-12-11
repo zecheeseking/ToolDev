@@ -50,9 +50,9 @@ namespace ToolDev_IvyGenerator
 
         public void Update(float deltaT)
         {
+            _camera.Update(deltaT);
             if (Model != null && Shader != null)
             {
-                //var viewMat = Matrix.LookAtLH(new Vector3(0, 50, -100), new Vector3(0, 15, 0), Vector3.UnitY);
                 var viewMat = Matrix.LookAtLH(_camera.Position, Vector3.Zero, Vector3.UnitY);
 
                 Shader.SetWorld(_worldMatrix);

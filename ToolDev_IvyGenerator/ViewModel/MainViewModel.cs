@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using System.Diagnostics;
 
 using DaeSharpWpf;
+using SharpDX;
 using ToolDev_IvyGenerator.Utilities;
 
 namespace ToolDev_IvyGenerator.ViewModel
