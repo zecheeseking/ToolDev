@@ -1,8 +1,9 @@
-﻿using SharpDX.Direct3D;
+﻿using System.ComponentModel;
+using SharpDX.Direct3D;
 using SharpDX.Direct3D10;
 using Buffer = SharpDX.Direct3D10.Buffer;
 
-namespace DaeSharpWPF.Models
+namespace DaeSharpWpf
 {
     public interface IModel
     {
@@ -11,7 +12,5 @@ namespace DaeSharpWPF.Models
         int IndexCount { get; set; }
         Buffer IndexBuffer { get; set; }
         Buffer VertexBuffer { get; set; }
-
-        void Create(Device1 device);
     }
 }

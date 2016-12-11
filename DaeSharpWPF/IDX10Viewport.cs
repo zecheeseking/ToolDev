@@ -6,7 +6,7 @@ namespace DaeSharpWpf
 {
     public interface IDX10Viewport
     {
-        void Initialize(Device device, RenderTargetView renderTarget, DX10RenderCanvas canvasControl);
+        void Initialize(Device device, RenderTargetView renderTarget, Dx10RenderCanvas canvasControl);
         void Deinitialize();
         void Update(float deltaT);
         void Render(float deltaT);

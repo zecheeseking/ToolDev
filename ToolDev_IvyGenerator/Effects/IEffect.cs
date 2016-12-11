@@ -1,7 +1,7 @@
 ﻿using SharpDX;
 using SharpDX.Direct3D10;
 
-namespace DirectxWpf.Effects
+namespace ToolDev_IvyGenerator.Effects
 {
     public interface IEffect
     {

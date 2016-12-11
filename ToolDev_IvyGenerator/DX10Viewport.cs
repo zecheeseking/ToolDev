@@ -1,10 +1,13 @@
 ﻿using System.Windows;
-using DirectxWpf.Effects;
-using DirectxWpf.Models;
+using System.Windows.Input;
+using DaeSharpWpf;
+using ToolDev_IvyGenerator.Effects;
 using SharpDX;
 using SharpDX.Direct3D10;
+using SharpDX.DirectInput;
+using ToolDev_IvyGenerator.Models;
+using ToolDev_IvyGenerator.Utilities;
 using Format = SharpDX.DXGI.Format;
-using DaeSharpWpf;
 
 namespace ToolDev_IvyGenerator
 {
@@ -12,21 +15,22 @@ namespace ToolDev_IvyGenerator
     {
         private Device1 _device;
         private RenderTargetView _renderTargetView;
-        private DX10RenderCanvas _renderControl;
+        private Dx10RenderCanvas _renderControl;
 
         public IModel Model { get; set; }
         public IEffect Shader { get; set; }
 		
 		private float _modelRotation;
 
-        public void Initialize(Device1 device, RenderTargetView renderTarget, DX10RenderCanvas canvasControl)
+        public void Initialize(Device1 device, RenderTargetView renderTarget, Dx10RenderCanvas canvasControl)
         {
             _device = device;
             _renderTargetView = renderTarget;
             _renderControl = canvasControl;
 
-            //Set Model (IModel)
-			//Set Shader (IEffect)
+            //Model = ModelLoader.LoadModel("C:\\Users\\Christopher\\Desktop\\cylinder.obj", _device);
+            Shader = new PosNormColEffect();
+            Shader.Create(device);
         }
 
         public void Deinitialize()
@@ -41,9 +45,11 @@ namespace ToolDev_IvyGenerator
                 _modelRotation += MathUtil.PiOverFour*deltaT;
 
                 var worldMat = Matrix.Identity;
+                worldMat *= Matrix.Scaling(2.0f);
                 worldMat *= Matrix.Scaling(20.0f);
                 worldMat *= Matrix.RotationY(_modelRotation);
 
+                //var viewMat = Matrix.LookAtLH(new Vector3(0, 50, -100), new Vector3(0, 15, 0), Vector3.UnitY);
                 var viewMat = Matrix.LookAtLH(new Vector3(0, 50, -100), Vector3.Zero, Vector3.UnitY);
                 var projMat = Matrix.PerspectiveFovLH(MathUtil.PiOverFour, (float)_renderControl.ActualWidth / (float)_renderControl.ActualHeight, 0.1f, 1000f);
 
@@ -71,6 +77,11 @@ namespace ToolDev_IvyGenerator
                     _device.DrawIndexed(Model.IndexCount, 0, 0);
                 }
             }
+        }
+
+        public Device1 GetDevice()
+        {
+            return _device;
         }
     }
 }

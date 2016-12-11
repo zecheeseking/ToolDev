@@ -13,7 +13,8 @@ namespace DaeSharpWpf
     using Device = SharpDX.Direct3D10.Device1;
     using Image = System.Windows.Controls.Image;
 
-    public partial class DX10RenderCanvas : Image
+
+    public partial class Dx10RenderCanvas : Image
     {
         private Device _device;
         private Texture2D _renderTarget;
@@ -31,7 +32,16 @@ namespace DaeSharpWpf
 
         public Color4 ClearColor = SharpDX.Color.CornflowerBlue;
 
-        public DX10RenderCanvas()
+        public static readonly DependencyProperty ModelProperty = DependencyProperty.Register(
+            "Model", typeof(IModel), typeof(Dx10RenderCanvas), new PropertyMetadata(default(IModel)));
+
+        public IModel Model
+        {
+            get { return (IModel) GetValue(ModelProperty); }
+            set { SetValue(ModelProperty, value); }
+        }
+
+        public Dx10RenderCanvas()
         {
             _renderTimer = new Stopwatch();
             Loaded += Window_Loaded;
@@ -40,7 +50,7 @@ namespace DaeSharpWpf
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DX10RenderCanvas.IsInDesignMode)
+            if (Dx10RenderCanvas.IsInDesignMode)
                 return;
 
             StartD3D();
@@ -49,7 +59,7 @@ namespace DaeSharpWpf
 
         private void Window_Closing(object sender, RoutedEventArgs e)
         {
-            if (DX10RenderCanvas.IsInDesignMode)
+            if (IsInDesignMode)
                 return;
 
             StopRendering();
@@ -250,6 +260,11 @@ namespace DaeSharpWpf
                 _sceneAttached = false;
                 _viewport = value;
             }
+        }
+
+        public Device GetDevice()
+        {
+            return _device;
         }
     }
 }

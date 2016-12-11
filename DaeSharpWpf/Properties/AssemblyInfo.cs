@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DaeSharpWpf")]
+[assembly: AssemblyTitle("DaeSharpWPF")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DaeSharpWpf")]
+[assembly: AssemblyProduct("DaeSharpWPF")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("31147a43-8fcb-46ef-855a-3cf60634246e")]
+[assembly: Guid("64f37404-7802-4fc0-b273-9815e0040c76")]
 
 // Version information for an assembly consists of the following four values:
 //
