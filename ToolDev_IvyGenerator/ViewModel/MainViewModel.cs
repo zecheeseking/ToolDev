@@ -3,11 +3,8 @@ using GalaSoft.MvvmLight.CommandWpf;
 
 using System.Diagnostics;
 
-using System.Windows;
-using SharpDX.Direct3D10;
 using DaeSharpWpf;
 using ToolDev_IvyGenerator.Utilities;
-using ToolDev_IvyGenerator;
 
 namespace ToolDev_IvyGenerator.ViewModel
 {
@@ -41,15 +38,12 @@ namespace ToolDev_IvyGenerator.ViewModel
                             {
                                 var dlg = new Microsoft.Win32.OpenFileDialog();
                                 dlg.DefaultExt = ".obj";
-                                dlg.Filter = "OBJ Files (*.obj)|*.obj";
+                                dlg.Filter = "OBJ Files|*.obj|FBX Files|*.fbx|Overload Files|*.ovm";
 
                                 bool? result = dlg.ShowDialog();
 
                                 if ((bool) result)
-                                {
-                                    var viewport = control.Viewport as DX10Viewport;
-                                    viewport.Model = ModelLoader.LoadModel(dlg.FileName, control.GetDevice());
-                                }
+                                    (control.Viewport as DX10Viewport).Model = ModelLoader.LoadModel(dlg.FileName, control.GetDevice());
                                 else
                                     Debug.WriteLine("Nope");
                             }
@@ -58,16 +52,23 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
 
-        public IModel Model { get; set; }
+        private RelayCommand<Dx10RenderCanvas> _raycastCommand;
 
-        public void Raycast()
+        public RelayCommand<Dx10RenderCanvas> RaycastCommand
         {
-            Debug.WriteLine("Narf");
-        }
-
-        private void LoadModel(string path, Device device)
-        {
-            Model = ModelLoader.LoadModel(path, device);
+            get
+            {
+                return _raycastCommand ??
+                       (
+                           _raycastCommand = new RelayCommand<Dx10RenderCanvas>
+                           (
+                               (control) =>
+                               {
+                                   Debug.WriteLine("Narf");
+                               }
+                           )
+                       );
+            }
         }
 
         public MainViewModel()

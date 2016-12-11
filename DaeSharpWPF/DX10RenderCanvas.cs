@@ -32,15 +32,6 @@ namespace DaeSharpWpf
 
         public Color4 ClearColor = SharpDX.Color.CornflowerBlue;
 
-        public static readonly DependencyProperty ModelProperty = DependencyProperty.Register(
-            "Model", typeof(IModel), typeof(Dx10RenderCanvas), new PropertyMetadata(default(IModel)));
-
-        public IModel Model
-        {
-            get { return (IModel) GetValue(ModelProperty); }
-            set { SetValue(ModelProperty, value); }
-        }
-
         public Dx10RenderCanvas()
         {
             _renderTimer = new Stopwatch();
