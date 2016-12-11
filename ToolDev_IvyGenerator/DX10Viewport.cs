@@ -16,11 +16,13 @@ namespace ToolDev_IvyGenerator
         private Device1 _device;
         private RenderTargetView _renderTargetView;
         private Dx10RenderCanvas _renderControl;
+        private Camera _camera;
 
         public IModel Model { get; set; }
         public IEffect Shader { get; set; }
 		
 		private float _modelRotation;
+        private Matrix _worldMatrix;
 
         public void Initialize(Device1 device, RenderTargetView renderTarget, Dx10RenderCanvas canvasControl)
         {
@@ -28,7 +30,15 @@ namespace ToolDev_IvyGenerator
             _renderTargetView = renderTarget;
             _renderControl = canvasControl;
 
-            //Model = ModelLoader.LoadModel("C:\\Users\\Christopher\\Desktop\\cylinder.obj", _device);
+            //CAMERA SETUP
+            _camera = new Camera((float)_renderControl.ActualWidth, (float)_renderControl.ActualHeight);
+            _camera.SetPosition(new Vector3(0,50,-100));
+
+            //WORLD MATRIX SETUP
+            _worldMatrix = Matrix.Identity;
+            _worldMatrix *= Matrix.Scaling(1.0f);
+            _worldMatrix *= Matrix.RotationY(45.0f);
+
             Shader = new PosNormColEffect();
             Shader.Create(device);
         }
@@ -42,19 +52,11 @@ namespace ToolDev_IvyGenerator
         {
             if (Model != null && Shader != null)
             {
-                _modelRotation += MathUtil.PiOverFour*deltaT;
-
-                var worldMat = Matrix.Identity;
-                worldMat *= Matrix.Scaling(2.0f);
-                worldMat *= Matrix.Scaling(20.0f);
-                worldMat *= Matrix.RotationY(_modelRotation);
-
                 //var viewMat = Matrix.LookAtLH(new Vector3(0, 50, -100), new Vector3(0, 15, 0), Vector3.UnitY);
-                var viewMat = Matrix.LookAtLH(new Vector3(0, 50, -100), Vector3.Zero, Vector3.UnitY);
-                var projMat = Matrix.PerspectiveFovLH(MathUtil.PiOverFour, (float)_renderControl.ActualWidth / (float)_renderControl.ActualHeight, 0.1f, 1000f);
+                var viewMat = Matrix.LookAtLH(_camera.Position, Vector3.Zero, Vector3.UnitY);
 
-                Shader.SetWorld(worldMat);
-                Shader.SetWorldViewProjection(worldMat*viewMat*projMat);
+                Shader.SetWorld(_worldMatrix);
+                Shader.SetWorldViewProjection(_worldMatrix * viewMat*_camera.ProjectionMatrix);
             }
         }
 
