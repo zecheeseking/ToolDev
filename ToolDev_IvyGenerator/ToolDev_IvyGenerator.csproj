@@ -80,6 +80,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\LIBRARIES\SharpDX\2.6.3\Bin\DirectX11-net40\SharpDX.DXGI.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX.RawInput">
+      <HintPath>D:\LIBRARIES\SharpDX\2.6.3\Bin\DirectX11-net40\SharpDX.RawInput.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -107,6 +110,7 @@
     </ApplicationDefinition>
     <Compile Include="Camera.cs" />
     <Compile Include="Effects\PosNormColEffect.cs" />
+    <Compile Include="MathHelper.cs" />
     <Compile Include="Models\Model.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Utilities\ModelLoader.cs" />
