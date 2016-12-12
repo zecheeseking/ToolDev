@@ -80,9 +80,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\LIBRARIES\SharpDX\2.6.3\Bin\DirectX11-net40\SharpDX.DXGI.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.RawInput">
-      <HintPath>D:\LIBRARIES\SharpDX\2.6.3\Bin\DirectX11-net40\SharpDX.RawInput.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -109,6 +106,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Camera.cs" />
+    <Compile Include="Converters\Converters.cs" />
     <Compile Include="Effects\PosNormColEffect.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Models\Model.cs" />
@@ -174,7 +172,9 @@
   <ItemGroup>
     <Content Include="Resources\PosColNorm3D.fx" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Structs\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\AssimpNet.3.3.1\build\AssimpNet.targets" Condition="Exists('packages\AssimpNet.3.3.1\build\AssimpNet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

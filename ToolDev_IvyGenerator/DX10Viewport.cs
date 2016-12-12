@@ -50,7 +50,9 @@ namespace ToolDev_IvyGenerator
 
         public void Update(float deltaT)
         {
-            _camera.Update(deltaT);
+            if(_renderControl.CameraMovementEnabled)
+                _camera.Update(deltaT);
+
             if (Model != null && Shader != null)
             {
                 //var viewMat = Matrix.LookAtLH(_camera.Position, Vector3.Zero, Vector3.UnitY);

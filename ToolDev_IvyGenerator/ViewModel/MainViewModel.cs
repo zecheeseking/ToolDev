@@ -2,9 +2,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 
 using System.Diagnostics;
-
 using DaeSharpWpf;
-using SharpDX;
 using ToolDev_IvyGenerator.Utilities;
 
 namespace ToolDev_IvyGenerator.ViewModel
@@ -69,6 +67,35 @@ namespace ToolDev_IvyGenerator.ViewModel
                                }
                            )
                        );
+            }
+        }
+
+        private RelayCommand<bool> _viewportCameraToggleCommand;
+        public RelayCommand<bool> ViewportCameraToggleCommand
+        {
+            get
+            {
+                return _viewportCameraToggleCommand ??
+                    (
+                        _viewportCameraToggleCommand = new RelayCommand<bool>
+                        (
+                            (toggle) =>
+                            {
+                                CameraMove = toggle;
+                            }
+                        )
+                    );
+            }
+        }
+
+        private bool _cameraMove;
+        public bool CameraMove
+        {
+            get { return _cameraMove; }
+            set
+            {
+                _cameraMove = value;
+                RaisePropertyChanged("CameraMove");
             }
         }
 

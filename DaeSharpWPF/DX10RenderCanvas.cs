@@ -32,6 +32,15 @@ namespace DaeSharpWpf
 
         public Color4 ClearColor = SharpDX.Color.CornflowerBlue;
 
+        public static DependencyProperty CameraEnabledProperty = DependencyProperty.Register(
+            "CameraMovementEnabled", typeof(bool), typeof(Dx10RenderCanvas), new PropertyMetadata(false));
+
+        public bool CameraMovementEnabled
+        {
+            get { return (bool) GetValue(CameraEnabledProperty); }
+            set { SetValue(CameraEnabledProperty, value); }
+        }
+
         public Dx10RenderCanvas()
         {
             _renderTimer = new Stopwatch();

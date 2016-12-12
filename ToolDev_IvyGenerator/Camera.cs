@@ -2,9 +2,6 @@
 using SharpDX.Direct3D10;
 using SharpDX.DirectInput;
 
-using System;
-
-using System.Diagnostics;
 
 namespace ToolDev_IvyGenerator
 {
@@ -45,6 +42,7 @@ namespace ToolDev_IvyGenerator
         public void SetPosition(Vector3 position)
         {
             _position = position;
+            UpdateTransformationMatrix();
         }
 
         public void Update(float deltaT)
@@ -60,35 +58,25 @@ namespace ToolDev_IvyGenerator
                 (float)MathHelper.AngleToRadians(_TotalPitch), 
                 0);
 
-            var camForward = Vector3.Transform(Vector3.ForwardLH, _rotation);
-            var camRight = Vector3.Transform(Vector3.Right, _rotation);
-            var camUp = Vector3.Cross(camForward, camRight);
-
-            _viewMatrix = Matrix.LookAtLH(_position, _position + camForward, camUp);
-
             var kbState = _kb.GetCurrentState();
             if (kbState.IsPressed(Key.W))
             {
-                Debug.WriteLine("Forward");
                 var dir = GetViewForward();
                 _position += dir * _camMoveSpeed * deltaT;
             }
             else if (kbState.IsPressed(Key.S))
             {
-                Debug.WriteLine("Backward");
                 var dir = GetViewForward() * -1;
                 _position += dir * _camMoveSpeed * deltaT;
             }
 
             if (kbState.IsPressed(Key.A))
             {
-                Debug.WriteLine("Left");
                 var dir = GetViewRight() * -1;
                 _position += dir * _camMoveSpeed * deltaT;
             }
             else if (kbState.IsPressed(Key.D))
             {
-                Debug.WriteLine("Right");
                 var dir = GetViewRight();
                 _position += dir * _camMoveSpeed * deltaT;
             }
@@ -97,6 +85,12 @@ namespace ToolDev_IvyGenerator
         private void UpdateTransformationMatrix()
         {
             _transformationMatrix = Matrix.Scaling(1.0f) * Matrix.RotationQuaternion(_rotation) * Matrix.Translation(_position);
+
+            var camForward = Vector3.Transform(Vector3.ForwardLH, _rotation);
+            var camRight = Vector3.Transform(Vector3.Right, _rotation);
+            var camUp = Vector3.Cross(camForward, camRight);
+
+            _viewMatrix = Matrix.LookAtLH(_position, _position + camForward, camUp);
         }
 
         private Vector3 GetViewForward()
