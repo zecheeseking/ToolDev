@@ -1,13 +1,14 @@
-﻿using SharpDX;
+﻿using DaeSharpWpf;
+using DaeSharpWPF;
+using SharpDX;
 using SharpDX.Direct3D10;
 using SharpDX.DirectInput;
 
 
 namespace ToolDev_IvyGenerator
 {
-    public class Camera
+    public class Camera : ICamera
     {
-
         private float _camMoveSpeed = 5.0f;
 
         private Vector3 _position = new Vector3(0.0f);
@@ -20,23 +21,32 @@ namespace ToolDev_IvyGenerator
         private readonly Keyboard _kb;
         private readonly Mouse _mouse;
 
-        public Matrix ProjectionMatrix { get; }
+        private Matrix _projectionMatrix;
+        public Matrix ProjectionMatrix { get { return _projectionMatrix; } }
         private Matrix _viewMatrix;
         public Matrix ViewMatrix { get { return _viewMatrix; } }
 
         private Matrix _transformationMatrix = Matrix.Identity;
+        public Matrix TransformationMatrix { get { return _transformationMatrix; }}
 
-        public Camera(float width, float height)
+        public bool MovementEnabled { get; set; }
+        public Camera()
         {
-            ProjectionMatrix = Matrix.PerspectiveFovLH(MathUtil.PiOverFour, width / height, 0.1f, 1000f);
-
-            _viewMatrix = Matrix.LookAtLH(_position + Vector3.ForwardLH, Vector3.Zero, Vector3.UnitY);
-
             var di = new DirectInput();
             _kb = new Keyboard(di);
             _kb.Acquire();
             _mouse = new Mouse(di);
             _mouse.Acquire();
+        }
+
+        public void Initialize(float width, float height)
+        {
+            _position = new Vector3(50, 50, -100);
+            UpdateTransformationMatrix();
+
+            _projectionMatrix = Matrix.PerspectiveFovLH(MathUtil.PiOverFour, width / height, 0.1f, 1000f);
+            _viewMatrix = Matrix.LookAtLH(_position + Vector3.ForwardLH, Vector3.Zero, Vector3.UnitY);
+
         }
 
         public void SetPosition(Vector3 position)
@@ -47,38 +57,41 @@ namespace ToolDev_IvyGenerator
 
         public void Update(float deltaT)
         {
-            UpdateTransformationMatrix();
-
-            var mouseState = _mouse.GetCurrentState();
-            Vector2 mouseDelta = new Vector2(mouseState.X, mouseState.Y);
-            _TotalYaw += mouseDelta.X*5.0f*deltaT;
-            _TotalPitch += mouseDelta.Y*5.0f*deltaT;
-
-            _rotation = Quaternion.RotationYawPitchRoll((float)MathHelper.AngleToRadians(_TotalYaw), 
-                (float)MathHelper.AngleToRadians(_TotalPitch), 
-                0);
-
-            var kbState = _kb.GetCurrentState();
-            if (kbState.IsPressed(Key.W))
+            if (MovementEnabled)
             {
-                var dir = GetViewForward();
-                _position += dir * _camMoveSpeed * deltaT;
-            }
-            else if (kbState.IsPressed(Key.S))
-            {
-                var dir = GetViewForward() * -1;
-                _position += dir * _camMoveSpeed * deltaT;
-            }
+                UpdateTransformationMatrix();
 
-            if (kbState.IsPressed(Key.A))
-            {
-                var dir = GetViewRight() * -1;
-                _position += dir * _camMoveSpeed * deltaT;
-            }
-            else if (kbState.IsPressed(Key.D))
-            {
-                var dir = GetViewRight();
-                _position += dir * _camMoveSpeed * deltaT;
+                var mouseState = _mouse.GetCurrentState();
+                Vector2 mouseDelta = new Vector2(mouseState.X, mouseState.Y);
+                _TotalYaw += mouseDelta.X*5.0f*deltaT;
+                _TotalPitch += mouseDelta.Y*5.0f*deltaT;
+
+                _rotation = Quaternion.RotationYawPitchRoll((float)MathHelper.AngleToRadians(_TotalYaw), 
+                    (float)MathHelper.AngleToRadians(_TotalPitch), 
+                    0);
+
+                var kbState = _kb.GetCurrentState();
+                if (kbState.IsPressed(Key.W))
+                {
+                    var dir = GetViewForward();
+                    _position += dir * _camMoveSpeed * deltaT;
+                }
+                else if (kbState.IsPressed(Key.S))
+                {
+                    var dir = GetViewForward() * -1;
+                    _position += dir * _camMoveSpeed * deltaT;
+                }
+
+                if (kbState.IsPressed(Key.A))
+                {
+                    var dir = GetViewRight() * -1;
+                    _position += dir * _camMoveSpeed * deltaT;
+                }
+                else if (kbState.IsPressed(Key.D))
+                {
+                    var dir = GetViewRight();
+                    _position += dir * _camMoveSpeed * deltaT;
+                }
             }
         }
 
@@ -93,14 +106,19 @@ namespace ToolDev_IvyGenerator
             _viewMatrix = Matrix.LookAtLH(_position, _position + camForward, camUp);
         }
 
+        public void RecalculateProjectionMatrix(float width, float height)
+        {
+            _projectionMatrix = Matrix.PerspectiveFovLH(MathUtil.PiOverFour, width / height, 0.1f, 1000f);
+        }
+
         private Vector3 GetViewForward()
         {
-            return new Vector3(_viewMatrix.M13, _viewMatrix.M23, _viewMatrix.M33);
+            return new Vector3(ViewMatrix.M13, ViewMatrix.M23, ViewMatrix.M33);
         }
 
         private Vector3 GetViewRight()
         {
-            return new Vector3(_viewMatrix.M11, _viewMatrix.M21, _viewMatrix.M31);
+            return new Vector3(ViewMatrix.M11, ViewMatrix.M21, ViewMatrix.M31);
         }
     }
 }

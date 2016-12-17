@@ -62,6 +62,7 @@
     <Compile Include="Disposer.cs" />
     <Compile Include="DX10ImageSource.cs" />
     <Compile Include="Dx10RenderCanvas.cs" />
+    <Compile Include="ICamera.cs" />
     <Compile Include="IDX10Viewport.cs" />
     <Compile Include="IModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -2,7 +2,11 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 
 using System.Diagnostics;
+using System.Windows.Input;
+using SharpDX;
 using DaeSharpWpf;
+using DaeSharpWPF;
+using ToolDev_IvyGenerator.Models;
 using ToolDev_IvyGenerator.Utilities;
 
 namespace ToolDev_IvyGenerator.ViewModel
@@ -42,7 +46,7 @@ namespace ToolDev_IvyGenerator.ViewModel
                                 bool? result = dlg.ShowDialog();
 
                                 if ((bool) result)
-                                    (control.Viewport as DX10Viewport).Model = ModelLoader.LoadModel(dlg.FileName, control.GetDevice());
+                                    ModelCube = ModelLoader.LoadModel(dlg.FileName, control.GetDevice());
                                 else
                                     Debug.WriteLine("Nope");
                             }
@@ -63,7 +67,29 @@ namespace ToolDev_IvyGenerator.ViewModel
                            (
                                (control) =>
                                {
-                                   Debug.WriteLine("Narf");
+                                   //First create a pick ray. Need projection matrix, 
+                                   var mousePos = Mouse.GetPosition(control);
+                                   //SharpDX.Ray ray = Ray.GetPickRay((int)mousePos.X, (int)mousePos.Y, control.Viewport, null);
+                                   Debug.WriteLine(mousePos.ToString());
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand<Dx10RenderCanvas> _windowResizedCommand;
+
+        public RelayCommand<Dx10RenderCanvas> WindowResizedCommand
+        {
+            get
+            {
+                return _windowResizedCommand ??
+                       (
+                           _windowResizedCommand = new RelayCommand<Dx10RenderCanvas>
+                           (
+                               (control) =>
+                               {
+                                   (Camera as Camera).RecalculateProjectionMatrix((float)control.ActualWidth, (float)control.ActualHeight);
                                }
                            )
                        );
@@ -81,21 +107,39 @@ namespace ToolDev_IvyGenerator.ViewModel
                         (
                             (toggle) =>
                             {
-                                CameraMove = toggle;
+                                (Camera as Camera).MovementEnabled = toggle;
                             }
                         )
                     );
             }
         }
 
-        private bool _cameraMove;
-        public bool CameraMove
+        private IModel _modelCube;
+        public IModel ModelCube
         {
-            get { return _cameraMove; }
+            get { return _modelCube; }
             set
             {
-                _cameraMove = value;
-                RaisePropertyChanged("CameraMove");
+                _modelCube = value;
+                RaisePropertyChanged("ModelCube");
+            }
+        }
+
+        private ICamera _camera;
+
+        public ICamera Camera
+        {
+            get
+            {
+                if(_camera == null)
+                    _camera = new Camera();
+
+                return _camera;
+            }
+            set
+            {
+                _camera = value;
+                RaisePropertyChanged("Camera");
             }
         }
 

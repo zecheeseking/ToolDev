@@ -1,4 +1,5 @@
 ﻿using DaeSharpWpf;
+using DaeSharpWPF;
 
 namespace DaeSharpWpf
 {
@@ -32,13 +33,22 @@ namespace DaeSharpWpf
 
         public Color4 ClearColor = SharpDX.Color.CornflowerBlue;
 
-        public static DependencyProperty CameraEnabledProperty = DependencyProperty.Register(
-            "CameraMovementEnabled", typeof(bool), typeof(Dx10RenderCanvas), new PropertyMetadata(false));
+        public static readonly DependencyProperty ModelProperty = DependencyProperty.Register(
+            "Model", typeof(IModel), typeof(Dx10RenderCanvas), new PropertyMetadata(default(IModel)));
 
-        public bool CameraMovementEnabled
+        public IModel Model
         {
-            get { return (bool) GetValue(CameraEnabledProperty); }
-            set { SetValue(CameraEnabledProperty, value); }
+            get { return (IModel) GetValue(ModelProperty); }
+            set { SetValue(ModelProperty, value); }
+        }
+
+        public static readonly DependencyProperty CameraProperty = DependencyProperty.Register(
+        "Camera", typeof(ICamera), typeof(Dx10RenderCanvas), new PropertyMetadata(default(ICamera)));
+
+        public ICamera Camera
+        {
+            get { return (ICamera)GetValue(CameraProperty); }
+            set { SetValue(CameraProperty, value); }
         }
 
         public Dx10RenderCanvas()

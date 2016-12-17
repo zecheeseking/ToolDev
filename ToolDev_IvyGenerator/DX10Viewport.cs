@@ -16,7 +16,6 @@ namespace ToolDev_IvyGenerator
         private Device1 _device;
         private RenderTargetView _renderTargetView;
         private Dx10RenderCanvas _renderControl;
-        private Camera _camera;
 
         public IModel Model { get; set; }
         public IEffect Shader { get; set; }
@@ -31,8 +30,8 @@ namespace ToolDev_IvyGenerator
             _renderControl = canvasControl;
 
             //CAMERA SETUP
-            _camera = new Camera((float)_renderControl.ActualWidth, (float)_renderControl.ActualHeight);
-            _camera.SetPosition(new Vector3(0,50,-100));
+            //_camera = new Camera((float)_renderControl.ActualWidth, (float)_renderControl.ActualHeight);
+            _renderControl.Camera.Initialize((float)_renderControl.ActualWidth, (float)_renderControl.ActualHeight);
 
             //WORLD MATRIX SETUP
             _worldMatrix = Matrix.Identity;
@@ -50,15 +49,14 @@ namespace ToolDev_IvyGenerator
 
         public void Update(float deltaT)
         {
-            if(_renderControl.CameraMovementEnabled)
-                _camera.Update(deltaT);
+            _renderControl.Camera.Update(deltaT);
 
-            if (Model != null && Shader != null)
+            if (_renderControl.Model != null && Shader != null)
             {
                 //var viewMat = Matrix.LookAtLH(_camera.Position, Vector3.Zero, Vector3.UnitY);
 
                 Shader.SetWorld(_worldMatrix);
-                Shader.SetWorldViewProjection(_worldMatrix * _camera.ViewMatrix *_camera.ProjectionMatrix);
+                Shader.SetWorldViewProjection(_worldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
             }
         }
 
@@ -67,18 +65,18 @@ namespace ToolDev_IvyGenerator
             if (_device == null)
                 return;
 
-            if (Model != null && Shader != null)
+            if (_renderControl.Model != null && Shader != null)
             {
                 _device.InputAssembler.InputLayout = Shader.InputLayout;
-                _device.InputAssembler.PrimitiveTopology = Model.PrimitiveTopology;
-                _device.InputAssembler.SetIndexBuffer(Model.IndexBuffer, Format.R32_UInt, 0);
+                _device.InputAssembler.PrimitiveTopology = _renderControl.Model.PrimitiveTopology;
+                _device.InputAssembler.SetIndexBuffer(_renderControl.Model.IndexBuffer, Format.R32_UInt, 0);
                 _device.InputAssembler.SetVertexBuffers(0,
-                    new VertexBufferBinding(Model.VertexBuffer, Model.VertexStride, 0));
+                    new VertexBufferBinding(_renderControl.Model.VertexBuffer, _renderControl.Model.VertexStride, 0));
 
                 for (int i = 0; i < Shader.Technique.Description.PassCount; ++i)
                 {
                     Shader.Technique.GetPassByIndex(i).Apply();
-                    _device.DrawIndexed(Model.IndexCount, 0, 0);
+                    _device.DrawIndexed(_renderControl.Model.IndexCount, 0, 0);
                 }
             }
         }
