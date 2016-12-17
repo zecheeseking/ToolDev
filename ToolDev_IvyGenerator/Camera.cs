@@ -3,11 +3,12 @@ using DaeSharpWPF;
 using SharpDX;
 using SharpDX.Direct3D10;
 using SharpDX.DirectInput;
+using ToolDev_IvyGenerator.Interfaces;
 
 
 namespace ToolDev_IvyGenerator
 {
-    public class Camera : ICamera
+    public class Camera : ICamera, ITransform
     {
         private float _camMoveSpeed = 5.0f;
 
@@ -25,9 +26,12 @@ namespace ToolDev_IvyGenerator
         public Matrix ProjectionMatrix { get { return _projectionMatrix; } }
         private Matrix _viewMatrix;
         public Matrix ViewMatrix { get { return _viewMatrix; } }
-
         private Matrix _transformationMatrix = Matrix.Identity;
         public Matrix TransformationMatrix { get { return _transformationMatrix; }}
+
+        private float _screenWidth;
+        private float _screenHeight;
+        public Matrix WorldMatrix { get; set; }
 
         public bool MovementEnabled { get; set; }
         public Camera()
@@ -41,10 +45,10 @@ namespace ToolDev_IvyGenerator
 
         public void Initialize(float width, float height)
         {
+            SetScreenWidthHeight(width, height);
             _position = new Vector3(50, 50, -100);
             UpdateTransformationMatrix();
 
-            _projectionMatrix = Matrix.PerspectiveFovLH(MathUtil.PiOverFour, width / height, 0.1f, 1000f);
             _viewMatrix = Matrix.LookAtLH(_position + Vector3.ForwardLH, Vector3.Zero, Vector3.UnitY);
 
         }
@@ -53,6 +57,14 @@ namespace ToolDev_IvyGenerator
         {
             _position = position;
             UpdateTransformationMatrix();
+        }
+
+        public void SetScreenWidthHeight(float width, float height)
+        {
+            _screenWidth = width;
+            _screenHeight = height;
+
+            _projectionMatrix = Matrix.PerspectiveFovLH(MathUtil.PiOverFour, _screenWidth / _screenHeight, 0.1f, 1000f);
         }
 
         public void Update(float deltaT)
@@ -106,11 +118,6 @@ namespace ToolDev_IvyGenerator
             _viewMatrix = Matrix.LookAtLH(_position, _position + camForward, camUp);
         }
 
-        public void RecalculateProjectionMatrix(float width, float height)
-        {
-            _projectionMatrix = Matrix.PerspectiveFovLH(MathUtil.PiOverFour, width / height, 0.1f, 1000f);
-        }
-
         private Vector3 GetViewForward()
         {
             return new Vector3(ViewMatrix.M13, ViewMatrix.M23, ViewMatrix.M33);
@@ -119,6 +126,42 @@ namespace ToolDev_IvyGenerator
         private Vector3 GetViewRight()
         {
             return new Vector3(ViewMatrix.M11, ViewMatrix.M21, ViewMatrix.M31);
+        }
+
+        public Ray GetPickRay(float mousePosX, float mousePosY)
+        {
+            Vector3 v = Vector3.Zero;
+
+            v.X = (((2.0f * mousePosX) / _screenWidth) - 1.0f) / _projectionMatrix.M11;
+            v.Y = (((2.0f * mousePosY) / _screenHeight) - 1.0f) / _projectionMatrix.M22;
+            v.Z = 1.0f;
+
+            Vector3 rPos = Vector3.Zero;
+            Vector3 rDir = Vector3.Zero;
+
+            Matrix inverseView = _viewMatrix;
+            inverseView.Invert();
+
+            rDir.X = v.X * inverseView.M11 + v.Y * inverseView.M21 + v.Z * inverseView.M31;
+            rDir.Y = v.X * inverseView.M12 + v.Y * inverseView.M22 + v.Z * inverseView.M32;
+            rDir.Z = v.X * inverseView.M13 + v.Y * inverseView.M23 + v.Z * inverseView.M33;
+            rPos.X = inverseView.M41;
+            rPos.Y = inverseView.M42;
+            rPos.Z = inverseView.M43;
+
+            return new Ray(rPos, rDir);
+        }
+
+        public void Translate(float x, float y, float z)
+        {
+        }
+
+        public void Rotate()
+        {
+        }
+
+        public void Scale()
+        {
         }
     }
 }

@@ -67,10 +67,17 @@ namespace ToolDev_IvyGenerator.ViewModel
                            (
                                (control) =>
                                {
-                                   //First create a pick ray. Need projection matrix, 
-                                   var mousePos = Mouse.GetPosition(control);
-                                   //SharpDX.Ray ray = Ray.GetPickRay((int)mousePos.X, (int)mousePos.Y, control.Viewport, null);
-                                   Debug.WriteLine(mousePos.ToString());
+                                   var cam = Camera as Camera;
+                                   if (cam != null && !cam.MovementEnabled)
+                                   {
+                                       //First create a pick ray. Need projection matrix, 
+                                       var mousePos = Mouse.GetPosition(control);
+                                       //SharpDX.Ray ray = Ray.GetPickRay((int)mousePos.X, (int)mousePos.Y, control.Viewport, null);
+                                       var ray = cam.GetPickRay((float)mousePos.X, (float)mousePos.Y);
+                                       //Do the models
+                                       Debug.WriteLine((ModelCube as Model).Intersects(ray));
+                                   }
+                                   
                                }
                            )
                        );
@@ -89,7 +96,7 @@ namespace ToolDev_IvyGenerator.ViewModel
                            (
                                (control) =>
                                {
-                                   (Camera as Camera).RecalculateProjectionMatrix((float)control.ActualWidth, (float)control.ActualHeight);
+                                   (Camera as Camera).SetScreenWidthHeight((float)control.ActualWidth, (float)control.ActualHeight);
                                }
                            )
                        );

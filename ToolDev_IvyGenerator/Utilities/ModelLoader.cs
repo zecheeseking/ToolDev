@@ -35,8 +35,8 @@ namespace ToolDev_IvyGenerator.Utilities
             //Set VertexStride
             model.VertexStride = Marshal.SizeOf(typeof(VertexPosColNorm));
 
-            VertexPosColNorm[] verts = null;
-            uint[] indices = null;
+            model.Vertices = null;
+            model.Indices = null;
 
             //Parse OVM file
             using (var reader = new BinaryReader(File.OpenRead(path)))
@@ -63,39 +63,39 @@ namespace ToolDev_IvyGenerator.Utilities
                             indexCount = reader.ReadUInt32();
 
                             model.IndexCount = (int)indexCount;
-                            verts = new VertexPosColNorm[vertexCount];
-                            indices = new uint[indexCount];
+                            model.Vertices = new VertexPosColNorm[vertexCount];
+                            model.Indices = new uint[indexCount];
                             break;
                         case 2:
                             for (var i = 0; i < vertexCount; ++i)
                             {
-                                verts[i] = new VertexPosColNorm(Vector3.Zero, Color.Gray, Vector3.Zero);
-                                verts[i].Position.X = reader.ReadSingle();
-                                verts[i].Position.Y = reader.ReadSingle();
-                                verts[i].Position.Z = reader.ReadSingle();
+                                model.Vertices[i] = new VertexPosColNorm(Vector3.Zero, Color.Gray, Vector3.Zero);
+                                model.Vertices[i].Position.X = reader.ReadSingle();
+                                model.Vertices[i].Position.Y = reader.ReadSingle();
+                                model.Vertices[i].Position.Z = reader.ReadSingle();
                             }
                             break;
                         case 3:
                             for (var i = 0; i < indexCount; ++i)
                             {
-                                indices[i] = reader.ReadUInt32();
+                                model.Indices[i] = reader.ReadUInt32();
                             }
                             break;
                         case 4:
                             for (var i = 0; i < vertexCount; ++i)
                             {
-                                verts[i].Normal.X = reader.ReadSingle();
-                                verts[i].Normal.Y = reader.ReadSingle();
-                                verts[i].Normal.Z = reader.ReadSingle();
+                                model.Vertices[i].Normal.X = reader.ReadSingle();
+                                model.Vertices[i].Normal.Y = reader.ReadSingle();
+                                model.Vertices[i].Normal.Z = reader.ReadSingle();
                             }
                             break;
                         case 7:
                             for (var i = 0; i < vertexCount; ++i)
                             {
-                                verts[i].Color.X = reader.ReadSingle();
-                                verts[i].Color.Y = reader.ReadSingle();
-                                verts[i].Color.Z = reader.ReadSingle();
-                                verts[i].Color.W = reader.ReadSingle();
+                                model.Vertices[i].Color.X = reader.ReadSingle();
+                                model.Vertices[i].Color.Y = reader.ReadSingle();
+                                model.Vertices[i].Color.Z = reader.ReadSingle();
+                                model.Vertices[i].Color.W = reader.ReadSingle();
                             }
                             break;
                         default:
@@ -107,10 +107,10 @@ namespace ToolDev_IvyGenerator.Utilities
 
             //Create buffers
             model.VertexBuffer?.Dispose();
-            model.VertexBuffer = CreateVertexBuffer(device, verts, model.VertexStride);
+            model.VertexBuffer = CreateVertexBuffer(device, model.Vertices, model.VertexStride);
 
             model.IndexBuffer?.Dispose();
-            model.IndexBuffer = CreateIndexBuffer(device, indices, model.IndexCount);
+            model.IndexBuffer = CreateIndexBuffer(device, model.Indices, model.IndexCount);
 
             return model;
         }
@@ -128,35 +128,35 @@ namespace ToolDev_IvyGenerator.Utilities
             model.VertexStride = Marshal.SizeOf(typeof(VertexPosColNorm));
 
             int vertCount = AssimpModel.Meshes[0].VertexCount;
-            VertexPosColNorm[] verts = new VertexPosColNorm[vertCount];
+            model.Vertices = new VertexPosColNorm[vertCount];
 
             for (int i = 0; i < vertCount; ++i)
             {
                 var pos = AssimpModel.Meshes[0].Vertices[i];
-                verts[i] = new VertexPosColNorm(new Vector3(pos.X, pos.Y, pos.Z), Color.Gray, Vector3.Zero);
+                model.Vertices[i] = new VertexPosColNorm(new Vector3(pos.X, pos.Y, pos.Z), Color.Gray, Vector3.Zero);
             }
 
             for (int i = 0; i < vertCount; ++i)
             {
                 var norm = AssimpModel.Meshes[0].Normals[i];
-                verts[i].Normal.X = norm.X;
-                verts[i].Normal.Y = norm.Y;
-                verts[i].Normal.Z = norm.Z;
+                model.Vertices[i].Normal.X = norm.X;
+                model.Vertices[i].Normal.Y = norm.Y;
+                model.Vertices[i].Normal.Z = norm.Z;
             }
 
             int indicesCount = AssimpModel.Meshes[0].GetIndices().Length;
-            uint[] indices = new uint[indicesCount];
+            model.Indices = new uint[indicesCount];
 
             for (int i = 0; i < indicesCount; ++i)
-                indices[i] = (uint)AssimpModel.Meshes[0].GetIndices()[i];
+                model.Indices[i] = (uint)AssimpModel.Meshes[0].GetIndices()[i];
 
-            model.IndexCount = indices.Length;
+            model.IndexCount = model.Indices.Length;
 
             model.VertexBuffer?.Dispose();
-            model.VertexBuffer = CreateVertexBuffer(device, verts, model.VertexStride);
+            model.VertexBuffer = CreateVertexBuffer(device, model.Vertices, model.VertexStride);
 
             model.IndexBuffer?.Dispose();
-            model.IndexBuffer = CreateIndexBuffer(device, indices, model.IndexCount);
+            model.IndexBuffer = CreateIndexBuffer(device, model.Indices, model.IndexCount);
 
             importer.Dispose();
 

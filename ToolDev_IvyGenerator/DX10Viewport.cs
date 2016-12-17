@@ -30,7 +30,6 @@ namespace ToolDev_IvyGenerator
             _renderControl = canvasControl;
 
             //CAMERA SETUP
-            //_camera = new Camera((float)_renderControl.ActualWidth, (float)_renderControl.ActualHeight);
             _renderControl.Camera.Initialize((float)_renderControl.ActualWidth, (float)_renderControl.ActualHeight);
 
             //WORLD MATRIX SETUP
@@ -53,9 +52,7 @@ namespace ToolDev_IvyGenerator
 
             if (_renderControl.Model != null && Shader != null)
             {
-                //var viewMat = Matrix.LookAtLH(_camera.Position, Vector3.Zero, Vector3.UnitY);
-
-                Shader.SetWorld(_worldMatrix);
+                Shader.SetWorld((_renderControl.Model as Model).WorldMatrix);
                 Shader.SetWorldViewProjection(_worldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
             }
         }

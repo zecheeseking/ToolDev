@@ -2,7 +2,7 @@
 using SharpDX.Direct3D10;
 using SharpDX.DXGI;
 
-namespace ToolDev_IvyGenerator.Models
+namespace DaeSharpWpf
 {
     public struct VertexPosColNorm
     {
