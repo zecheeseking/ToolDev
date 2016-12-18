@@ -132,9 +132,8 @@ namespace ToolDev_IvyGenerator
         public Ray GetPickRay(float mousePosX, float mousePosY)
         {
             Vector3 v = Vector3.Zero;
-
-            v.X = (((2.0f * mousePosX) / _screenWidth) - 1.0f) / _projectionMatrix.M11;
-            v.Y = (((2.0f * mousePosY) / _screenHeight) - 1.0f) / _projectionMatrix.M22;
+            v.X = (((2.0f * mousePosX) / _screenWidth) -1.0f) / _projectionMatrix.M11;
+            v.Y = -(((2.0f * mousePosY) / _screenHeight) - 1.0f)/ _projectionMatrix.M22;
             v.Z = 1.0f;
 
             Vector3 rPos = Vector3.Zero;

@@ -16,7 +16,6 @@ namespace ToolDev_IvyGenerator
 
         public IEffect Shader { get; set; }
 		
-		private float _modelRotation;
         private Matrix _worldMatrix;
 
         private SceneGrid _grid;

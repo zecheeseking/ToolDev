@@ -73,11 +73,8 @@ namespace ToolDev_IvyGenerator.ViewModel
                                    var cam = Camera as Camera;
                                    if (cam != null && !cam.MovementEnabled)
                                    {
-                                       //First create a pick ray. Need projection matrix, 
                                        var mousePos = Mouse.GetPosition(control);
-                                       //SharpDX.Ray ray = Ray.GetPickRay((int)mousePos.X, (int)mousePos.Y, control.Viewport, null);
                                        var ray = cam.GetPickRay((float)mousePos.X, (float)mousePos.Y);
-                                       //Do the models
                                        foreach (var m in Models)
                                        {
                                            var model = m as Model;

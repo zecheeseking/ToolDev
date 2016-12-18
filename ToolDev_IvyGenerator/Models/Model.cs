@@ -69,28 +69,13 @@ namespace ToolDev_IvyGenerator.Models
 
         public bool Intersects(Ray ray)
         {
-            Matrix worldInverse = Matrix.Zero;
-            Matrix.Invert(ref _worldMatrix,out worldInverse);
-
-            //Still have to transform ray to world space.
-            Vector3 rPos = Vector3.Zero;
-            Vector3 rDir = Vector3.Zero;
-
-            rPos = Vector3.TransformCoordinate(ray.Position, worldInverse);
-            rDir = Vector3.TransformNormal(ray.Direction, worldInverse);
-
-            rPos.Normalize();
-            rDir.Normalize();
-
-            Ray r = new Ray(rPos, rDir);
-
             for (int i = 0; i < IndexCount; i += 3)
             {
                 uint t1 = Indices[i];
                 uint t2 = Indices[i + 1];
                 uint t3 = Indices[i + 2];
 
-                if(r.Intersects(ref Vertices[t1].Position, ref Vertices[t2].Position, ref Vertices[t3].Position))
+                if(ray.Intersects(ref Vertices[t1].Position, ref Vertices[t2].Position, ref Vertices[t3].Position))
                     return true;
             }
 
