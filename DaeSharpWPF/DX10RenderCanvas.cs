@@ -1,4 +1,5 @@
-﻿using DaeSharpWPF;
+﻿using System.Collections.Generic;
+using DaeSharpWPF;
 
 namespace DaeSharpWpf
 {
@@ -33,11 +34,11 @@ namespace DaeSharpWpf
         public Color4 ClearColor = SharpDX.Color.CornflowerBlue;
 
         public static readonly DependencyProperty ModelProperty = DependencyProperty.Register(
-            "Models", typeof(IModel<VertexPosColNorm>[]), typeof(Dx10RenderCanvas), new PropertyMetadata(default(IModel<VertexPosColNorm>[])));
+            "Models", typeof(List<IModel<VertexPosColNorm>>), typeof(Dx10RenderCanvas), new PropertyMetadata(default(IModel<VertexPosColNorm>[])));
 
-        public IModel<VertexPosColNorm>[] Models
+        public List<IModel<VertexPosColNorm>> Models
         {
-            get { return (IModel<VertexPosColNorm>[]) GetValue(ModelProperty); }
+            get { return (List<IModel<VertexPosColNorm>>) GetValue(ModelProperty); }
             set { SetValue(ModelProperty, value); }
         }
 

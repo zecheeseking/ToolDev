@@ -1,11 +1,7 @@
-﻿using System.Windows;
-using System.Windows.Input;
-using DaeSharpWpf;
+﻿using DaeSharpWpf;
 using ToolDev_IvyGenerator.Effects;
 using SharpDX;
-using SharpDX.Direct3D;
 using SharpDX.Direct3D10;
-using SharpDX.DirectInput;
 using ToolDev_IvyGenerator.Models;
 using ToolDev_IvyGenerator.Utilities;
 using Format = SharpDX.DXGI.Format;
@@ -63,21 +59,25 @@ namespace ToolDev_IvyGenerator
             if (_device == null)
                 return;
 
-            _grid.Shader.SetWorldViewProjection(_worldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
             DrawGrid();
 
-            if (_renderControl.Models.Length != 0 && Shader != null)
+            if (_renderControl.Models.Count != 0 && Shader != null)
             {
                 foreach (IModel<VertexPosColNorm> m in _renderControl.Models)
                 {
-                    Shader.SetWorld((m as Model).WorldMatrix);
-                    Shader.SetWorldViewProjection(_worldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
+                    var model = m as Model;
+
+                    if (model == null)
+                        break;
+
+                    Shader.SetWorld(model.WorldMatrix);
+                    Shader.SetWorldViewProjection(model.WorldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
 
                     _device.InputAssembler.InputLayout = Shader.InputLayout;
                     _device.InputAssembler.PrimitiveTopology = m.PrimitiveTopology;
                     _device.InputAssembler.SetIndexBuffer(m.IndexBuffer, Format.R32_UInt, 0);
-                    _device.InputAssembler.SetVertexBuffers(0,
-                        new VertexBufferBinding(m.VertexBuffer, m.VertexStride, 0));
+                    _device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(m.VertexBuffer, m.VertexStride, 0));
+
                     for (int i = 0; i < Shader.Technique.Description.PassCount; ++i)
                     {
                         Shader.Technique.GetPassByIndex(i).Apply();
@@ -89,6 +89,8 @@ namespace ToolDev_IvyGenerator
 
         private void DrawGrid()
         {
+            _grid.Shader.SetWorldViewProjection(_worldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
+
             _device.InputAssembler.InputLayout = _grid.Shader.InputLayout;
             _device.InputAssembler.PrimitiveTopology = _grid.PrimitiveTopology;
             _device.InputAssembler.SetIndexBuffer(_grid.IndexBuffer, Format.R32_UInt, 0);

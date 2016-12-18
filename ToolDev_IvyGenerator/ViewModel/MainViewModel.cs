@@ -49,10 +49,7 @@ namespace ToolDev_IvyGenerator.ViewModel
 
                                 ////Add new model
                                 if ((bool) result)
-                                {
-                                    _models.Add(ModelLoader.LoadModel(dlg.FileName, control.GetDevice()));
-                                    RaisePropertyChanged("Models");
-                                }
+                                    Models.Add(ModelLoader.LoadModel(dlg.FileName, control.GetDevice()));
                                 else
                                     Debug.WriteLine("Nope");
                             }
@@ -81,7 +78,13 @@ namespace ToolDev_IvyGenerator.ViewModel
                                        //SharpDX.Ray ray = Ray.GetPickRay((int)mousePos.X, (int)mousePos.Y, control.Viewport, null);
                                        var ray = cam.GetPickRay((float)mousePos.X, (float)mousePos.Y);
                                        //Do the models
-                                       //Debug.WriteLine((Models as Model).Intersects(ray));
+                                       foreach (var m in Models)
+                                       {
+                                           var model = m as Model;
+                                           if (m == null)
+                                               break;
+                                           Debug.WriteLine(model.Intersects(ray));
+                                       }
                                    }
                                    
                                }
@@ -128,13 +131,13 @@ namespace ToolDev_IvyGenerator.ViewModel
         }
 
         private List<IModel<VertexPosColNorm>> _models = new List<IModel<VertexPosColNorm>>();
-        public IModel<VertexPosColNorm>[] Models
+        public List<IModel<VertexPosColNorm>> Models
         {
-            get { return _models.ToArray(); }
+            get { return _models; }
             set
             {
-                //_models = value;
-                //RaisePropertyChanged("Models");
+                _models = value;
+                RaisePropertyChanged("Models");
             }
         }
 

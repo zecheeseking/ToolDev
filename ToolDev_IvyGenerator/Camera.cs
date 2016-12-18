@@ -1,8 +1,5 @@
-﻿using System.Diagnostics;
-using DaeSharpWpf;
-using DaeSharpWPF;
+﻿using DaeSharpWPF;
 using SharpDX;
-using SharpDX.Direct3D10;
 using SharpDX.DirectInput;
 using ToolDev_IvyGenerator.Interfaces;
 
@@ -13,9 +10,12 @@ namespace ToolDev_IvyGenerator
     {
         private float _camMoveSpeed = 5.0f;
 
-        private Vector3 _position = new Vector3(0.0f);
-        public Vector3 Position { get { return _position;} }
-        private Quaternion _rotation = Quaternion.Identity;
+        private Vector3 _position;
+        public Vector3 Position { get { return _position; } }
+        private Quaternion _rotation;
+        public Quaternion Rotation { get { return _rotation; } }
+        private Vector3 _scale;
+        public Vector3 Scale { get { return _scale; } }
 
         private float _TotalYaw = 0.0f;
         private float _TotalPitch = 0.0f;
@@ -43,6 +43,10 @@ namespace ToolDev_IvyGenerator
             _kb.Acquire();
             _mouse = new Mouse(di);
             _mouse.Acquire();
+
+            _position = Vector3.Zero;
+            _rotation = Quaternion.Identity;
+            _scale = Vector3.Zero;
         }
 
         public void Initialize(float width, float height)
@@ -51,14 +55,9 @@ namespace ToolDev_IvyGenerator
             _position = new Vector3(50, 50, -100);
             UpdateTransformationMatrix();
 
-            _viewMatrix = Matrix.LookAtLH(_position + Vector3.ForwardLH, Vector3.Zero, Vector3.UnitY);
+            _viewMatrix = Matrix.LookAtLH(Position + Vector3.ForwardLH, Vector3.Zero, Vector3.UnitY);
         }
 
-        public void SetPosition(Vector3 position)
-        {
-            _position = position;
-            UpdateTransformationMatrix();
-        }
 
         public void SetScreenWidthHeight(float width, float height)
         {
@@ -111,13 +110,13 @@ namespace ToolDev_IvyGenerator
 
         private void UpdateTransformationMatrix()
         {
-            _transformationMatrix = Matrix.Scaling(1.0f) * Matrix.RotationQuaternion(_rotation) * Matrix.Translation(_position);
+            _transformationMatrix = Matrix.Scaling(1.0f) * Matrix.RotationQuaternion(Rotation) * Matrix.Translation(Position);
 
-            var camForward = Vector3.Transform(Vector3.ForwardLH, _rotation);
-            var camRight = Vector3.Transform(Vector3.Right, _rotation);
+            var camForward = Vector3.Transform(Vector3.ForwardLH, Rotation);
+            var camRight = Vector3.Transform(Vector3.Right, Rotation);
             var camUp = Vector3.Cross(camForward, camRight);
 
-            _viewMatrix = Matrix.LookAtLH(_position, _position + camForward, camUp);
+            _viewMatrix = Matrix.LookAtLH(Position, Position + camForward, camUp);
         }
 
         private Vector3 GetViewForward()
@@ -156,13 +155,14 @@ namespace ToolDev_IvyGenerator
 
         public void Translate(float x, float y, float z)
         {
+            _position = new Vector3(x,y,z);
         }
 
         public void Rotate()
         {
         }
 
-        public void Scale()
+        public void Scaling(float x, float y, float z)
         {
         }
     }

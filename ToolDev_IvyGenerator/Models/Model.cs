@@ -23,28 +23,48 @@ namespace ToolDev_IvyGenerator.Models
 
         private Matrix _worldMatrix;
 
-        public Matrix WorldMatrix
-        {
-            get { return _worldMatrix; }
-            set { _worldMatrix = value; }
-        }
+        public Matrix WorldMatrix{ get { return _worldMatrix; } }
+
+        private Vector3 _position;
+
+        public Vector3 Position { get { return _position; } }
+
+        private Quaternion _rotation;
+        public Quaternion Rotation { get { return _rotation; } }
+        private Vector3 _scale;
+        public Vector3 Scale { get {return _scale; } }
 
         public void Translate(float x, float y, float z)
         {
-            WorldMatrix = Matrix.Scaling(1.0f) * Matrix.RotationQuaternion(Quaternion.Identity) * Matrix.Translation(x, y, z);
+            _position = new Vector3(x,y,z);
+
+            UpdateWorldMatrix();
         }
 
         public void Rotate()
         {
+
         }
 
-        public void Scale()
+        public void Scaling(float x, float y, float z)
         {
+            _scale = new Vector3(x, y, z);
+
+            UpdateWorldMatrix();
+        }
+
+        private void UpdateWorldMatrix()
+        {
+            _worldMatrix = Matrix.Scaling(Scale) * Matrix.RotationQuaternion(Rotation) * Matrix.Translation(Position);
         }
 
         public Model()
         {
-            WorldMatrix = Matrix.Scaling(1.0f) * Matrix.RotationQuaternion(Quaternion.Identity) * Matrix.Translation(Vector3.Zero);
+            _position = Vector3.Zero;
+            _rotation = Quaternion.Identity;
+            _scale = new Vector3(1.0f);
+
+            UpdateWorldMatrix();
         }
 
         public bool Intersects(Ray ray)
