@@ -15,7 +15,7 @@ namespace ToolDev_IvyGenerator.Utilities
 {
     public class ModelLoader
     {
-        public static IModel LoadModel(string path, Device device)
+        public static IModel<VertexPosColNorm> LoadModel(string path, Device device)
         {
             var extension = path.Split('.');
 
@@ -25,7 +25,7 @@ namespace ToolDev_IvyGenerator.Utilities
             return AssimpLoad(path, device);
         }
 
-        private static IModel LoadOvm(string path, Device device)
+        private static IModel<VertexPosColNorm> LoadOvm(string path, Device device)
         {
             Model model = new Model();
 
@@ -115,7 +115,7 @@ namespace ToolDev_IvyGenerator.Utilities
             return model;
         }
 
-        private static IModel AssimpLoad(string path, Device device)
+        private static IModel<VertexPosColNorm> AssimpLoad(string path, Device device)
         {
             AssimpContext importer = new AssimpContext();
             importer.SetConfig(new NormalSmoothingAngleConfig(66.0f));

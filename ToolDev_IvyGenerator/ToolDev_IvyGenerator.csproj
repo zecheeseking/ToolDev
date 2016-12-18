@@ -108,11 +108,13 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Effects\PosNormColEffect.cs" />
+    <Compile Include="Effects\SceneGridEffect.cs" />
     <Compile Include="Interfaces\interfaces.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Models\Model.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Utilities\ModelLoader.cs" />
+    <Compile Include="Utilities\SceneGrid.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="View\MainWindow.xaml">
@@ -171,8 +173,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\PosColNorm3D.fx" />
+    <Content Include="Resources\SceneGrid.fx" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Resources\Textures\" />
     <Folder Include="Structs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

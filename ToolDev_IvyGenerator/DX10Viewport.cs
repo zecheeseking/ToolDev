@@ -3,6 +3,7 @@ using System.Windows.Input;
 using DaeSharpWpf;
 using ToolDev_IvyGenerator.Effects;
 using SharpDX;
+using SharpDX.Direct3D;
 using SharpDX.Direct3D10;
 using SharpDX.DirectInput;
 using ToolDev_IvyGenerator.Models;
@@ -17,11 +18,12 @@ namespace ToolDev_IvyGenerator
         private RenderTargetView _renderTargetView;
         private Dx10RenderCanvas _renderControl;
 
-        public IModel Model { get; set; }
         public IEffect Shader { get; set; }
 		
 		private float _modelRotation;
         private Matrix _worldMatrix;
+
+        private SceneGrid _grid;
 
         public void Initialize(Device1 device, RenderTargetView renderTarget, Dx10RenderCanvas canvasControl)
         {
@@ -39,6 +41,11 @@ namespace ToolDev_IvyGenerator
 
             Shader = new PosNormColEffect();
             Shader.Create(device);
+
+            _grid = new SceneGrid();
+            _grid.Initialize(device);
+            _grid.Shader = new SceneGridEffect();
+            _grid.Shader.Create(device);
         }
 
         public void Deinitialize()
@@ -50,11 +57,17 @@ namespace ToolDev_IvyGenerator
         {
             _renderControl.Camera.Update(deltaT);
 
-            if (_renderControl.Model != null && Shader != null)
-            {
-                Shader.SetWorld((_renderControl.Model as Model).WorldMatrix);
-                Shader.SetWorldViewProjection(_worldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
-            }
+            _grid.Shader.SetWorldViewProjection(_worldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
+
+            ///FIX
+            //if (_renderControl.Models != null && Shader != null)
+            //{
+            //    foreach (IModel m in _renderControl.Models)
+            //    {
+            //        Shader.SetWorld((m as Model).WorldMatrix);
+            //        Shader.SetWorldViewProjection(_worldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
+            //    }
+            //}
         }
 
         public void Render(float deltaT)
@@ -62,19 +75,39 @@ namespace ToolDev_IvyGenerator
             if (_device == null)
                 return;
 
-            if (_renderControl.Model != null && Shader != null)
-            {
-                _device.InputAssembler.InputLayout = Shader.InputLayout;
-                _device.InputAssembler.PrimitiveTopology = _renderControl.Model.PrimitiveTopology;
-                _device.InputAssembler.SetIndexBuffer(_renderControl.Model.IndexBuffer, Format.R32_UInt, 0);
-                _device.InputAssembler.SetVertexBuffers(0,
-                    new VertexBufferBinding(_renderControl.Model.VertexBuffer, _renderControl.Model.VertexStride, 0));
+            DrawGrid();
 
-                for (int i = 0; i < Shader.Technique.Description.PassCount; ++i)
-                {
-                    Shader.Technique.GetPassByIndex(i).Apply();
-                    _device.DrawIndexed(_renderControl.Model.IndexCount, 0, 0);
-                }
+            ///FIX
+            //if (_renderControl.Models != null && Shader != null)
+            //{
+            //    foreach (IModel m in _renderControl.Models)
+            //    {
+            //        _device.InputAssembler.InputLayout = Shader.InputLayout;
+            //        _device.InputAssembler.PrimitiveTopology = m.PrimitiveTopology;
+            //        _device.InputAssembler.SetIndexBuffer(m.IndexBuffer, Format.R32_UInt, 0);
+            //        _device.InputAssembler.SetVertexBuffers(0,
+            //            new VertexBufferBinding(m.VertexBuffer, m.VertexStride, 0));
+
+            //        for (int i = 0; i < Shader.Technique.Description.PassCount; ++i)
+            //        {
+            //            Shader.Technique.GetPassByIndex(i).Apply();
+            //            _device.DrawIndexed(m.IndexCount, 0, 0);
+            //        }
+            //    }
+            //}
+        }
+
+        private void DrawGrid()
+        {
+            _device.InputAssembler.InputLayout = _grid.Shader.InputLayout;
+            _device.InputAssembler.PrimitiveTopology = _grid.PrimitiveTopology;
+            _device.InputAssembler.SetIndexBuffer(_grid.IndexBuffer, Format.R32_UInt, 0);
+            _device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(_grid.VertexBuffer, _grid.VertexStride, 0));
+
+            for (int i = 0; i < _grid.Shader.Technique.Description.PassCount; ++i)
+            {
+                _grid.Shader.Technique.GetPassByIndex(i).Apply();
+                _device.DrawIndexed(_grid.IndexCount, 0, 0);
             }
         }
 

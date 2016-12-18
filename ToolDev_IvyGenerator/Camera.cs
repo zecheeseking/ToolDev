@@ -139,12 +139,12 @@ namespace ToolDev_IvyGenerator
             Vector3 rPos = Vector3.Zero;
             Vector3 rDir = Vector3.Zero;
 
-            Matrix inverseView = _viewMatrix;
-            inverseView.Invert();
+            Matrix inverseView = Matrix.Zero;
+            Matrix.Invert(ref _viewMatrix, out inverseView);
 
-            rDir.X = v.X * inverseView.M11 + v.Y * inverseView.M21 + v.Z * inverseView.M31;
-            rDir.Y = v.X * inverseView.M12 + v.Y * inverseView.M22 + v.Z * inverseView.M32;
-            rDir.Z = v.X * inverseView.M13 + v.Y * inverseView.M23 + v.Z * inverseView.M33;
+            rDir.X = (v.X * inverseView.M11) + (v.Y * inverseView.M21) + (v.Z * inverseView.M31);
+            rDir.Y = (v.X * inverseView.M12) + (v.Y * inverseView.M22) + (v.Z * inverseView.M32);
+            rDir.Z = (v.X * inverseView.M13) + (v.Y * inverseView.M23) + (v.Z * inverseView.M33);
             rPos.X = inverseView.M41;
             rPos.Y = inverseView.M42;
             rPos.Z = inverseView.M43;

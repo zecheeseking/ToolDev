@@ -34,11 +34,11 @@ namespace DaeSharpWpf
         public Color4 ClearColor = SharpDX.Color.CornflowerBlue;
 
         public static readonly DependencyProperty ModelProperty = DependencyProperty.Register(
-            "Model", typeof(IModel), typeof(Dx10RenderCanvas), new PropertyMetadata(default(IModel)));
+            "Models", typeof(IModel<VertexPosColNorm>[]), typeof(Dx10RenderCanvas), new PropertyMetadata(default(IModel<VertexPosColNorm>[])));
 
-        public IModel Model
+        public IModel<VertexPosColNorm>[] Models
         {
-            get { return (IModel) GetValue(ModelProperty); }
+            get { return (IModel<VertexPosColNorm>[]) GetValue(ModelProperty); }
             set { SetValue(ModelProperty, value); }
         }
 

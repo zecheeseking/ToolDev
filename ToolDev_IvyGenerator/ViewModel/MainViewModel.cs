@@ -76,6 +76,7 @@ namespace ToolDev_IvyGenerator.ViewModel
                                        var ray = cam.GetPickRay((float)mousePos.X, (float)mousePos.Y);
                                        //Do the models
                                        Debug.WriteLine((ModelCube as Model).Intersects(ray));
+                                       (ModelCube as Model).Translate(100,0,0);
                                    }
                                    
                                }
@@ -121,8 +122,8 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
 
-        private IModel _modelCube;
-        public IModel ModelCube
+        private IModel<VertexPosColNorm> _modelCube;
+        public IModel<VertexPosColNorm> ModelCube
         {
             get { return _modelCube; }
             set

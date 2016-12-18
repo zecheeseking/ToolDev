@@ -7,12 +7,12 @@ using SharpDX;
 
 namespace DaeSharpWpf
 {
-    public interface IModel
+    public interface IModel<T>
     {
         PrimitiveTopology PrimitiveTopology { get; set; }
         int VertexStride { get; set; }
         int IndexCount { get; set; }
-        VertexPosColNorm[] Vertices { get; set; }
+        T[] Vertices { get; set; }
         uint[] Indices { get; set; }
         Buffer IndexBuffer { get; set; }
         Buffer VertexBuffer { get; set; }

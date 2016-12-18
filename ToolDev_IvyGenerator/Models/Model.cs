@@ -11,7 +11,7 @@ using ToolDev_IvyGenerator.Interfaces;
 namespace ToolDev_IvyGenerator.Models
 {
 
-    public class Model : IModel, INotifyPropertyChanged, ITransform
+    public class Model : IModel<VertexPosColNorm>, INotifyPropertyChanged, ITransform
     {
         public PrimitiveTopology PrimitiveTopology { get; set; }
         public int VertexStride { get; set; }
@@ -21,10 +21,17 @@ namespace ToolDev_IvyGenerator.Models
         public SharpDX.Direct3D10.Buffer IndexBuffer { get; set; }
         public SharpDX.Direct3D10.Buffer VertexBuffer { get; set; }
 
-        public Matrix WorldMatrix { get; set; }
+        private Matrix _worldMatrix;
+
+        public Matrix WorldMatrix
+        {
+            get { return _worldMatrix; }
+            set { _worldMatrix = value; }
+        }
 
         public void Translate(float x, float y, float z)
         {
+            WorldMatrix = Matrix.Scaling(1.0f) * Matrix.RotationQuaternion(Quaternion.Identity) * Matrix.Translation(x, y, z);
         }
 
         public void Rotate()
@@ -42,15 +49,15 @@ namespace ToolDev_IvyGenerator.Models
 
         public bool Intersects(Ray ray)
         {
-            Matrix worldInverse = WorldMatrix;
-            worldInverse.Invert();
+            Matrix worldInverse = Matrix.Zero;
+            Matrix.Invert(ref _worldMatrix,out worldInverse);
 
             //Still have to transform ray to world space.
             Vector3 rPos = Vector3.Zero;
             Vector3 rDir = Vector3.Zero;
 
-            Vector3.Transform(ray.Position, worldInverse);
-            Vector3.TransformNormal(ray.Direction, worldInverse);
+            rPos = Vector3.TransformCoordinate(ray.Position, worldInverse);
+            rDir = Vector3.TransformNormal(ray.Direction, worldInverse);
 
             rPos.Normalize();
             rDir.Normalize();
