@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Input;
 using SharpDX;
 using DaeSharpWpf;
@@ -45,8 +47,12 @@ namespace ToolDev_IvyGenerator.ViewModel
 
                                 bool? result = dlg.ShowDialog();
 
+                                ////Add new model
                                 if ((bool) result)
-                                    ModelCube = ModelLoader.LoadModel(dlg.FileName, control.GetDevice());
+                                {
+                                    _models.Add(ModelLoader.LoadModel(dlg.FileName, control.GetDevice()));
+                                    RaisePropertyChanged("Models");
+                                }
                                 else
                                     Debug.WriteLine("Nope");
                             }
@@ -75,8 +81,7 @@ namespace ToolDev_IvyGenerator.ViewModel
                                        //SharpDX.Ray ray = Ray.GetPickRay((int)mousePos.X, (int)mousePos.Y, control.Viewport, null);
                                        var ray = cam.GetPickRay((float)mousePos.X, (float)mousePos.Y);
                                        //Do the models
-                                       Debug.WriteLine((ModelCube as Model).Intersects(ray));
-                                       (ModelCube as Model).Translate(100,0,0);
+                                       //Debug.WriteLine((Models as Model).Intersects(ray));
                                    }
                                    
                                }
@@ -122,14 +127,14 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
 
-        private IModel<VertexPosColNorm> _modelCube;
-        public IModel<VertexPosColNorm> ModelCube
+        private List<IModel<VertexPosColNorm>> _models = new List<IModel<VertexPosColNorm>>();
+        public IModel<VertexPosColNorm>[] Models
         {
-            get { return _modelCube; }
+            get { return _models.ToArray(); }
             set
             {
-                _modelCube = value;
-                RaisePropertyChanged("ModelCube");
+                //_models = value;
+                //RaisePropertyChanged("Models");
             }
         }
 

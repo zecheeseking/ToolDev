@@ -56,18 +56,6 @@ namespace ToolDev_IvyGenerator
         public void Update(float deltaT)
         {
             _renderControl.Camera.Update(deltaT);
-
-            _grid.Shader.SetWorldViewProjection(_worldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
-
-            ///FIX
-            //if (_renderControl.Models != null && Shader != null)
-            //{
-            //    foreach (IModel m in _renderControl.Models)
-            //    {
-            //        Shader.SetWorld((m as Model).WorldMatrix);
-            //        Shader.SetWorldViewProjection(_worldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
-            //    }
-            //}
         }
 
         public void Render(float deltaT)
@@ -75,26 +63,28 @@ namespace ToolDev_IvyGenerator
             if (_device == null)
                 return;
 
+            _grid.Shader.SetWorldViewProjection(_worldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
             DrawGrid();
 
-            ///FIX
-            //if (_renderControl.Models != null && Shader != null)
-            //{
-            //    foreach (IModel m in _renderControl.Models)
-            //    {
-            //        _device.InputAssembler.InputLayout = Shader.InputLayout;
-            //        _device.InputAssembler.PrimitiveTopology = m.PrimitiveTopology;
-            //        _device.InputAssembler.SetIndexBuffer(m.IndexBuffer, Format.R32_UInt, 0);
-            //        _device.InputAssembler.SetVertexBuffers(0,
-            //            new VertexBufferBinding(m.VertexBuffer, m.VertexStride, 0));
+            if (_renderControl.Models.Length != 0 && Shader != null)
+            {
+                foreach (IModel<VertexPosColNorm> m in _renderControl.Models)
+                {
+                    Shader.SetWorld((m as Model).WorldMatrix);
+                    Shader.SetWorldViewProjection(_worldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
 
-            //        for (int i = 0; i < Shader.Technique.Description.PassCount; ++i)
-            //        {
-            //            Shader.Technique.GetPassByIndex(i).Apply();
-            //            _device.DrawIndexed(m.IndexCount, 0, 0);
-            //        }
-            //    }
-            //}
+                    _device.InputAssembler.InputLayout = Shader.InputLayout;
+                    _device.InputAssembler.PrimitiveTopology = m.PrimitiveTopology;
+                    _device.InputAssembler.SetIndexBuffer(m.IndexBuffer, Format.R32_UInt, 0);
+                    _device.InputAssembler.SetVertexBuffers(0,
+                        new VertexBufferBinding(m.VertexBuffer, m.VertexStride, 0));
+                    for (int i = 0; i < Shader.Technique.Description.PassCount; ++i)
+                    {
+                        Shader.Technique.GetPassByIndex(i).Apply();
+                        _device.DrawIndexed(m.IndexCount, 0, 0);
+                    }
+                }
+            }
         }
 
         private void DrawGrid()

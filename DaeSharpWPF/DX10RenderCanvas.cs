@@ -1,5 +1,4 @@
-﻿using DaeSharpWpf;
-using DaeSharpWPF;
+﻿using DaeSharpWPF;
 
 namespace DaeSharpWpf
 {

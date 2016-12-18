@@ -1,4 +1,5 @@
-﻿using DaeSharpWpf;
+﻿using System.Diagnostics;
+using DaeSharpWpf;
 using DaeSharpWPF;
 using SharpDX;
 using SharpDX.Direct3D10;
@@ -21,6 +22,7 @@ namespace ToolDev_IvyGenerator
 
         private readonly Keyboard _kb;
         private readonly Mouse _mouse;
+        private Vector2 _mouseMovement;
 
         private Matrix _projectionMatrix;
         public Matrix ProjectionMatrix { get { return _projectionMatrix; } }
@@ -50,7 +52,6 @@ namespace ToolDev_IvyGenerator
             UpdateTransformationMatrix();
 
             _viewMatrix = Matrix.LookAtLH(_position + Vector3.ForwardLH, Vector3.Zero, Vector3.UnitY);
-
         }
 
         public void SetPosition(Vector3 position)
@@ -69,18 +70,19 @@ namespace ToolDev_IvyGenerator
 
         public void Update(float deltaT)
         {
+            var mouseState = _mouse.GetCurrentState();
+            _mouseMovement = new Vector2(mouseState.X, mouseState.Y);
+
             if (MovementEnabled)
             {
-                UpdateTransformationMatrix();
-
-                var mouseState = _mouse.GetCurrentState();
-                Vector2 mouseDelta = new Vector2(mouseState.X, mouseState.Y);
-                _TotalYaw += mouseDelta.X*5.0f*deltaT;
-                _TotalPitch += mouseDelta.Y*5.0f*deltaT;
+                _TotalYaw += _mouseMovement.X * 5.0f * deltaT;
+                _TotalPitch += _mouseMovement.Y * 5.0f * deltaT;
 
                 _rotation = Quaternion.RotationYawPitchRoll((float)MathHelper.AngleToRadians(_TotalYaw), 
                     (float)MathHelper.AngleToRadians(_TotalPitch), 
                     0);
+
+                UpdateTransformationMatrix();
 
                 var kbState = _kb.GetCurrentState();
                 if (kbState.IsPressed(Key.W))
