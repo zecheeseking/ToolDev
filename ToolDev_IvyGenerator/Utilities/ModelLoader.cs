@@ -9,7 +9,8 @@ using Buffer = SharpDX.Direct3D10.Buffer;
 using SharpDX.Direct3D;
 using System.Runtime.InteropServices;
 using SharpDX;
-using Device = SharpDX.Direct3D10.Device;
+using ToolDev_IvyGenerator.Effects;
+using Device = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Utilities
 {
@@ -105,6 +106,9 @@ namespace ToolDev_IvyGenerator.Utilities
                 }
             }
 
+            model.Material = new PosNormColEffect();
+            model.Material.Create(device);
+
             //Create buffers
             model.CreateVertexBuffer(device);
             model.CreateIndexBuffer(device);
@@ -148,6 +152,9 @@ namespace ToolDev_IvyGenerator.Utilities
                 model.Indices[i] = (uint)AssimpModel.Meshes[0].GetIndices()[i];
 
             model.IndexCount = model.Indices.Length;
+
+            model.Material = new PosNormColEffect();
+            model.Material.Create(device);
 
             model.CreateVertexBuffer(device);
             model.CreateIndexBuffer(device);

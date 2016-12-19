@@ -43,8 +43,6 @@ namespace ToolDev_IvyGenerator
 
             _grid = new SceneGrid();
             _grid.Initialize(device);
-            _grid.Shader = new SceneGridEffect();
-            _grid.Shader.Create(device);
         }
 
         public void Deinitialize()
@@ -54,10 +52,11 @@ namespace ToolDev_IvyGenerator
 
         public void Update(float deltaT)
         {
-            if ((_renderControl.Camera as Camera).MovementEnabled)
-                Mouse.Capture(_renderControl);
-            else
-                Mouse.Capture(null);
+            //FIX THIS
+            //if ((_renderControl.Camera as Camera).MovementEnabled)
+            //    Mouse.Capture(_renderControl);
+            //else
+            //    Mouse.Capture(null);
 
             _renderControl.Camera.Update(deltaT);
         }
@@ -67,7 +66,7 @@ namespace ToolDev_IvyGenerator
             if (_device == null)
                 return;
 
-            DrawGrid();
+            _grid.Draw(_device, _renderControl.Camera, _lightDirection);
 
             if (_renderControl.Models.Count != 0 && Shader != null)
             {
@@ -78,37 +77,8 @@ namespace ToolDev_IvyGenerator
                     if (model == null)
                         break;
 
-                    Shader.SetWorld(model.WorldMatrix);
-                    Shader.SetWorldViewProjection(model.WorldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
-                    Shader.SetLightDirection(_lightDirection);
-
-                    _device.InputAssembler.InputLayout = Shader.InputLayout;
-                    _device.InputAssembler.PrimitiveTopology = m.PrimitiveTopology;
-                    _device.InputAssembler.SetIndexBuffer(m.IndexBuffer, Format.R32_UInt, 0);
-                    _device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(m.VertexBuffer, m.VertexStride, 0));
-
-                    for (int i = 0; i < Shader.Technique.Description.PassCount; ++i)
-                    {
-                        Shader.Technique.GetPassByIndex(i).Apply();
-                        _device.DrawIndexed(m.IndexCount, 0, 0);
-                    }
+                    m.Draw(_device, _renderControl.Camera, _lightDirection);
                 }
-            }
-        }
-
-        private void DrawGrid()
-        {
-            _grid.Shader.SetWorldViewProjection(_worldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
-
-            _device.InputAssembler.InputLayout = _grid.Shader.InputLayout;
-            _device.InputAssembler.PrimitiveTopology = _grid.PrimitiveTopology;
-            _device.InputAssembler.SetIndexBuffer(_grid.IndexBuffer, Format.R32_UInt, 0);
-            _device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(_grid.VertexBuffer, _grid.VertexStride, 0));
-
-            for (int i = 0; i < _grid.Shader.Technique.Description.PassCount; ++i)
-            {
-                _grid.Shader.Technique.GetPassByIndex(i).Apply();
-                _device.DrawIndexed(_grid.IndexCount, 0, 0);
             }
         }
 

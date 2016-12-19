@@ -4,10 +4,14 @@ using DaeSharpWpf;
 
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using DaeSharpWPF;
 using SharpDX;
 using SharpDX.Direct3D10;
+using SharpDX.DXGI;
 using ToolDev_IvyGenerator.Annotations;
+using ToolDev_IvyGenerator.Effects;
 using ToolDev_IvyGenerator.Interfaces;
+using Device = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Models
 {
@@ -21,6 +25,7 @@ namespace ToolDev_IvyGenerator.Models
         public uint[] Indices { get; set; }
         public SharpDX.Direct3D10.Buffer IndexBuffer { get; set; }
         public SharpDX.Direct3D10.Buffer VertexBuffer { get; set; }
+        public IEffect Material { get; set; }
 
         public void CreateVertexBuffer(Device device)
         {
@@ -52,6 +57,24 @@ namespace ToolDev_IvyGenerator.Models
             };
 
             IndexBuffer = new Buffer(device, DataStream.Create(Indices, false, false), bufferDescription);
+        }
+
+        public void Draw(Device device, ICamera camera, Vector3 lightDirection)
+        {
+            Material.SetWorld(WorldMatrix);
+            Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+            Material.SetLightDirection(lightDirection);
+
+            device.InputAssembler.InputLayout = Material.InputLayout;
+            device.InputAssembler.PrimitiveTopology = PrimitiveTopology;
+            device.InputAssembler.SetIndexBuffer(IndexBuffer, Format.R32_UInt, 0);
+            device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(VertexBuffer, VertexStride, 0));
+
+            for (int i = 0; i < Material.Technique.Description.PassCount; ++i)
+            {
+                Material.Technique.GetPassByIndex(i).Apply();
+                device.DrawIndexed(IndexCount, 0, 0);
+            }
         }
 
         private Matrix _worldMatrix;
@@ -102,19 +125,17 @@ namespace ToolDev_IvyGenerator.Models
 
         public Model(Model model)
         {
-            PrimitiveTopology = model.PrimitiveTopology;
-
             _position = model._position;
             _rotation = model._rotation;
             _scale = model._scale;
-
             UpdateWorldMatrix();
 
+            PrimitiveTopology = model.PrimitiveTopology;
+            Material = model.Material;
             Vertices = model.Vertices;
             Indices = model.Indices;
             IndexCount = model.IndexCount;
             VertexStride = model.VertexStride;
-
             VertexBuffer = model.VertexBuffer;
             IndexBuffer = model.IndexBuffer;
         }

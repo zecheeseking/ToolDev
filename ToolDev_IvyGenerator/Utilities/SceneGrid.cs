@@ -2,17 +2,20 @@
 using System;
 using System.Runtime.InteropServices;
 using DaeSharpWpf;
+using DaeSharpWPF;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D10;
+using SharpDX.DXGI;
 using ToolDev_IvyGenerator.Effects;
+using ToolDev_IvyGenerator.Interfaces;
 using Buffer = SharpDX.Direct3D10.Buffer;
+using Device = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Utilities
 {
     public class SceneGrid : IModel<VertexPosCol>
     {
-        public IEffect Shader { get; set; }
         public PrimitiveTopology PrimitiveTopology { get; set; }
         public int VertexStride { get; set; }
         public int IndexCount { get; set; }
@@ -20,6 +23,24 @@ namespace ToolDev_IvyGenerator.Utilities
         public uint[] Indices { get; set; }
         public Buffer IndexBuffer { get; set; }
         public Buffer VertexBuffer { get; set; }
+        public IEffect Material { get; set; }
+
+        private Matrix _worldMatrix;
+
+        public void Initialize(Device device)
+        {
+            _worldMatrix = Matrix.Scaling(1.0f)*Matrix.RotationQuaternion(Quaternion.Identity)*Matrix.Translation(Vector3.Zero);
+            PrimitiveTopology = PrimitiveTopology.LineList;
+
+            CreateGrid(20, Color.Black, 4.0f);
+
+            CreateVertexBuffer(device);
+            CreateIndexBuffer(device);
+
+            Material = new SceneGridEffect();
+            Material.Create(device);
+        }
+
         public void CreateVertexBuffer(Device device)
         {
             VertexBuffer?.Dispose();
@@ -48,15 +69,23 @@ namespace ToolDev_IvyGenerator.Utilities
             IndexBuffer = new Buffer(device, DataStream.Create(Indices, false, false), bufferDescription);
         }
 
-        public void Initialize(Device device)
+        public void Draw(Device device, ICamera camera, Vector3 lightDirection)
         {
-            PrimitiveTopology = PrimitiveTopology.LineList;
+            Material.SetWorldViewProjection(_worldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
 
-            CreateGrid(20, Color.Black, 4.0f);
+            device.InputAssembler.InputLayout = Material.InputLayout;
+            device.InputAssembler.PrimitiveTopology = PrimitiveTopology;
+            device.InputAssembler.SetIndexBuffer(IndexBuffer, Format.R32_UInt, 0);
+            device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(VertexBuffer, VertexStride, 0));
 
-            CreateVertexBuffer(device);
-            CreateIndexBuffer(device);
+            for (int i = 0; i < Material.Technique.Description.PassCount; ++i)
+            {
+                Material.Technique.GetPassByIndex(i).Apply();
+                device.DrawIndexed(IndexCount, 0, 0);
+            }
         }
+
+
 
         private void CreateGrid(int gridSize, Color color, float gridSpacing)
         {
@@ -85,6 +114,19 @@ namespace ToolDev_IvyGenerator.Utilities
             }
 
             IndexCount = Indices.Length;
+        }
+
+
+        public void Translate(float x, float y, float z)
+        {
+        }
+
+        public void Rotate()
+        {
+        }
+
+        public void Scaling(float x, float y, float z)
+        {
         }
     }
 }

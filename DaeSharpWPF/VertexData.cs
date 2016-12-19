@@ -4,7 +4,6 @@ using SharpDX.DXGI;
 
 namespace DaeSharpWpf
 {
-
     public struct VertexPosCol
     {
         public Vector3 Position;
