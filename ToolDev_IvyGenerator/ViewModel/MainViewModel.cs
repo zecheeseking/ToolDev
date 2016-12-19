@@ -151,7 +151,6 @@ namespace ToolDev_IvyGenerator.ViewModel
         }
 
         private ICamera _camera;
-
         public ICamera Camera
         {
             get

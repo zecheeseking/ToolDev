@@ -1,4 +1,5 @@
-﻿using DaeSharpWpf;
+﻿using System.Windows.Input;
+using DaeSharpWpf;
 using ToolDev_IvyGenerator.Effects;
 using SharpDX;
 using SharpDX.Direct3D10;
@@ -53,6 +54,11 @@ namespace ToolDev_IvyGenerator
 
         public void Update(float deltaT)
         {
+            if ((_renderControl.Camera as Camera).MovementEnabled)
+                Mouse.Capture(_renderControl);
+            else
+                Mouse.Capture(null);
+
             _renderControl.Camera.Update(deltaT);
         }
 

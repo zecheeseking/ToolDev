@@ -31,7 +31,7 @@ namespace DaeSharpWpf
 
         private DateTime? _lastSizeChange;
 
-        public Color4 ClearColor = SharpDX.Color.CornflowerBlue;
+        public Color4 ClearColor = new Color4(new Color3(0.2f, 0.2f, 0.2f), 1.0f);
 
         public static readonly DependencyProperty ModelProperty = DependencyProperty.Register(
             "Models", typeof(List<IModel<VertexPosColNorm>>), typeof(Dx10RenderCanvas), new PropertyMetadata(default(IModel<VertexPosColNorm>[])));

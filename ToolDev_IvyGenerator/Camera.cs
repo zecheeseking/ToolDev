@@ -8,7 +8,7 @@ namespace ToolDev_IvyGenerator
 {
     public class Camera : ICamera, ITransform
     {
-        private float _camMoveSpeed = 5.0f;
+        private float _camMoveSpeed = 25.0f;
 
         private Vector3 _position;
         public Vector3 Position { get { return _position; } }
