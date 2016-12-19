@@ -20,6 +20,8 @@ namespace ToolDev_IvyGenerator
 
         private SceneGrid _grid;
 
+        private Vector3 _lightDirection;
+
         public void Initialize(Device1 device, RenderTargetView renderTarget, Dx10RenderCanvas canvasControl)
         {
             _device = device;
@@ -28,6 +30,7 @@ namespace ToolDev_IvyGenerator
 
             //CAMERA SETUP
             _renderControl.Camera.Initialize((float)_renderControl.ActualWidth, (float)_renderControl.ActualHeight);
+            _lightDirection = (_renderControl.Camera as Camera).CameraForward;
 
             //WORLD MATRIX SETUP
             _worldMatrix = Matrix.Identity;
@@ -71,7 +74,7 @@ namespace ToolDev_IvyGenerator
 
                     Shader.SetWorld(model.WorldMatrix);
                     Shader.SetWorldViewProjection(model.WorldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
-                    Shader.SetLightDirection((_renderControl.Camera as Camera).CameraForward);
+                    Shader.SetLightDirection(_lightDirection);
 
                     _device.InputAssembler.InputLayout = Shader.InputLayout;
                     _device.InputAssembler.PrimitiveTopology = m.PrimitiveTopology;

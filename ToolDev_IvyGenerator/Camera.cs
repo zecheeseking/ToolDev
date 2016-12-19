@@ -57,7 +57,7 @@ namespace ToolDev_IvyGenerator
         public void Initialize(float width, float height)
         {
             SetScreenWidthHeight(width, height);
-            _position = new Vector3(50, 50, -100);
+            _position = new Vector3(75, 75, -100);
             UpdateTransformationMatrix();
 
             _viewMatrix = Matrix.LookAtLH(Position + Vector3.ForwardLH, Vector3.Zero, Vector3.UnitY);

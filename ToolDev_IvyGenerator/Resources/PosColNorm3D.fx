@@ -69,6 +69,10 @@ float4 PS(VS_OUTPUT input) : SV_TARGET{
 	return float4( color_rgb , color_a );
 }
 
+float4 PSWIRE(VS_OUTPUT input) : SV_TARGET{
+	return float4(0,0,0,1);
+}
+
 //--------------------------------------------------------------------------------------
 // Technique
 //--------------------------------------------------------------------------------------
@@ -81,16 +85,18 @@ technique10 SolidTech
 		SetGeometryShader( NULL );
         SetPixelShader( CompileShader( ps_4_0, PS() ) );
     }
+
+	pass P1
+	{
+		SetRasterizerState(Wire);
+		SetVertexShader(CompileShader(vs_4_0, VS()));
+		SetGeometryShader(NULL);
+		SetPixelShader(CompileShader(ps_4_0, PSWIRE()));
+	}
 }
 
 technique10 WireTech
 {
-    pass P0
-    {
-		SetRasterizerState(Wire);
-        SetVertexShader( CompileShader( vs_4_0, VS() ) );
-		SetGeometryShader( NULL );
-        SetPixelShader( CompileShader( ps_4_0, PS() ) );
-    }
+
 }
 
