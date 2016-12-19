@@ -31,6 +31,11 @@ namespace ToolDev_IvyGenerator
         private Matrix _transformationMatrix = Matrix.Identity;
         public Matrix TransformationMatrix { get { return _transformationMatrix; }}
 
+        private Vector3 _camForward;
+        public Vector3 CameraForward { get { return _camForward; } }
+        private Vector3 _camRight;
+        public Vector3 CameraRight { get { return _camRight; } }
+
         private float _screenWidth;
         private float _screenHeight;
         public Matrix WorldMatrix { get; set; }
@@ -57,7 +62,6 @@ namespace ToolDev_IvyGenerator
 
             _viewMatrix = Matrix.LookAtLH(Position + Vector3.ForwardLH, Vector3.Zero, Vector3.UnitY);
         }
-
 
         public void SetScreenWidthHeight(float width, float height)
         {
@@ -112,11 +116,11 @@ namespace ToolDev_IvyGenerator
         {
             _transformationMatrix = Matrix.Scaling(1.0f) * Matrix.RotationQuaternion(Rotation) * Matrix.Translation(Position);
 
-            var camForward = Vector3.Transform(Vector3.ForwardLH, Rotation);
-            var camRight = Vector3.Transform(Vector3.Right, Rotation);
-            var camUp = Vector3.Cross(camForward, camRight);
+            _camForward = Vector3.Transform(Vector3.ForwardLH, Rotation);
+            _camRight = Vector3.Transform(Vector3.Right, Rotation);
+            var camUp = Vector3.Cross(_camForward, _camRight);
 
-            _viewMatrix = Matrix.LookAtLH(Position, Position + camForward, camUp);
+            _viewMatrix = Matrix.LookAtLH(Position, Position + _camForward, camUp);
         }
 
         private Vector3 GetViewForward()

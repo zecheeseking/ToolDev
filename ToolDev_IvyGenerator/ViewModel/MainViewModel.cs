@@ -75,15 +75,27 @@ namespace ToolDev_IvyGenerator.ViewModel
                                    {
                                        var mousePos = Mouse.GetPosition(control);
                                        var ray = cam.GetPickRay((float)mousePos.X, (float)mousePos.Y);
+                                       List<Model> toAdd = new List<Model>();
                                        foreach (var m in Models)
                                        {
                                            var model = m as Model;
                                            if (m == null)
                                                break;
-                                           Debug.WriteLine(model.Intersects(ray));
+                                           Vector3 hitPoint;
+                                           if (model.Intersects(ray, out hitPoint))
+                                           {
+                                               Model newModel = new Model(model);
+                                               newModel.Translate(hitPoint.X, hitPoint.Y, hitPoint.Z);
+                                               newModel.Scaling( 0.3f,0.3f,0.3f);
+                                               toAdd.Add(newModel);
+                                           }
+                                       }
+
+                                       foreach (Model m in toAdd)
+                                       {
+                                            Models.Add(m);
                                        }
                                    }
-                                   
                                }
                            )
                        );

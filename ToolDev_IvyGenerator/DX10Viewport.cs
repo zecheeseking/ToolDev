@@ -71,6 +71,7 @@ namespace ToolDev_IvyGenerator
 
                     Shader.SetWorld(model.WorldMatrix);
                     Shader.SetWorldViewProjection(model.WorldMatrix * _renderControl.Camera.ViewMatrix * _renderControl.Camera.ProjectionMatrix);
+                    Shader.SetLightDirection((_renderControl.Camera as Camera).CameraForward);
 
                     _device.InputAssembler.InputLayout = Shader.InputLayout;
                     _device.InputAssembler.PrimitiveTopology = m.PrimitiveTopology;

@@ -5,6 +5,7 @@ using DaeSharpWpf;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using SharpDX;
+using SharpDX.Direct3D10;
 using ToolDev_IvyGenerator.Annotations;
 using ToolDev_IvyGenerator.Interfaces;
 
@@ -67,19 +68,52 @@ namespace ToolDev_IvyGenerator.Models
             UpdateWorldMatrix();
         }
 
-        public bool Intersects(Ray ray)
+        public Model(Model model)
         {
+            PrimitiveTopology = model.PrimitiveTopology;
+
+            _position = model._position;
+            _rotation = model._rotation;
+            _scale = model._scale;
+
+            UpdateWorldMatrix();
+
+            Vertices = model.Vertices;
+            Indices = model.Indices;
+            IndexCount = model.IndexCount;
+            VertexStride = model.VertexStride;
+
+            VertexBuffer = model.VertexBuffer;
+            IndexBuffer = model.IndexBuffer;
+        }
+
+        public bool Intersects(Ray ray, out Vector3 intersectionPoint)
+        {
+            float distance = float.MaxValue;
+            intersectionPoint = Vector3.Zero;
+            bool hit = false;
+
             for (int i = 0; i < IndexCount; i += 3)
             {
                 uint t1 = Indices[i];
                 uint t2 = Indices[i + 1];
                 uint t3 = Indices[i + 2];
 
-                if(ray.Intersects(ref Vertices[t1].Position, ref Vertices[t2].Position, ref Vertices[t3].Position))
-                    return true;
+                var v = Vector3.Zero;
+
+                if (ray.Intersects(ref Vertices[t1].Position, ref Vertices[t2].Position, ref Vertices[t3].Position, out v))
+                {
+                    float dist = Vector3.Distance(ray.Position, v);
+                    if (dist < distance)
+                    {
+                        intersectionPoint = v;
+                        distance = dist;
+                        hit = true;
+                    }
+                }
             }
 
-            return false;
+            return hit;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
