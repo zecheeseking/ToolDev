@@ -1,9 +1,6 @@
-﻿using System.ComponentModel;
-using SharpDX.Direct3D;
-using SharpDX.Direct3D10;
-using SharpDX.Direct3D9;
+﻿using SharpDX.Direct3D;
 using Buffer = SharpDX.Direct3D10.Buffer;
-using SharpDX;
+using Device = SharpDX.Direct3D10.Device;
 
 namespace DaeSharpWpf
 {
@@ -16,5 +13,7 @@ namespace DaeSharpWpf
         uint[] Indices { get; set; }
         Buffer IndexBuffer { get; set; }
         Buffer VertexBuffer { get; set; }
+        void CreateVertexBuffer(Device device);
+        void CreateIndexBuffer(Device device);
     }
 }

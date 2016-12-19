@@ -20,13 +20,8 @@ namespace ToolDev_IvyGenerator.Utilities
         public uint[] Indices { get; set; }
         public Buffer IndexBuffer { get; set; }
         public Buffer VertexBuffer { get; set; }
-
-        public void Initialize(Device device)
+        public void CreateVertexBuffer(Device device)
         {
-            PrimitiveTopology = PrimitiveTopology.LineList;
-
-            CreateGrid(20, Color.Black, 4.0f);
-
             VertexBuffer?.Dispose();
             var bufferDescription = new BufferDescription
             {
@@ -37,9 +32,12 @@ namespace ToolDev_IvyGenerator.Utilities
                 SizeInBytes = VertexStride * Vertices.Length
             };
             VertexBuffer = new Buffer(device, DataStream.Create(Vertices, false, false), bufferDescription);
+        }
 
+        public void CreateIndexBuffer(Device device)
+        {
             IndexBuffer?.Dispose();
-            bufferDescription = new BufferDescription
+            var bufferDescription = new BufferDescription
             {
                 BindFlags = BindFlags.IndexBuffer,
                 CpuAccessFlags = CpuAccessFlags.None,
@@ -48,6 +46,16 @@ namespace ToolDev_IvyGenerator.Utilities
                 SizeInBytes = sizeof(uint) * IndexCount
             };
             IndexBuffer = new Buffer(device, DataStream.Create(Indices, false, false), bufferDescription);
+        }
+
+        public void Initialize(Device device)
+        {
+            PrimitiveTopology = PrimitiveTopology.LineList;
+
+            CreateGrid(20, Color.Black, 4.0f);
+
+            CreateVertexBuffer(device);
+            CreateIndexBuffer(device);
         }
 
         private void CreateGrid(int gridSize, Color color, float gridSpacing)

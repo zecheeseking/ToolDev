@@ -177,8 +177,6 @@ namespace ToolDev_IvyGenerator.ViewModel
             ////{
             ////    // Code runs "for real"
             ////}
-            
-            
         }
     }
 }

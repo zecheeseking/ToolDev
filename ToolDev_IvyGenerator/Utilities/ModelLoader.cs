@@ -106,11 +106,8 @@ namespace ToolDev_IvyGenerator.Utilities
             }
 
             //Create buffers
-            model.VertexBuffer?.Dispose();
-            model.VertexBuffer = CreateVertexBuffer(device, model.Vertices, model.VertexStride);
-
-            model.IndexBuffer?.Dispose();
-            model.IndexBuffer = CreateIndexBuffer(device, model.Indices, model.IndexCount);
+            model.CreateVertexBuffer(device);
+            model.CreateIndexBuffer(device);
 
             return model;
         }
@@ -152,43 +149,12 @@ namespace ToolDev_IvyGenerator.Utilities
 
             model.IndexCount = model.Indices.Length;
 
-            model.VertexBuffer?.Dispose();
-            model.VertexBuffer = CreateVertexBuffer(device, model.Vertices, model.VertexStride);
-
-            model.IndexBuffer?.Dispose();
-            model.IndexBuffer = CreateIndexBuffer(device, model.Indices, model.IndexCount);
+            model.CreateVertexBuffer(device);
+            model.CreateIndexBuffer(device);
 
             importer.Dispose();
 
             return model;
-        }
-
-        private static Buffer CreateVertexBuffer(Device device, VertexPosColNorm[] verts, int vertexStride)
-        {
-            var bufferDescription = new BufferDescription
-            {
-                BindFlags = BindFlags.VertexBuffer,
-                CpuAccessFlags = CpuAccessFlags.None,
-                OptionFlags = ResourceOptionFlags.None,
-                Usage = ResourceUsage.Immutable,
-                SizeInBytes = vertexStride * verts.Length
-            };
-
-            return new Buffer(device, DataStream.Create(verts, false, false), bufferDescription);
-        }
-
-        private static Buffer CreateIndexBuffer(Device device, uint[] indices, int indexCount)
-        {
-            var bufferDescription = new BufferDescription
-            {
-                BindFlags = BindFlags.IndexBuffer,
-                CpuAccessFlags = CpuAccessFlags.None,
-                OptionFlags = ResourceOptionFlags.None,
-                Usage = ResourceUsage.Immutable,
-                SizeInBytes = sizeof(uint) * indexCount
-            };
-
-            return new Buffer(device, DataStream.Create(indices, false, false), bufferDescription);
         }
     }
 }
