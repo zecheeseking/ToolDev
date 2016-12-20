@@ -111,6 +111,7 @@
     <Compile Include="Effects\SceneGridEffect.cs" />
     <Compile Include="Interfaces\interfaces.cs" />
     <Compile Include="MathHelper.cs" />
+    <Compile Include="Models\MeshData.cs" />
     <Compile Include="Models\Model.cs" />
     <Compile Include="Models\Spline.cs" />
     <Compile Include="Properties\Annotations.cs" />

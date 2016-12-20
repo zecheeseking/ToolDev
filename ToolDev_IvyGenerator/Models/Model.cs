@@ -12,6 +12,7 @@ using ToolDev_IvyGenerator.Annotations;
 using ToolDev_IvyGenerator.Effects;
 using ToolDev_IvyGenerator.Interfaces;
 using Device = SharpDX.Direct3D10.Device1;
+using Buffer = SharpDX.Direct3D10.Buffer;
 
 namespace ToolDev_IvyGenerator.Models
 {
@@ -23,8 +24,8 @@ namespace ToolDev_IvyGenerator.Models
         public int IndexCount { get; set; }
         public VertexPosColNorm[] Vertices { get; set; }
         public uint[] Indices { get; set; }
-        public SharpDX.Direct3D10.Buffer IndexBuffer { get; set; }
-        public SharpDX.Direct3D10.Buffer VertexBuffer { get; set; }
+        public Buffer IndexBuffer { get; set; }
+        public Buffer VertexBuffer { get; set; }
         public IEffect Material { get; set; }
 
         public void CreateVertexBuffer(Device device)

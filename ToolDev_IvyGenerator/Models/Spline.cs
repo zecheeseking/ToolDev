@@ -6,6 +6,8 @@ using DaeSharpWPF;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D10;
+using SharpDX.DXGI;
+using ToolDev_IvyGenerator.Effects;
 using ToolDev_IvyGenerator.Structs;
 using Buffer = SharpDX.Direct3D10.Buffer;
 using Device = SharpDX.Direct3D10.Device1;
@@ -23,33 +25,47 @@ namespace ToolDev_IvyGenerator.Models
         public Buffer VertexBuffer { get; set; }
         public IEffect Material { get; set; }
 
-
-
         private List<SplineControlPoint> _controlPoints = new List<SplineControlPoint>();
 
         public int InterpolationSteps { get; set; }
 
-        public Spline(Device device)
+        public Spline()
         {
-            _controlPoints.Add(new SplineControlPoint(Vector3.Zero, Vector3.Zero + Vector3.Right));
-            _controlPoints.Add(new SplineControlPoint(new Vector3(100, 50, 0), new Vector3(100, 50, 0) + Vector3.Right));
+            _controlPoints.Add(new SplineControlPoint(Vector3.Zero, Vector3.Zero + Vector3.Up * 10.0f));
+            _controlPoints.Add(new SplineControlPoint(new Vector3(100, 50, 0), new Vector3(100, 50, 0) + Vector3.Down * 10.0f));
 
             PrimitiveTopology = PrimitiveTopology.LineList;
             VertexStride = Marshal.SizeOf(typeof(VertexPosCol));
             InterpolationSteps = 10;
-            IndexCount = InterpolationSteps*2;
+            IndexCount = (InterpolationSteps - 1) * 2;
 
             Vertices = new VertexPosCol[InterpolationSteps];
             Vertices[0] = new VertexPosCol(_controlPoints[0].Position, Color.Pink);
+
             int count = 1;
             for (int i = 1; i < InterpolationSteps - 1; ++i)
             {
                 var t = (float)i / (InterpolationSteps - 1);
-                var p = CalculateSplinePoint(t, _controlPoints[i - 1], _controlPoints[i]);
+                var p = CalculateSplinePoint(t, _controlPoints[0], _controlPoints[1]);
                 Vertices[count] = new VertexPosCol(p, Color.Pink);
                 count++;
             }
             Vertices[Vertices.Length - 1] = new VertexPosCol(_controlPoints[1].Position, Color.Pink);
+
+            Indices = new uint[IndexCount];
+            Indices[0] = 0;
+            Indices[1] = 1;
+            for (int i = 2; i < IndexCount; i += 2)
+            {
+                Indices[i] = Indices[i - 1];
+                Indices[i + 1] = Indices[i - 1] + 1;
+            }
+        }
+
+        public void Initialize(Device device)
+        {
+            Material = new SceneGridEffect();
+            Material.Create(device);
 
             CreateVertexBuffer(device);
             CreateIndexBuffer(device);
@@ -97,15 +113,24 @@ namespace ToolDev_IvyGenerator.Models
             IndexBuffer = new Buffer(device, DataStream.Create(Indices, false, false), bufferDescription);
         }
 
-
         public void Draw(Device device, ICamera camera, Vector3 lightDirection)
         {
-            throw new NotImplementedException();
-        }
+            var WorldMatrix = Matrix.Scaling(1.0f)*Matrix.RotationQuaternion(Quaternion.Identity)*Matrix.Translation(Vector3.Zero);
 
-        public void Draw(Device device)
-        {
-            
+            Material.SetWorld(WorldMatrix);
+            Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+            Material.SetLightDirection(lightDirection);
+
+            device.InputAssembler.InputLayout = Material.InputLayout;
+            device.InputAssembler.PrimitiveTopology = PrimitiveTopology;
+            device.InputAssembler.SetIndexBuffer(IndexBuffer, Format.R32_UInt, 0);
+            device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(VertexBuffer, VertexStride, 0));
+
+            for (int i = 0; i < Material.Technique.Description.PassCount; ++i)
+            {
+                Material.Technique.GetPassByIndex(i).Apply();
+                device.DrawIndexed(IndexCount, 0, 0);
+            }
         }
     }
 }

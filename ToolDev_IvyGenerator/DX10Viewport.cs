@@ -5,7 +5,6 @@ using SharpDX;
 using SharpDX.Direct3D10;
 using ToolDev_IvyGenerator.Models;
 using ToolDev_IvyGenerator.Utilities;
-using Format = SharpDX.DXGI.Format;
 
 namespace ToolDev_IvyGenerator
 {
@@ -23,6 +22,8 @@ namespace ToolDev_IvyGenerator
 
         private Vector3 _lightDirection;
 
+        private Spline _testSpline;
+
         public void Initialize(Device1 device, RenderTargetView renderTarget, Dx10RenderCanvas canvasControl)
         {
             _device = device;
@@ -38,11 +39,11 @@ namespace ToolDev_IvyGenerator
             _worldMatrix *= Matrix.Scaling(1.0f);
             _worldMatrix *= Matrix.RotationY(0.0f);
 
-            Shader = new PosNormColEffect();
-            Shader.Create(device);
-
             _grid = new SceneGrid();
             _grid.Initialize(device);
+
+            _testSpline = new Spline();
+            _testSpline.Initialize(_device);
         }
 
         public void Deinitialize()
@@ -80,6 +81,8 @@ namespace ToolDev_IvyGenerator
                     m.Draw(_device, _renderControl.Camera, _lightDirection);
                 }
             }
+
+            _testSpline.Draw(_device, _renderControl.Camera, _lightDirection);
         }
 
         public Device1 GetDevice()
