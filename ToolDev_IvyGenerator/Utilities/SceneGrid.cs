@@ -2,13 +2,12 @@
 using System;
 using System.Runtime.InteropServices;
 using DaeSharpWpf;
-using DaeSharpWPF;
+using DaeSharpWpf.Interfaces;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D10;
 using SharpDX.DXGI;
 using ToolDev_IvyGenerator.Effects;
-using ToolDev_IvyGenerator.Interfaces;
 using Buffer = SharpDX.Direct3D10.Buffer;
 using Device = SharpDX.Direct3D10.Device1;
 

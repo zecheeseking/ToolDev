@@ -1,144 +1,86 @@
-﻿
-using SharpDX.Direct3D;
-using DaeSharpWpf;
-
+﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using DaeSharpWPF;
+using DaeSharpWpf;
+using DaeSharpWpf.Interfaces;
 using SharpDX;
 using SharpDX.Direct3D10;
 using SharpDX.DXGI;
 using ToolDev_IvyGenerator.Annotations;
 using ToolDev_IvyGenerator.Effects;
-using ToolDev_IvyGenerator.Interfaces;
-using Device = SharpDX.Direct3D10.Device1;
-using Buffer = SharpDX.Direct3D10.Buffer;
+using Device1 = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Models
 {
-
-    public class Model : IModel<VertexPosColNorm>, INotifyPropertyChanged, ITransform
+    class Model : ISceneObject, INotifyPropertyChanged
     {
-        public PrimitiveTopology PrimitiveTopology { get; set; }
-        public int VertexStride { get; set; }
-        public int IndexCount { get; set; }
-        public VertexPosColNorm[] Vertices { get; set; }
-        public uint[] Indices { get; set; }
-        public Buffer IndexBuffer { get; set; }
-        public Buffer VertexBuffer { get; set; }
+        public Matrix WorldMatrix { get; set; }
+        public Vector3 Position { get; set; }
+        public Quaternion Rotation { get; set; }
+        public Vector3 Scale { get; set; }
         public IEffect Material { get; set; }
+        public MeshData<VertexPosColNorm> Mesh { get; set; }
 
-        public void CreateVertexBuffer(Device device)
-        {
-            VertexBuffer?.Dispose();
-
-            var bufferDescription = new BufferDescription
-            {
-                BindFlags = BindFlags.VertexBuffer,
-                CpuAccessFlags = CpuAccessFlags.None,
-                OptionFlags = ResourceOptionFlags.None,
-                Usage = ResourceUsage.Immutable,
-                SizeInBytes = VertexStride * Vertices.Length
-            };
-
-            VertexBuffer = new Buffer(device, DataStream.Create(Vertices, false, false), bufferDescription);
-        }
-
-        public void CreateIndexBuffer(Device device)
-        {
-            IndexBuffer?.Dispose();
-
-            var bufferDescription = new BufferDescription
-            {
-                BindFlags = BindFlags.IndexBuffer,
-                CpuAccessFlags = CpuAccessFlags.None,
-                OptionFlags = ResourceOptionFlags.None,
-                Usage = ResourceUsage.Immutable,
-                SizeInBytes = sizeof(uint) * IndexCount
-            };
-
-            IndexBuffer = new Buffer(device, DataStream.Create(Indices, false, false), bufferDescription);
-        }
-
-        public void Draw(Device device, ICamera camera, Vector3 lightDirection)
-        {
-            Material.SetWorld(WorldMatrix);
-            Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
-            Material.SetLightDirection(lightDirection);
-
-            device.InputAssembler.InputLayout = Material.InputLayout;
-            device.InputAssembler.PrimitiveTopology = PrimitiveTopology;
-            device.InputAssembler.SetIndexBuffer(IndexBuffer, Format.R32_UInt, 0);
-            device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(VertexBuffer, VertexStride, 0));
-
-            for (int i = 0; i < Material.Technique.Description.PassCount; ++i)
-            {
-                Material.Technique.GetPassByIndex(i).Apply();
-                device.DrawIndexed(IndexCount, 0, 0);
-            }
-        }
-
-        private Matrix _worldMatrix;
-
-        public Matrix WorldMatrix{ get { return _worldMatrix; } }
-
-        private Vector3 _position;
-
-        public Vector3 Position { get { return _position; } }
-
-        private Quaternion _rotation;
-        public Quaternion Rotation { get { return _rotation; } }
-        private Vector3 _scale;
-        public Vector3 Scale { get {return _scale; } }
-
-        public void Translate(float x, float y, float z)
-        {
-            _position = new Vector3(x,y,z);
-
-            UpdateWorldMatrix();
-        }
-
-        public void Rotate()
-        {
-
-        }
-
-        public void Scaling(float x, float y, float z)
-        {
-            _scale = new Vector3(x, y, z);
-
-            UpdateWorldMatrix();
-        }
-
-        private void UpdateWorldMatrix()
-        {
-            _worldMatrix = Matrix.Scaling(Scale) * Matrix.RotationQuaternion(Rotation) * Matrix.Translation(Position);
-        }
+        public Vector3 LightDirection { get; set; }
 
         public Model()
         {
-            _position = Vector3.Zero;
-            _rotation = Quaternion.Identity;
-            _scale = new Vector3(1.0f);
+            Material = new PosNormColEffect();
 
-            UpdateWorldMatrix();
+            Position = Vector3.Zero;
+            Rotation = Quaternion.Identity;
+            Scale = new Vector3(1.0f);
+
+            WorldMatrix = Matrix.Scaling(Scale)*Matrix.RotationQuaternion(Rotation)*Matrix.Translation(Position);
+            LightDirection = Vector3.Zero;
         }
 
         public Model(Model model)
         {
-            _position = model._position;
-            _rotation = model._rotation;
-            _scale = model._scale;
-            UpdateWorldMatrix();
-
-            PrimitiveTopology = model.PrimitiveTopology;
             Material = model.Material;
-            Vertices = model.Vertices;
-            Indices = model.Indices;
-            IndexCount = model.IndexCount;
-            VertexStride = model.VertexStride;
-            VertexBuffer = model.VertexBuffer;
-            IndexBuffer = model.IndexBuffer;
+
+            Position = model.Position;
+            Rotation = model.Rotation;
+            Scale = model.Scale;
+            WorldMatrix = model.WorldMatrix;
+
+            Mesh = model.Mesh;
+
+            LightDirection = model.LightDirection;
+        }
+
+        public void Initialize(Device1 device)
+        {
+            Material.Create(device);
+
+            for (int i = 0; i < Mesh.Positions.Length; ++i)
+                Mesh.Vertices[i] = new VertexPosColNorm(Mesh.Positions[i], Mesh.Colors[i], Mesh.Normals[i]);
+
+            Mesh.CreateVertexBuffer(device);
+            Mesh.CreateIndexBuffer(device);
+        }
+
+        public void Update(float deltaT)
+        {
+            WorldMatrix = Matrix.Scaling(Scale)*Matrix.RotationQuaternion(Rotation)*Matrix.Translation(Position);
+        }
+
+        public void Draw(Device1 device, ICamera camera)
+        {
+            Material.SetWorld(WorldMatrix);
+            Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+            Material.SetLightDirection(LightDirection);
+
+            device.InputAssembler.InputLayout = Material.InputLayout;
+            device.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;
+            device.InputAssembler.SetIndexBuffer(Mesh.IndexBuffer, Format.R32_UInt, 0);
+            device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(Mesh.VertexBuffer, Mesh.VertexStride, 0));
+
+            for (int i = 0; i < Material.Technique.Description.PassCount; ++i)
+            {
+                Material.Technique.GetPassByIndex(i).Apply();
+                device.DrawIndexed(Mesh.IndexCount, 0, 0);
+            }
         }
 
         public bool Intersects(Ray ray, out Vector3 intersectionPoint)
@@ -147,15 +89,15 @@ namespace ToolDev_IvyGenerator.Models
             intersectionPoint = Vector3.Zero;
             bool hit = false;
 
-            for (int i = 0; i < IndexCount; i += 3)
+            for (int i = 0; i < Mesh.IndexCount; i += 3)
             {
-                uint t1 = Indices[i];
-                uint t2 = Indices[i + 1];
-                uint t3 = Indices[i + 2];
+                uint t1 = Mesh.Indices[i];
+                uint t2 = Mesh.Indices[i + 1];
+                uint t3 = Mesh.Indices[i + 2];
 
                 var v = Vector3.Zero;
 
-                if (ray.Intersects(ref Vertices[t1].Position, ref Vertices[t2].Position, ref Vertices[t3].Position, out v))
+                if (ray.Intersects(ref Mesh.Vertices[t1].Position, ref Mesh.Vertices[t2].Position, ref Mesh.Vertices[t3].Position, out v))
                 {
                     float dist = Vector3.Distance(ray.Position, v);
                     if (dist < distance)

@@ -1,10 +1,9 @@
-﻿using DaeSharpWPF;
-using SharpDX.Direct3D;
+﻿using SharpDX.Direct3D;
 using SharpDX;
 using Buffer = SharpDX.Direct3D10.Buffer;
 using Device = SharpDX.Direct3D10.Device1;
 
-namespace DaeSharpWpf
+namespace DaeSharpWpf.Interfaces
 {
     public interface IModel<T>
     {

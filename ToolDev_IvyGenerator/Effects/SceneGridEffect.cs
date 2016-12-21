@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using DaeSharpWpf;
+using DaeSharpWpf.Interfaces;
 using SharpDX;
 using SharpDX.D3DCompiler;
 using SharpDX.Direct3D10;
@@ -20,7 +21,7 @@ namespace ToolDev_IvyGenerator.Effects
             Technique = Effect.GetTechniqueByIndex(0);
 
             var pass = Technique.GetPassByIndex(0);
-            InputLayout = new InputLayout(device, pass.Description.Signature, InputLayouts.PosCol);
+            InputLayout = new InputLayout(device, pass.Description.Signature, InputLayouts.PosNormCol);
         }
 
         public void SetWorld(Matrix world){}

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using DaeSharpWpf;
+using DaeSharpWpf.Interfaces;
 using SharpDX;
 using SharpDX.D3DCompiler;
 using SharpDX.Direct3D10;

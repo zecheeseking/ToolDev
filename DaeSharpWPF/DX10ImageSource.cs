@@ -6,7 +6,7 @@
     using System.Windows.Interop;
     using SharpDX.Direct3D9;
 
-    class DX10ImageSource : D3DImage, IDisposable
+    class Dx10ImageSource : D3DImage, IDisposable
     {
         [DllImport("user32.dll", SetLastError = false)]
         private static extern IntPtr GetDesktopWindow();
@@ -15,10 +15,10 @@
         private static DeviceEx D3DDevice;
         private Texture RenderTarget;
 
-        public DX10ImageSource()
+        public Dx10ImageSource()
         {
             StartD3D();
-            DX10ImageSource.ActiveClients++;
+            Dx10ImageSource.ActiveClients++;
         }
 
         public void Dispose()
@@ -26,7 +26,7 @@
             SetRenderTargetDX10(null);
             Disposer.RemoveAndDispose(ref RenderTarget);
 
-            DX10ImageSource.ActiveClients--;
+            Dx10ImageSource.ActiveClients--;
             EndD3D();
         }
 
@@ -57,7 +57,7 @@
             if (!IsShareable(renderTarget))
                 throw new ArgumentException("Texture must be created with ResourceOptionFlags.Shared");
 
-            Format format = DX10ImageSource.TranslateFormat(renderTarget);
+            Format format = Dx10ImageSource.TranslateFormat(renderTarget);
             if (format == Format.Unknown)
                 throw new ArgumentException("Texture format is not compatible with OpenSharedResource");
 
@@ -65,7 +65,7 @@
             if (handle == IntPtr.Zero)
                 throw new ArgumentNullException("Handle");
 
-            RenderTarget = new Texture(DX10ImageSource.D3DDevice, renderTarget.Description.Width, renderTarget.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
+            RenderTarget = new Texture(Dx10ImageSource.D3DDevice, renderTarget.Description.Width, renderTarget.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
             using (Surface surface = RenderTarget.GetSurfaceLevel(0))
             {
                 base.Lock();
@@ -76,7 +76,7 @@
 
         private void StartD3D()
         {
-            if (DX10ImageSource.ActiveClients != 0)
+            if (Dx10ImageSource.ActiveClients != 0)
                 return;
 
             D3DContext = new Direct3DEx();
@@ -87,7 +87,7 @@
             presentparams.DeviceWindowHandle = GetDesktopWindow();
             presentparams.PresentationInterval = PresentInterval.Default;
 
-            DX10ImageSource.D3DDevice = new DeviceEx(D3DContext,
+            Dx10ImageSource.D3DDevice = new DeviceEx(D3DContext,
                 0,
                 DeviceType.Hardware, IntPtr.Zero,
                 CreateFlags.HardwareVertexProcessing | CreateFlags.Multithreaded | CreateFlags.FpuPreserve, presentparams);
@@ -95,12 +95,12 @@
 
         private void EndD3D()
         {
-            if (DX10ImageSource.ActiveClients != 0)
+            if (Dx10ImageSource.ActiveClients != 0)
                 return;
 
             Disposer.RemoveAndDispose(ref RenderTarget);
-            Disposer.RemoveAndDispose(ref DX10ImageSource.D3DDevice);
-            Disposer.RemoveAndDispose(ref DX10ImageSource.D3DContext);
+            Disposer.RemoveAndDispose(ref Dx10ImageSource.D3DDevice);
+            Disposer.RemoveAndDispose(ref Dx10ImageSource.D3DContext);
         }
 
         private IntPtr GetSharedHandle(SharpDX.Direct3D10.Texture2D Texture)

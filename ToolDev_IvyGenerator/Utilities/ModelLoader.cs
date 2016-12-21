@@ -3,20 +3,16 @@ using Assimp;
 using Assimp.Configs;
 using System.IO;
 using DaeSharpWpf;
-using SharpDX.Direct3D10;
-using ToolDev_IvyGenerator.Models;
-using Buffer = SharpDX.Direct3D10.Buffer;
 using SharpDX.Direct3D;
 using System.Runtime.InteropServices;
 using SharpDX;
-using ToolDev_IvyGenerator.Effects;
 using Device = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Utilities
 {
-    public class ModelLoader
+    public class ModelLoader<T> where T: struct
     {
-        public static IModel<VertexPosColNorm> LoadModel(string path, Device device)
+        public static MeshData<T> LoadModel(string path, Device device)
         {
             var extension = path.Split('.');
 
@@ -26,18 +22,18 @@ namespace ToolDev_IvyGenerator.Utilities
             return AssimpLoad(path, device);
         }
 
-        private static IModel<VertexPosColNorm> LoadOvm(string path, Device device)
+        private static MeshData<T> LoadOvm(string path, Device device)
         {
-            Model model = new Model();
+            MeshData<T> Mesh = new MeshData<T>();
 
             //Set Primitive Topology
-            model.PrimitiveTopology = PrimitiveTopology.TriangleList;
+            Mesh.PrimitiveTopology = PrimitiveTopology.TriangleList;
 
             //Set VertexStride
-            model.VertexStride = Marshal.SizeOf(typeof(VertexPosColNorm));
+            Mesh.VertexStride = Marshal.SizeOf(typeof(VertexPosColNorm));
 
-            model.Vertices = null;
-            model.Indices = null;
+            Mesh.Vertices = null;
+            Mesh.Indices = null;
 
             //Parse OVM file
             using (var reader = new BinaryReader(File.OpenRead(path)))
@@ -63,40 +59,44 @@ namespace ToolDev_IvyGenerator.Utilities
                             vertexCount = reader.ReadUInt32();
                             indexCount = reader.ReadUInt32();
 
-                            model.IndexCount = (int)indexCount;
-                            model.Vertices = new VertexPosColNorm[vertexCount];
-                            model.Indices = new uint[indexCount];
+                            Mesh.IndexCount = (int)indexCount;
+                            Mesh.Vertices = new T[vertexCount];
+                            Mesh.Indices = new uint[indexCount];
                             break;
                         case 2:
                             for (var i = 0; i < vertexCount; ++i)
                             {
-                                model.Vertices[i] = new VertexPosColNorm(Vector3.Zero, Color.Gray, Vector3.Zero);
-                                model.Vertices[i].Position.X = reader.ReadSingle();
-                                model.Vertices[i].Position.Y = reader.ReadSingle();
-                                model.Vertices[i].Position.Z = reader.ReadSingle();
+                                Mesh.Positions[i].X = reader.ReadSingle();
+                                Mesh.Positions[i].Y = reader.ReadSingle();
+                                Mesh.Positions[i].Z = reader.ReadSingle();
                             }
                             break;
                         case 3:
                             for (var i = 0; i < indexCount; ++i)
                             {
-                                model.Indices[i] = reader.ReadUInt32();
+                                Mesh.Indices[i] = reader.ReadUInt32();
                             }
                             break;
                         case 4:
                             for (var i = 0; i < vertexCount; ++i)
                             {
-                                model.Vertices[i].Normal.X = reader.ReadSingle();
-                                model.Vertices[i].Normal.Y = reader.ReadSingle();
-                                model.Vertices[i].Normal.Z = reader.ReadSingle();
+                                Mesh.Normals[i].X = reader.ReadSingle();
+                                Mesh.Normals[i].Y = reader.ReadSingle();
+                                Mesh.Normals[i].Z = reader.ReadSingle();
                             }
                             break;
                         case 7:
                             for (var i = 0; i < vertexCount; ++i)
                             {
-                                model.Vertices[i].Color.X = reader.ReadSingle();
-                                model.Vertices[i].Color.Y = reader.ReadSingle();
-                                model.Vertices[i].Color.Z = reader.ReadSingle();
-                                model.Vertices[i].Color.W = reader.ReadSingle();
+                                //Mesh.Colors[i].R = reader.ReadSingle();
+                                //Mesh.Colors[i].G = reader.ReadSingle();
+                                //Mesh.Colors[i].B = reader.ReadSingle();
+                                //Mesh.Colors[i].A = reader.ReadSingle();
+
+                                reader.ReadSingle();
+                                reader.ReadSingle();
+                                reader.ReadSingle();
+                                reader.ReadSingle();
                             }
                             break;
                         default:
@@ -106,62 +106,63 @@ namespace ToolDev_IvyGenerator.Utilities
                 }
             }
 
-            model.Material = new PosNormColEffect();
-            model.Material.Create(device);
-
             //Create buffers
-            model.CreateVertexBuffer(device);
-            model.CreateIndexBuffer(device);
+            Mesh.CreateVertexBuffer(device);
+            Mesh.CreateIndexBuffer(device);
 
-            return model;
+            return Mesh;
         }
 
-        private static IModel<VertexPosColNorm> AssimpLoad(string path, Device device)
+        private static MeshData<T> AssimpLoad(string path, Device device)
         {
             AssimpContext importer = new AssimpContext();
             importer.SetConfig(new NormalSmoothingAngleConfig(66.0f));
             Scene AssimpModel = importer.ImportFile(path, PostProcessPreset.TargetRealTimeMaximumQuality);
 
-            Model model = new Model();
+            MeshData<T> Mesh = new MeshData<T>();
 
-            model.PrimitiveTopology = PrimitiveTopology.TriangleList;
+            Mesh.PrimitiveTopology = PrimitiveTopology.TriangleList;
 
-            model.VertexStride = Marshal.SizeOf(typeof(VertexPosColNorm));
+            Mesh.VertexStride = Marshal.SizeOf(typeof(VertexPosColNorm));
 
             int vertCount = AssimpModel.Meshes[0].VertexCount;
-            model.Vertices = new VertexPosColNorm[vertCount];
+            Mesh.Positions = new Vector3[vertCount];
+            Mesh.Normals = new Vector3[vertCount];
+            Mesh.Colors = new Color[vertCount];
+
+            Mesh.Vertices = new T[vertCount];
 
             for (int i = 0; i < vertCount; ++i)
             {
                 var pos = AssimpModel.Meshes[0].Vertices[i];
-                model.Vertices[i] = new VertexPosColNorm(new Vector3(pos.X, pos.Y, pos.Z), Color.Gray, Vector3.Zero);
+                Mesh.Positions[i] = new Vector3(pos.X, pos.Y, pos.Z);
             }
 
             for (int i = 0; i < vertCount; ++i)
             {
                 var norm = AssimpModel.Meshes[0].Normals[i];
-                model.Vertices[i].Normal.X = norm.X;
-                model.Vertices[i].Normal.Y = norm.Y;
-                model.Vertices[i].Normal.Z = norm.Z;
+                Mesh.Normals[i].X = norm.X;
+                Mesh.Normals[i].Y = norm.Y;
+                Mesh.Normals[i].Z = norm.Z;
             }
 
+            for (int i = 0; i < vertCount; ++i)
+                Mesh.Colors[i] = Color.Gray;
+
             int indicesCount = AssimpModel.Meshes[0].GetIndices().Length;
-            model.Indices = new uint[indicesCount];
+            Mesh.Indices = new uint[indicesCount];
 
             for (int i = 0; i < indicesCount; ++i)
-                model.Indices[i] = (uint)AssimpModel.Meshes[0].GetIndices()[i];
+                Mesh.Indices[i] = (uint)AssimpModel.Meshes[0].GetIndices()[i];
 
-            model.IndexCount = model.Indices.Length;
+            Mesh.IndexCount = Mesh.Indices.Length;
 
-            model.Material = new PosNormColEffect();
-            model.Material.Create(device);
-
-            model.CreateVertexBuffer(device);
-            model.CreateIndexBuffer(device);
+            Mesh.CreateVertexBuffer(device);
+            Mesh.CreateIndexBuffer(device);
 
             importer.Dispose();
 
-            return model;
+            return Mesh;
         }
     }
 }

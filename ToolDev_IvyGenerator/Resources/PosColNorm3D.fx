@@ -4,8 +4,8 @@ float3 gLightDirection = float3(-0.577f, -0.577f, 0.577f);
 
 struct VS_INPUT{
 	float3 pos : POSITION;
-	float3 normal : NORMAL;
 	float4 color : COLOR;
+	float3 normal : NORMAL;
 };
 
 struct VS_OUTPUT{

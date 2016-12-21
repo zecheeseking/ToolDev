@@ -4,7 +4,7 @@ using Device = SharpDX.Direct3D10.Device1;
 
 namespace DaeSharpWpf
 {
-    public interface IDX10Viewport
+    public interface IDx10Viewport
     {
         void Initialize(Device device, RenderTargetView renderTarget, Dx10RenderCanvas canvasControl);
         void Deinitialize();

@@ -60,12 +60,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Disposer.cs" />
-    <Compile Include="DX10ImageSource.cs" />
+    <Compile Include="Dx10ImageSource.cs" />
     <Compile Include="Dx10RenderCanvas.cs" />
-    <Compile Include="ICamera.cs" />
-    <Compile Include="IDX10Viewport.cs" />
-    <Compile Include="IEffect.cs" />
-    <Compile Include="IModel.cs" />
+    <Compile Include="Interfaces\ICamera.cs" />
+    <Compile Include="IDx10Viewport.cs" />
+    <Compile Include="Interfaces\IEffect.cs" />
+    <Compile Include="Interfaces\IModel.cs" />
+    <Compile Include="Interfaces\ITransform.cs" />
+    <Compile Include="Interfaces\ISceneObject.cs" />
+    <Compile Include="MeshData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VertexData.cs" />
   </ItemGroup>

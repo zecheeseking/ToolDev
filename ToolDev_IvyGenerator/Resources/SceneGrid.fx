@@ -14,6 +14,7 @@ RasterizerState NoCulling
 struct VS_INPUT{
 	float3 pos : POSITION;
 	float4 color : COLOR;
+	float3 norm : NORMAL;
 };
 
 struct VS_OUTPUT{

@@ -4,10 +4,11 @@ using GalaSoft.MvvmLight.CommandWpf;
 
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using SharpDX;
 using DaeSharpWpf;
-using DaeSharpWPF;
+using DaeSharpWpf.Interfaces;
 using ToolDev_IvyGenerator.Models;
 using ToolDev_IvyGenerator.Utilities;
 
@@ -49,7 +50,12 @@ namespace ToolDev_IvyGenerator.ViewModel
 
                                 ////Add new model
                                 if ((bool) result)
-                                    Models.Add(ModelLoader.LoadModel(dlg.FileName, control.GetDevice()));
+                                {
+                                    var obj = new Model();
+                                    obj.Mesh = ModelLoader<VertexPosColNorm>.LoadModel(dlg.FileName, control.GetDevice());
+                                    obj.Initialize(control.GetDevice());
+                                    Models.Add(obj);
+                                }
                                 else
                                     Debug.WriteLine("Nope");
                             }
@@ -59,7 +65,6 @@ namespace ToolDev_IvyGenerator.ViewModel
         }
 
         private RelayCommand<Dx10RenderCanvas> _raycastCommand;
-
         public RelayCommand<Dx10RenderCanvas> RaycastCommand
         {
             get
@@ -85,16 +90,16 @@ namespace ToolDev_IvyGenerator.ViewModel
                                            if (model.Intersects(ray, out hitPoint))
                                            {
                                                Model newModel = new Model(model);
-                                               newModel.Translate(hitPoint.X, hitPoint.Y, hitPoint.Z);
-                                               newModel.Scaling( 0.3f,0.3f,0.3f);
+                                               newModel.Position = new Vector3(hitPoint.X, hitPoint.Y, hitPoint.Z);
+                                               newModel.Scale = new Vector3(0.3f, 0.3f, 0.3f);
                                                toAdd.Add(newModel);
                                            }
                                        }
 
-                                       foreach (Model m in toAdd)
-                                       {
-                                            Models.Add(m);
-                                       }
+                                       //foreach (Model m in toAdd)
+                                       //{
+                                       //     Models.Add(m);
+                                       //}
                                    }
                                }
                            )
@@ -103,7 +108,6 @@ namespace ToolDev_IvyGenerator.ViewModel
         }
 
         private RelayCommand<Dx10RenderCanvas> _windowResizedCommand;
-
         public RelayCommand<Dx10RenderCanvas> WindowResizedCommand
         {
             get
@@ -139,8 +143,8 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
 
-        private List<IModel<VertexPosColNorm>> _models = new List<IModel<VertexPosColNorm>>();
-        public List<IModel<VertexPosColNorm>> Models
+        private List<ISceneObject> _models = new List<ISceneObject>();
+        public List<ISceneObject> Models
         {
             get { return _models; }
             set
@@ -164,6 +168,26 @@ namespace ToolDev_IvyGenerator.ViewModel
             {
                 _camera = value;
                 RaisePropertyChanged("Camera");
+            }
+        }
+
+        private RelayCommand<Dx10RenderCanvas> _createTestSplineCommand;
+        public RelayCommand<Dx10RenderCanvas> CreateTestSplineCommand
+        {
+            get
+            {
+                return _createTestSplineCommand ??
+                    (
+                        _createTestSplineCommand = new RelayCommand<Dx10RenderCanvas>
+                        (
+                            (control) =>
+                            {
+                                var testSpline = new Spline();
+                                testSpline.Initialize(control.GetDevice());
+                                Models.Add(testSpline);
+                            }
+                        )
+                    );
             }
         }
 

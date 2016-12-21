@@ -1,6 +1,6 @@
 ﻿using SharpDX;
 
-namespace DaeSharpWPF
+namespace DaeSharpWpf.Interfaces
 {
     public interface ICamera
     {

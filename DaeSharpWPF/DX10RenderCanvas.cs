@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DaeSharpWPF;
+using DaeSharpWpf.Interfaces;
 
 namespace DaeSharpWpf
 {
@@ -22,10 +22,10 @@ namespace DaeSharpWpf
         private Texture2D _depthStencil;
         private RenderTargetView _renderTargetView;
         private DepthStencilView _depthStencilView;
-        private DX10ImageSource _d3DSurface;
+        private Dx10ImageSource _d3DSurface;
         private Stopwatch _renderTimer;
 
-        private IDX10Viewport _viewport;
+        private IDx10Viewport _viewport;
         private bool _sceneAttached;
         private float _lastUpdate;
 
@@ -34,11 +34,11 @@ namespace DaeSharpWpf
         public Color4 ClearColor = new Color4(new Color3(0.2f, 0.2f, 0.2f), 1.0f);
 
         public static readonly DependencyProperty ModelProperty = DependencyProperty.Register(
-            "Models", typeof(List<IModel<VertexPosColNorm>>), typeof(Dx10RenderCanvas), new PropertyMetadata(default(IModel<VertexPosColNorm>[])));
+            "Models", typeof(List<ISceneObject>), typeof(Dx10RenderCanvas), new PropertyMetadata(default(ISceneObject[])));
 
-        public List<IModel<VertexPosColNorm>> Models
+        public List<ISceneObject> Models
         {
-            get { return (List<IModel<VertexPosColNorm>>) GetValue(ModelProperty); }
+            get { return (List<ISceneObject>) GetValue(ModelProperty); }
             set { SetValue(ModelProperty, value); }
         }
 
@@ -80,7 +80,7 @@ namespace DaeSharpWpf
         {
             _device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
 
-            _d3DSurface = new DX10ImageSource();
+            _d3DSurface = new Dx10ImageSource();
             _d3DSurface.IsFrontBufferAvailableChanged += OnIsFrontBufferAvailableChanged;
 
             CreateAndBindTargets();
@@ -256,7 +256,7 @@ namespace DaeSharpWpf
             }
         }
 
-        public IDX10Viewport Viewport
+        public IDx10Viewport Viewport
         {
             get { return _viewport; }
             set

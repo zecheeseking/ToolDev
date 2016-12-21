@@ -1,7 +1,7 @@
 ﻿using SharpDX;
 using SharpDX.Direct3D10;
 
-namespace DaeSharpWpf
+namespace DaeSharpWpf.Interfaces
 {
     public interface IEffect
     {
