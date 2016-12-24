@@ -82,7 +82,7 @@ namespace ToolDev_IvyGenerator.ViewModel
                                    {
                                        var mousePos = Mouse.GetPosition(control);
                                        var ray = cam.GetPickRay((float)mousePos.X, (float)mousePos.Y);
-                                       List<Model> toAdd = new List<Model>();
+                                           Model newModel = null;
                                        foreach (var m in Models)
                                        {
                                            var model = m as IIntersect;
@@ -90,7 +90,6 @@ namespace ToolDev_IvyGenerator.ViewModel
                                                break;
                                            Vector3 hitPoint;
 
-                                           Model newModel = null;
                                            if (model.Intersects(ray, out hitPoint))
                                            {
                                                if ((model as Model) != null)
@@ -105,9 +104,8 @@ namespace ToolDev_IvyGenerator.ViewModel
                                                model.ResetCollisionFlags();
                                            }
 
-                                           SelectedModel = newModel;
                                        }
-
+                                       SelectedModel = newModel;
                                        //foreach (Model m in toAdd)
                                        //{
                                        //     Models.Add(m);

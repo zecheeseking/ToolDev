@@ -15,7 +15,8 @@ namespace ToolDev_IvyGenerator.Models
 {
     public class Model : ISceneObject, INotifyPropertyChanged, IIntersect
     {
-        public Matrix WorldMatrix { get; set; }
+        private Matrix _worldMatrix;
+        public Matrix WorldMatrix { get {return _worldMatrix;} set{ _worldMatrix = value;}  }
         public Vector3 Position { get; set; }
         public Quaternion Rotation { get; set; }
         public Vector3 Scale { get; set; }
@@ -97,6 +98,12 @@ namespace ToolDev_IvyGenerator.Models
             float distance = float.MaxValue;
             intersectionPoint = Vector3.Zero;
             bool hit = false;
+            Matrix modelInverse = Matrix.Invert(WorldMatrix);
+
+            Ray r = new Ray(ray.Position, ray.Direction);
+            Vector3.Transform(r.Position, modelInverse);
+            Vector3.TransformNormal(r.Direction, modelInverse);
+            r.Direction.Normalize();
 
             for (int i = 0; i < Mesh.IndexCount; i += 3)
             {
@@ -106,7 +113,12 @@ namespace ToolDev_IvyGenerator.Models
 
                 var v = Vector3.Zero;
 
-                if (ray.Intersects(ref Mesh.Vertices[t1].Position, ref Mesh.Vertices[t2].Position, ref Mesh.Vertices[t3].Position, out v))
+                Vector3 p1;Vector3 p2;Vector3 p3;
+                Vector3.Transform(ref Mesh.Vertices[t1].Position, ref _worldMatrix, out p1);
+                Vector3.Transform(ref Mesh.Vertices[t2].Position, ref _worldMatrix, out p2);
+                Vector3.Transform(ref Mesh.Vertices[t3].Position, ref _worldMatrix, out p3);
+
+                if (ray.Intersects(ref p1, ref p2, ref p3, out v))
                 {
                     float dist = Vector3.Distance(ray.Position, v);
                     if (dist < distance)
