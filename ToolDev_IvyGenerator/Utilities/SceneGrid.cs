@@ -13,119 +13,81 @@ using Device = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Utilities
 {
-    public class SceneGrid : IModel<VertexPosCol>
+    public class SceneGrid : ISceneObject
     {
-        public PrimitiveTopology PrimitiveTopology { get; set; }
-        public int VertexStride { get; set; }
-        public int IndexCount { get; set; }
-        public VertexPosCol[] Vertices { get; set; }
-        public uint[] Indices { get; set; }
-        public Buffer IndexBuffer { get; set; }
-        public Buffer VertexBuffer { get; set; }
-        public IEffect Material { get; set; }
+        public Matrix WorldMatrix { get; set; }
+        public Vector3 Position { get; set; }
+        public Quaternion Rotation { get; set; }
+        public Vector3 Scale { get; set; }
 
-        private Matrix _worldMatrix;
+        public IEffect Material { get; set; }
+        public Vector3 LightDirection { get; set; }
+        public MeshData<VertexPosColNorm> Mesh { get; set; }
+
 
         public void Initialize(Device device)
         {
-            _worldMatrix = Matrix.Scaling(1.0f)*Matrix.RotationQuaternion(Quaternion.Identity)*Matrix.Translation(Vector3.Zero);
-            PrimitiveTopology = PrimitiveTopology.LineList;
+            WorldMatrix = Matrix.Scaling(1.0f)*Matrix.RotationQuaternion(Quaternion.Identity)*Matrix.Translation(Vector3.Zero);
+
+            Mesh = new MeshData<VertexPosColNorm>();
+            Mesh.PrimitiveTopology = PrimitiveTopology.LineList;
 
             CreateGrid(20, Color.Black, 4.0f);
 
-            CreateVertexBuffer(device);
-            CreateIndexBuffer(device);
+            Mesh.CreateVertexBuffer(device);
+            Mesh.CreateIndexBuffer(device);
 
             Material = new SceneGridEffect();
             Material.Create(device);
         }
 
-        public void CreateVertexBuffer(Device device)
+        public void Update(float deltaT)
         {
-            VertexBuffer?.Dispose();
-            var bufferDescription = new BufferDescription
-            {
-                BindFlags = BindFlags.VertexBuffer,
-                CpuAccessFlags = CpuAccessFlags.None,
-                OptionFlags = ResourceOptionFlags.None,
-                Usage = ResourceUsage.Immutable,
-                SizeInBytes = VertexStride * Vertices.Length
-            };
-            VertexBuffer = new Buffer(device, DataStream.Create(Vertices, false, false), bufferDescription);
         }
 
-        public void CreateIndexBuffer(Device device)
+        public void Draw(Device device, ICamera camera)
         {
-            IndexBuffer?.Dispose();
-            var bufferDescription = new BufferDescription
-            {
-                BindFlags = BindFlags.IndexBuffer,
-                CpuAccessFlags = CpuAccessFlags.None,
-                OptionFlags = ResourceOptionFlags.None,
-                Usage = ResourceUsage.Immutable,
-                SizeInBytes = sizeof(uint) * IndexCount
-            };
-            IndexBuffer = new Buffer(device, DataStream.Create(Indices, false, false), bufferDescription);
-        }
-
-        public void Draw(Device device, ICamera camera, Vector3 lightDirection)
-        {
-            Material.SetWorldViewProjection(_worldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+            Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
 
             device.InputAssembler.InputLayout = Material.InputLayout;
-            device.InputAssembler.PrimitiveTopology = PrimitiveTopology;
-            device.InputAssembler.SetIndexBuffer(IndexBuffer, Format.R32_UInt, 0);
-            device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(VertexBuffer, VertexStride, 0));
+            device.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;
+            device.InputAssembler.SetIndexBuffer(Mesh.IndexBuffer, Format.R32_UInt, 0);
+            device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(Mesh.VertexBuffer, Mesh.VertexStride, 0));
 
             for (int i = 0; i < Material.Technique.Description.PassCount; ++i)
             {
                 Material.Technique.GetPassByIndex(i).Apply();
-                device.DrawIndexed(IndexCount, 0, 0);
+                device.DrawIndexed(Mesh.IndexCount, 0, 0);
             }
         }
-
-
 
         private void CreateGrid(int gridSize, Color color, float gridSpacing)
         {
             float zeroOffset = ((float)gridSize / 2) * gridSpacing;
 
-            VertexStride = Marshal.SizeOf(typeof(VertexPosCol));
-            Vertices = new VertexPosCol[((gridSize + 1) * 2) * 2];
-            Indices = new uint[((gridSize + 1) * 2) * 2];
+            Mesh.VertexStride = Marshal.SizeOf(typeof(VertexPosColNorm));
+            Mesh.Vertices = new VertexPosColNorm[((gridSize + 1) * 2) * 2];
+            Mesh.Indices = new uint[((gridSize + 1) * 2) * 2];
 
-            for (int i = 0; i < Vertices.Length / 2; i += 2)
+            for (int i = 0; i < Mesh.Vertices.Length / 2; i += 2)
             {
                 //Horizontal
-                Vertices[i] = new VertexPosCol(new Vector3(0 - zeroOffset,0,0 - zeroOffset + i * (gridSpacing / 2)), color);
-                Vertices[i + 1] = new VertexPosCol(new Vector3(0 + zeroOffset,0,0 - zeroOffset + i * (gridSpacing / 2)), color);
-                Indices[i] = Convert.ToUInt32(i);
-                Indices[i + 1] = Convert.ToUInt32(i + 1);
+                Mesh.Vertices[i] = new VertexPosColNorm(new Vector3(0 - zeroOffset,0,0 - zeroOffset + i * (gridSpacing / 2)), color, Vector3.Right);
+                Mesh.Vertices[i + 1] = new VertexPosColNorm(new Vector3(0 + zeroOffset,0,0 - zeroOffset + i * (gridSpacing / 2)), color, Vector3.Right);
+                Mesh.Indices[i] = Convert.ToUInt32(i);
+                Mesh.Indices[i + 1] = Convert.ToUInt32(i + 1);
             }
 
             //vertical
-            for (int i = Vertices.Length / 2; i < Vertices.Length; i += 2)
+            for (int i = Mesh.Vertices.Length / 2; i < Mesh.Vertices.Length; i += 2)
             {
-                Vertices[i] = new VertexPosCol(new Vector3(0 - zeroOffset + (i - (Vertices.Length / 2)) * (gridSpacing / 2), 0,0 - zeroOffset), color);
-                Vertices[i + 1] = new VertexPosCol(new Vector3(0 - zeroOffset + (i - (Vertices.Length / 2)) * (gridSpacing / 2), 0,0 + zeroOffset), color);
-                Indices[i] = Convert.ToUInt32(i);
-                Indices[i + 1] = Convert.ToUInt32(i + 1);
+                Mesh.Vertices[i] = new VertexPosColNorm(new Vector3(0 - zeroOffset + (i - (Mesh.Vertices.Length / 2)) * (gridSpacing / 2), 0,0 - zeroOffset), color, Vector3.Right);
+                Mesh.Vertices[i + 1] = new VertexPosColNorm(new Vector3(0 - zeroOffset + (i - (Mesh.Vertices.Length / 2)) * (gridSpacing / 2), 0,0 + zeroOffset), color, Vector3.Right);
+                Mesh.Indices[i] = Convert.ToUInt32(i);
+                Mesh.Indices[i + 1] = Convert.ToUInt32(i + 1);
             }
 
-            IndexCount = Indices.Length;
-        }
-
-
-        public void Translate(float x, float y, float z)
-        {
-        }
-
-        public void Rotate()
-        {
-        }
-
-        public void Scaling(float x, float y, float z)
-        {
+            Mesh.IndexCount = Mesh.Indices.Length;
         }
     }
 }

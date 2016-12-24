@@ -117,7 +117,9 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Structs\Structs.cs" />
     <Compile Include="Utilities\ModelLoader.cs" />
+    <Compile Include="Utilities\InputManager.cs" />
     <Compile Include="Utilities\SceneGrid.cs" />
+    <Compile Include="Utilities\TransformHandle.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="View\MainWindow.xaml">

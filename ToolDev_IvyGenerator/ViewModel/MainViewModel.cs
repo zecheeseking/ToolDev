@@ -9,6 +9,7 @@ using System.Windows.Input;
 using SharpDX;
 using DaeSharpWpf;
 using DaeSharpWpf.Interfaces;
+using ToolDev_IvyGenerator.Interfaces;
 using ToolDev_IvyGenerator.Models;
 using ToolDev_IvyGenerator.Utilities;
 
@@ -56,8 +57,6 @@ namespace ToolDev_IvyGenerator.ViewModel
                                     obj.Initialize(control.GetDevice());
                                     Models.Add(obj);
                                 }
-                                else
-                                    Debug.WriteLine("Nope");
                             }
                         )
                     );
@@ -83,16 +82,20 @@ namespace ToolDev_IvyGenerator.ViewModel
                                        List<Model> toAdd = new List<Model>();
                                        foreach (var m in Models)
                                        {
-                                           var model = m as Model;
+                                           var model = m as IIntersect;
                                            if (m == null)
                                                break;
                                            Vector3 hitPoint;
                                            if (model.Intersects(ray, out hitPoint))
                                            {
-                                               Model newModel = new Model(model);
-                                               newModel.Position = new Vector3(hitPoint.X, hitPoint.Y, hitPoint.Z);
-                                               newModel.Scale = new Vector3(0.3f, 0.3f, 0.3f);
-                                               toAdd.Add(newModel);
+                                               //var newModel = new Model(model);
+                                               //newModel.Position = new Vector3(hitPoint.X, hitPoint.Y, hitPoint.Z);
+                                               //newModel.Scale = new Vector3(0.3f, 0.3f, 0.3f);
+                                               //toAdd.Add(newModel);
+                                           }
+                                           else
+                                           {
+                                               model.ResetCollisionFlags();
                                            }
                                        }
 

@@ -8,11 +8,12 @@ using SharpDX.Direct3D10;
 using SharpDX.DXGI;
 using ToolDev_IvyGenerator.Annotations;
 using ToolDev_IvyGenerator.Effects;
+using ToolDev_IvyGenerator.Interfaces;
 using Device1 = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Models
 {
-    class Model : ISceneObject, INotifyPropertyChanged
+    class Model : ISceneObject, INotifyPropertyChanged, IIntersect
     {
         public Matrix WorldMatrix { get; set; }
         public Vector3 Position { get; set; }
@@ -110,6 +111,10 @@ namespace ToolDev_IvyGenerator.Models
             }
 
             return hit;
+        }
+
+        public void ResetCollisionFlags()
+        {
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

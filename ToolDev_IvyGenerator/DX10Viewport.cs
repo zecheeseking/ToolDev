@@ -19,6 +19,7 @@ namespace ToolDev_IvyGenerator
 
         private Vector3 _lightDirection;
 
+
         public void Initialize(Device1 device, RenderTargetView renderTarget, Dx10RenderCanvas canvasControl)
         {
             _device = device;
@@ -36,22 +37,30 @@ namespace ToolDev_IvyGenerator
 
             _grid = new SceneGrid();
             _grid.Initialize(device);
+
+            var _handle = new TransformHandle();
+            _handle.Initialize(device);
+            _renderControl.Models.Add(_handle);
         }
 
         public void Deinitialize()
         {
-            
         }
 
         public void Update(float deltaT)
         {
-            //FIX THIS
+            ////FIX THIS
             //if ((_renderControl.Camera as Camera).MovementEnabled)
             //    Mouse.Capture(_renderControl);
             //else
             //    Mouse.Capture(null);
-
+            InputManager.Instance.Update();
             _renderControl.Camera.Update(deltaT);
+
+            foreach (var sObj in _renderControl.Models)
+            {
+                sObj.Update(deltaT);
+            }
         }
 
         public void Render(float deltaT)
@@ -59,7 +68,7 @@ namespace ToolDev_IvyGenerator
             if (_device == null)
                 return;
 
-            _grid.Draw(_device, _renderControl.Camera, _lightDirection);
+            _grid.Draw(_device, _renderControl.Camera);
 
             if (_renderControl.Models.Count != 0)
             {

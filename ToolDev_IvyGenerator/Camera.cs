@@ -1,7 +1,8 @@
-﻿using DaeSharpWpf.Interfaces;
+﻿using System.Diagnostics;
+using DaeSharpWpf.Interfaces;
 using SharpDX;
-using SharpDX.DirectInput;
-using ToolDev_IvyGenerator.Interfaces;
+using ToolDev_IvyGenerator.Utilities;
+using Key = SharpDX.DirectInput.Key;
 
 
 namespace ToolDev_IvyGenerator
@@ -17,8 +18,6 @@ namespace ToolDev_IvyGenerator
         private float _TotalYaw = 0.0f;
         private float _TotalPitch = 0.0f;
 
-        private readonly Keyboard _kb;
-        private readonly Mouse _mouse;
         private Vector2 _mouseMovement;
 
         private Matrix _projectionMatrix;
@@ -40,12 +39,6 @@ namespace ToolDev_IvyGenerator
         public bool MovementEnabled { get; set; }
         public Camera()
         {
-            var di = new DirectInput();
-            _kb = new Keyboard(di);
-            _kb.Acquire();
-            _mouse = new Mouse(di);
-            _mouse.Acquire();
-
             Position = Vector3.Zero;
             Rotation = Quaternion.Identity;
             Scale = Vector3.Zero;
@@ -70,9 +63,8 @@ namespace ToolDev_IvyGenerator
 
         public void Update(float deltaT)
         {
-            var mouseState = _mouse.GetCurrentState();
-            _mouseMovement = new Vector2(mouseState.X, mouseState.Y);
-
+            _mouseMovement = InputManager.Instance.GetMouseDelta();
+            Debug.WriteLine(_mouseMovement.ToString());
             if (MovementEnabled)
             {
                 _TotalYaw += _mouseMovement.X * 5.0f * deltaT;
@@ -84,7 +76,7 @@ namespace ToolDev_IvyGenerator
 
                 UpdateTransformationMatrix();
 
-                var kbState = _kb.GetCurrentState();
+                var kbState = InputManager.Instance.GetCurrenKeyboardState();
                 if (kbState.IsPressed(Key.W))
                 {
                     var dir = GetViewForward();
