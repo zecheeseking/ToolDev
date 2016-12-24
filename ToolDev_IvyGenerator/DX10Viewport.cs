@@ -38,9 +38,9 @@ namespace ToolDev_IvyGenerator
             _grid = new SceneGrid();
             _grid.Initialize(device);
 
-            var _handle = new TransformHandle();
-            _handle.Initialize(device);
-            _renderControl.Models.Add(_handle);
+            //var _handle = new TransformHandle();
+            //_handle.Initialize(device);
+            //_renderControl.Models.Add(_handle);
         }
 
         public void Deinitialize()

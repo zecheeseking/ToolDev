@@ -2,6 +2,8 @@ float4x4 gWorld : WORLD;
 float4x4 gWorldViewProj : WORLDVIEWPROJECTION; 
 float3 gLightDirection = float3(-0.577f, -0.577f, 0.577f);
 
+float4 gColor : COLOR;
+
 struct VS_INPUT{
 	float3 pos : POSITION;
 	float4 color : COLOR;
@@ -64,7 +66,7 @@ float4 PS(VS_OUTPUT input) : SV_TARGET{
 	diffuseStrength = diffuseStrength * 0.5 + 0.5;
 	diffuseStrength = saturate(diffuseStrength);
 
-	color_rgb = color_rgb * diffuseStrength;
+	color_rgb = gColor.rgb * diffuseStrength;
 	
 	return float4( color_rgb , color_a );
 }

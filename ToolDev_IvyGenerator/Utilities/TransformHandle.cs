@@ -101,7 +101,7 @@ namespace ToolDev_IvyGenerator.Utilities
         public void Update(float deltaT)
         {
             var mouseMovement = InputManager.Instance.GetMouseDelta();
-            Debug.WriteLine(mouseMovement.ToString());
+
             if (_xHit)
             {
                 Position = _position + (Vector3.Right * mouseMovement.X);

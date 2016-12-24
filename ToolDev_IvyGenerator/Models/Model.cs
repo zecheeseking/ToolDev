@@ -13,7 +13,7 @@ using Device1 = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Models
 {
-    class Model : ISceneObject, INotifyPropertyChanged, IIntersect
+    public class Model : ISceneObject, INotifyPropertyChanged, IIntersect
     {
         public Matrix WorldMatrix { get; set; }
         public Vector3 Position { get; set; }
@@ -24,9 +24,15 @@ namespace ToolDev_IvyGenerator.Models
 
         public Vector3 LightDirection { get; set; }
 
+        public Color Color { get; set; }
+
+        public string Name { get; set; }
+
         public Model()
         {
             Material = new PosNormColEffect();
+
+            Color = Color.Gray;
 
             Position = Vector3.Zero;
             Rotation = Quaternion.Identity;
@@ -71,12 +77,13 @@ namespace ToolDev_IvyGenerator.Models
             Material.SetWorld(WorldMatrix);
             Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
             Material.SetLightDirection(LightDirection);
+            (Material as PosNormColEffect).SetColor(Color);
 
             device.InputAssembler.InputLayout = Material.InputLayout;
             device.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;
             device.InputAssembler.SetIndexBuffer(Mesh.IndexBuffer, Format.R32_UInt, 0);
             device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(Mesh.VertexBuffer, Mesh.VertexStride, 0));
-
+            
             for (int i = 0; i < Material.Technique.Description.PassCount; ++i)
             {
                 Material.Technique.GetPassByIndex(i).Apply();
@@ -86,6 +93,7 @@ namespace ToolDev_IvyGenerator.Models
 
         public bool Intersects(Ray ray, out Vector3 intersectionPoint)
         {
+            //FIX THIS.
             float distance = float.MaxValue;
             intersectionPoint = Vector3.Zero;
             bool hit = false;

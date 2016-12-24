@@ -55,6 +55,9 @@ namespace ToolDev_IvyGenerator.ViewModel
                                     var obj = new Model();
                                     obj.Mesh = ModelLoader<VertexPosColNorm>.LoadModel(dlg.FileName, control.GetDevice());
                                     obj.Initialize(control.GetDevice());
+                                    obj.Name = "Bob " + Models.Count.ToString();
+                                    if(Models.Count != 0)
+                                        obj.Position = Vector3.Right*80.0f*Models.Count; 
                                     Models.Add(obj);
                                 }
                             }
@@ -86,8 +89,12 @@ namespace ToolDev_IvyGenerator.ViewModel
                                            if (m == null)
                                                break;
                                            Vector3 hitPoint;
+
+                                           Model newModel = null;
                                            if (model.Intersects(ray, out hitPoint))
                                            {
+                                               if ((model as Model) != null)
+                                                   newModel = model as Model;
                                                //var newModel = new Model(model);
                                                //newModel.Position = new Vector3(hitPoint.X, hitPoint.Y, hitPoint.Z);
                                                //newModel.Scale = new Vector3(0.3f, 0.3f, 0.3f);
@@ -97,6 +104,8 @@ namespace ToolDev_IvyGenerator.ViewModel
                                            {
                                                model.ResetCollisionFlags();
                                            }
+
+                                           SelectedModel = newModel;
                                        }
 
                                        //foreach (Model m in toAdd)
@@ -107,6 +116,18 @@ namespace ToolDev_IvyGenerator.ViewModel
                                }
                            )
                        );
+            }
+        }
+
+        private Model _selectedModel;
+
+        public Model SelectedModel
+        {
+            get { return _selectedModel; }
+            set
+            {
+                _selectedModel = value;
+                RaisePropertyChanged("SelectedModel");
             }
         }
 

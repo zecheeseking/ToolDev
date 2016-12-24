@@ -64,7 +64,7 @@ namespace ToolDev_IvyGenerator
         public void Update(float deltaT)
         {
             _mouseMovement = InputManager.Instance.GetMouseDelta();
-            Debug.WriteLine(_mouseMovement.ToString());
+
             if (MovementEnabled)
             {
                 _TotalYaw += _mouseMovement.X * 5.0f * deltaT;
