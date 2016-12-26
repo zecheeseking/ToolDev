@@ -1,15 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using DaeSharpWpf;
-using DaeSharpWpf.Interfaces;
+using ToolDev_IvyGenerator.Interfaces;
 using SharpDX;
 using SharpDX.Direct3D10;
 using SharpDX.DXGI;
 using ToolDev_IvyGenerator.Annotations;
 using ToolDev_IvyGenerator.Effects;
-using ToolDev_IvyGenerator.Interfaces;
 using Device1 = SharpDX.Direct3D10.Device1;
+using ToolDev_IvyGenerator.Utilities;
 
 namespace ToolDev_IvyGenerator.Models
 {
@@ -17,17 +16,17 @@ namespace ToolDev_IvyGenerator.Models
     {
         private Matrix _worldMatrix;
         public Matrix WorldMatrix { get {return _worldMatrix;} set{ _worldMatrix = value;}  }
-        public Vector3 Position { get; set; }
-        public Quaternion Rotation { get; set; }
-        public Vector3 Scale { get; set; }
+        //public Vec3 Pos { get; set; }
+        public Vec3 Position { get; set; }
+        //public Vector3 Position { get; set; }
+        public Vec3 Rotation { get; set; }
+        public Vec3 Scale { get; set; }
         public IEffect Material { get; set; }
         public MeshData<VertexPosColNorm> Mesh { get; set; }
 
-        public Vector3 LightDirection { get; set; }
+        public SharpDX.Vector3 LightDirection { get; set; }
 
         public Color Color { get; set; }
-
-        public string Name { get; set; }
 
         public Model()
         {
@@ -35,11 +34,15 @@ namespace ToolDev_IvyGenerator.Models
 
             Color = Color.Gray;
 
-            Position = Vector3.Zero;
-            Rotation = Quaternion.Identity;
-            Scale = new Vector3(1.0f);
+            Position = new Vec3();
+            Position.Value = Vector3.Zero;
 
-            WorldMatrix = Matrix.Scaling(Scale)*Matrix.RotationQuaternion(Rotation)*Matrix.Translation(Position);
+            Rotation = new Vec3();
+            Rotation.Value = Vector3.Zero;
+            Scale = new Vec3();
+            Scale.Value = new Vector3(1.0f);
+
+            WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
             LightDirection = Vector3.Zero;
         }
 
@@ -70,7 +73,7 @@ namespace ToolDev_IvyGenerator.Models
 
         public void Update(float deltaT)
         {
-            WorldMatrix = Matrix.Scaling(Scale)*Matrix.RotationQuaternion(Rotation)*Matrix.Translation(Position);
+            WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
         }
 
         public void Draw(Device1 device, ICamera camera)

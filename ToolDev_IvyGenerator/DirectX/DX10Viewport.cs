@@ -1,11 +1,9 @@
-﻿using DaeSharpWpf;
-using DaeSharpWpf.Interfaces;
+﻿using ToolDev_IvyGenerator.Interfaces;
 using SharpDX;
 using SharpDX.Direct3D10;
-using ToolDev_IvyGenerator.Models;
 using ToolDev_IvyGenerator.Utilities;
 
-namespace ToolDev_IvyGenerator
+namespace ToolDev_IvyGenerator.DirectX
 {
     class DX10Viewport : IDx10Viewport
     {

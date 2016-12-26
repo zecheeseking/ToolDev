@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using DaeSharpWpf;
-using DaeSharpWpf.Interfaces;
+using ToolDev_IvyGenerator.Interfaces;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D10;
@@ -15,24 +14,26 @@ namespace ToolDev_IvyGenerator.Utilities
     class TransformHandle : ISceneObject, IIntersect
     {
         public Matrix WorldMatrix { get; set; }
-        private Vector3 _position = Vector3.Zero;
-        public Vector3 Position
+        private Vec3 _position;
+
+        public Vec3 Position
         {
             get {return _position;}
             set
             {
                 _position = value;
 
-                _xBoundingBox.Minimum = new Vector3(0.0f, -1.0f, -1.0f) + _position;
-                _xBoundingBox.Maximum = new Vector3(10.0f, 1.0f, 1.0f) + _position;
-                _yBoundingBox.Minimum = new Vector3(-1.0f, 0.0f, -1.0f) + _position;
-                _yBoundingBox.Maximum = new Vector3(1.0f, 10.0f, 1.0f) + _position;
-                _zBoundingBox.Minimum = new Vector3(-1.0f, -1.0f, 0.0f) + _position;
-                _zBoundingBox.Maximum = new Vector3(1.0f, 1.0f, 10.0f) + _position;
+                _xBoundingBox.Minimum = new Vector3(0.0f, -1.0f, -1.0f) + _position.Value;
+                _xBoundingBox.Maximum = new Vector3(10.0f, 1.0f, 1.0f) + _position.Value;
+                _yBoundingBox.Minimum = new Vector3(-1.0f, 0.0f, -1.0f) + _position.Value;
+                _yBoundingBox.Maximum = new Vector3(1.0f, 10.0f, 1.0f) + _position.Value;
+                _zBoundingBox.Minimum = new Vector3(-1.0f, -1.0f, 0.0f) + _position.Value;
+                _zBoundingBox.Maximum = new Vector3(1.0f, 1.0f, 10.0f) + _position.Value;
             }
         }
-        public Quaternion Rotation { get; set; }
-        public Vector3 Scale { get; set; }
+        public Vec3 Rotation { get; set; }
+        public Vec3 Scale { get; set; }
+
         public IEffect Material { get; set; }
         public Vector3 LightDirection { get; set; }
         public MeshData<VertexPosColNorm> Mesh { get; set; }
@@ -46,11 +47,14 @@ namespace ToolDev_IvyGenerator.Utilities
 
         public void Initialize(Device1 device)
         {
-            Position = Vector3.Zero;
-            Rotation = Quaternion.Identity;
-            Scale = new Vector3(1.0f);
+            Position = new Vec3();
+            Position.Value = Vector3.Zero;
 
-            WorldMatrix = Matrix.Scaling(Scale) * Matrix.RotationQuaternion(Rotation) * Matrix.Translation(Position);
+            Rotation = new Vec3();
+            Rotation.Value = Vector3.Zero;
+
+            Scale = new Vec3();
+            Scale.Value = new Vector3(1.0f);
 
             Mesh = new MeshData<VertexPosColNorm>();
 
@@ -65,16 +69,16 @@ namespace ToolDev_IvyGenerator.Utilities
             Material.Create(device);
 
             _xBoundingBox = new BoundingBox();
-            _xBoundingBox.Minimum = new Vector3(0.0f, -1.0f, -1.0f) + Position;
-            _xBoundingBox.Maximum = new Vector3(10.0f, 1.0f, 1.0f) + Position;
+            _xBoundingBox.Minimum = new Vector3(0.0f, -1.0f, -1.0f) + Position.Value;
+            _xBoundingBox.Maximum = new Vector3(10.0f, 1.0f, 1.0f) + Position.Value;
 
             _yBoundingBox = new BoundingBox();
-            _yBoundingBox.Minimum = new Vector3(-1.0f, 0.0f, -1.0f) + Position;
-            _yBoundingBox.Maximum = new Vector3(1.0f, 10.0f, 1.0f) + Position;
+            _yBoundingBox.Minimum = new Vector3(-1.0f, 0.0f, -1.0f) + Position.Value;
+            _yBoundingBox.Maximum = new Vector3(1.0f, 10.0f, 1.0f) + Position.Value;
 
             _zBoundingBox = new BoundingBox();
-            _zBoundingBox.Minimum = new Vector3(-1.0f, -1.0f, 0.0f) + Position;
-            _zBoundingBox.Maximum = new Vector3(1.0f, 1.0f, 10.0f) + Position;
+            _zBoundingBox.Minimum = new Vector3(-1.0f, -1.0f, 0.0f) + Position.Value;
+            _zBoundingBox.Maximum = new Vector3(1.0f, 1.0f, 10.0f) + Position.Value;
         }
 
         private void CreateTransformLines()
@@ -104,18 +108,18 @@ namespace ToolDev_IvyGenerator.Utilities
 
             if (_xHit)
             {
-                Position = _position + (Vector3.Right * mouseMovement.X);
+                Position.Value = _position.Value + (Vector3.Right * mouseMovement.X);
             }
             else if (_yHit && InputManager.Instance.GetMouseButton(0))
             {
-                Position = _position + (Vector3.Up * mouseMovement.Y);
+                Position.Value = _position.Value + (Vector3.Up * mouseMovement.Y);
             }
             else if (_zHit && InputManager.Instance.GetMouseButton(0))
             {
-                Position = _position + (Vector3.ForwardRH * -1 * mouseMovement.X);
+                Position.Value = _position.Value + (Vector3.ForwardRH * -1 * mouseMovement.X);
             }
 
-            WorldMatrix = Matrix.Scaling(Scale) * Matrix.RotationQuaternion(Rotation) * Matrix.Translation(Position);
+            WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
         }
 
         public void Draw(Device1 device, ICamera camera)

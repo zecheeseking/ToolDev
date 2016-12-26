@@ -2,13 +2,9 @@ using System.Collections.Generic;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 
-using System.Diagnostics;
-using System.Linq;
-using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using SharpDX;
-using DaeSharpWpf;
-using DaeSharpWpf.Interfaces;
+using ToolDev_IvyGenerator.DirectX;
 using ToolDev_IvyGenerator.Interfaces;
 using ToolDev_IvyGenerator.Models;
 using ToolDev_IvyGenerator.Utilities;
@@ -55,9 +51,6 @@ namespace ToolDev_IvyGenerator.ViewModel
                                     var obj = new Model();
                                     obj.Mesh = ModelLoader<VertexPosColNorm>.LoadModel(dlg.FileName, control.GetDevice());
                                     obj.Initialize(control.GetDevice());
-                                    obj.Name = "Bob " + Models.Count.ToString();
-                                    if(Models.Count != 0)
-                                        obj.Position = Vector3.Right*80.0f*Models.Count; 
                                     Models.Add(obj);
                                 }
                             }
@@ -118,7 +111,6 @@ namespace ToolDev_IvyGenerator.ViewModel
         }
 
         private Model _selectedModel;
-
         public Model SelectedModel
         {
             get { return _selectedModel; }

@@ -2,7 +2,6 @@
 using Assimp;
 using Assimp.Configs;
 using System.IO;
-using DaeSharpWpf;
 using SharpDX.Direct3D;
 using System.Runtime.InteropServices;
 using SharpDX;

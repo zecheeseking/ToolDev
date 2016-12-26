@@ -107,10 +107,15 @@
     </ApplicationDefinition>
     <Compile Include="Camera.cs" />
     <Compile Include="Converters\Converters.cs" />
+    <Compile Include="DirectX\Disposer.cs" />
+    <Compile Include="DirectX\Dx10ImageSource.cs" />
+    <Compile Include="DirectX\Dx10RenderCanvas.cs" />
     <Compile Include="Effects\PosNormColEffect.cs" />
     <Compile Include="Effects\SceneGridEffect.cs" />
+    <Compile Include="DirectX\IDX10Viewport.cs" />
     <Compile Include="Interfaces\interfaces.cs" />
     <Compile Include="MathHelper.cs" />
+    <Compile Include="Utilities\MeshData.cs" />
     <Compile Include="Models\Model2.cs" />
     <Compile Include="Models\Model.cs" />
     <Compile Include="Models\Spline.cs" />
@@ -118,8 +123,11 @@
     <Compile Include="Structs\Structs.cs" />
     <Compile Include="Utilities\ModelLoader.cs" />
     <Compile Include="Utilities\InputManager.cs" />
+    <Compile Include="Utilities\Quat.cs" />
     <Compile Include="Utilities\SceneGrid.cs" />
     <Compile Include="Utilities\TransformHandle.cs" />
+    <Compile Include="Utilities\Vec3.cs" />
+    <Compile Include="Utilities\VertexData.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="View\MainWindow.xaml">
@@ -130,7 +138,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DX10Viewport.cs" />
+    <Compile Include="DirectX\DX10Viewport.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -168,12 +176,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Models\BOX_DATA.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DaeSharpWPF\DaeSharpWPF.csproj">
-      <Project>{64f37404-7802-4fc0-b273-9815e0040c76}</Project>
-      <Name>DaeSharpWPF</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\PosColNorm3D.fx" />

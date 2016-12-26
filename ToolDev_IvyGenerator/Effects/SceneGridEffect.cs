@@ -1,9 +1,9 @@
 ﻿using System.IO;
-using DaeSharpWpf;
-using DaeSharpWpf.Interfaces;
+using ToolDev_IvyGenerator.Interfaces;
 using SharpDX;
 using SharpDX.D3DCompiler;
 using SharpDX.Direct3D10;
+using ToolDev_IvyGenerator.Utilities;
 using Device1 = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Effects

@@ -1,8 +1,7 @@
 ﻿
 using System;
 using System.Runtime.InteropServices;
-using DaeSharpWpf;
-using DaeSharpWpf.Interfaces;
+using ToolDev_IvyGenerator.Interfaces;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D10;
@@ -16,9 +15,9 @@ namespace ToolDev_IvyGenerator.Utilities
     public class SceneGrid : ISceneObject
     {
         public Matrix WorldMatrix { get; set; }
-        public Vector3 Position { get; set; }
-        public Quaternion Rotation { get; set; }
-        public Vector3 Scale { get; set; }
+        public Vec3 Position { get; set; }
+        public Vec3 Rotation { get; set; }
+        public Vec3 Scale { get; set; }
 
         public IEffect Material { get; set; }
         public Vector3 LightDirection { get; set; }

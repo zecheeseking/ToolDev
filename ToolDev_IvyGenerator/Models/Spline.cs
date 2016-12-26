@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using DaeSharpWpf;
-using DaeSharpWpf.Interfaces;
+using ToolDev_IvyGenerator.Interfaces;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D10;
 using SharpDX.DXGI;
 using ToolDev_IvyGenerator.Effects;
 using ToolDev_IvyGenerator.Structs;
+using ToolDev_IvyGenerator.Utilities;
 using Buffer = SharpDX.Direct3D10.Buffer;
 using Device = SharpDX.Direct3D10.Device1;
 
@@ -18,9 +18,9 @@ namespace ToolDev_IvyGenerator.Models
     class Spline : ISceneObject, INotifyPropertyChanged
     {
         public Matrix WorldMatrix { get; set; }
-        public Vector3 Position { get; set; }
-        public Quaternion Rotation { get; set; }
-        public Vector3 Scale { get; set; }
+        public Vec3 Position { get; set; }
+        public Vec3 Rotation { get; set; }
+        public Vec3 Scale { get; set; }
 
         public IEffect Material { get; set; }
 
