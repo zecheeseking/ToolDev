@@ -34,13 +34,9 @@ namespace ToolDev_IvyGenerator.Models
 
             Color = Color.Gray;
 
-            Position = new Vec3();
-            Position.Value = Vector3.Zero;
-
-            Rotation = new Vec3();
-            Rotation.Value = Vector3.Zero;
-            Scale = new Vec3();
-            Scale.Value = new Vector3(1.0f);
+            Position = new Vec3 {Value = Vector3.Zero};
+            Rotation = new Vec3 {Value = Vector3.Zero};
+            Scale = new Vec3 {Value = new Vector3(1.0f)};
 
             WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
             LightDirection = Vector3.Zero;

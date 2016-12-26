@@ -38,14 +38,9 @@ namespace ToolDev_IvyGenerator
         public bool MovementEnabled { get; set; }
         public Camera()
         {
-            Position = new Vec3();
-            Position.Value = Vector3.Zero;
-
-            Rotation = new Vec3();
-            Rotation.Value = Vector3.Zero;
-
-            Scale = new Vec3();
-            Scale.Value = new Vector3(1.0f);
+            Position = new Vec3 {Value = Vector3.Zero};
+            Rotation = new Vec3 {Value = Vector3.Zero};
+            Scale = new Vec3 {Value = new Vector3(1.0f)};
         }
 
         public void Initialize(float width, float height)
@@ -107,8 +102,10 @@ namespace ToolDev_IvyGenerator
         {
             _transformationMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
 
-            //_camForward = Vector3.Transform(Vector3.ForwardLH, Rotation.Value);
-            //_camRight = Vector3.Transform(Vector3.Right, Rotation.Value);
+            Quaternion q = Quaternion.RotationMatrix(_transformationMatrix);
+
+            _camForward = Vector3.Transform(Vector3.ForwardLH, q);
+            _camRight = Vector3.Transform(Vector3.Right, q);
             var camUp = Vector3.Cross(_camForward, _camRight);
 
             _viewMatrix = Matrix.LookAtLH(Position.Value, Position.Value + _camForward, camUp);

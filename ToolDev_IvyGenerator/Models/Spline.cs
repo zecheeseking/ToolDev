@@ -33,7 +33,11 @@ namespace ToolDev_IvyGenerator.Models
 
         public Spline()
         {
-            WorldMatrix = Matrix.Scaling(1.0f) * Matrix.RotationQuaternion(Quaternion.Identity) * Matrix.Translation(Vector3.Zero);
+            Position = new Vec3 {Value = Vector3.Zero};
+            Rotation = new Vec3 { Value = Vector3.Zero };
+            Scale = new Vec3 { Value = new Vector3(1.0f) };
+
+            WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
 
             _controlPoints.Add(new SplineControlPoint(Vector3.Zero, Vector3.Zero + Vector3.Up * 10.0f));
             _controlPoints.Add(new SplineControlPoint(new Vector3(100, 50, 0), new Vector3(100, 50, 0) + Vector3.Down * 10.0f));
