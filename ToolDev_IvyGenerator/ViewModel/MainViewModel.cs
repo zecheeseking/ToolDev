@@ -118,6 +118,16 @@ namespace ToolDev_IvyGenerator.ViewModel
             {
                 _selectedModel = value;
                 RaisePropertyChanged("SelectedModel");
+                RaisePropertyChanged("ObjectSelected");
+            }
+        }
+
+        public bool ObjectSelected
+        {
+            get
+            {
+                if (_selectedModel == null) return false;
+                return true;
             }
         }
 
