@@ -93,7 +93,6 @@ namespace ToolDev_IvyGenerator.Models
 
         public bool Intersects(Ray ray, out Vector3 intersectionPoint)
         {
-            //FIX THIS.
             float distance = float.MaxValue;
             intersectionPoint = Vector3.Zero;
             bool hit = false;

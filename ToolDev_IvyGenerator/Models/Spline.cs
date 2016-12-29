@@ -17,9 +17,10 @@ using System.Diagnostics;
 
 namespace ToolDev_IvyGenerator.Models
 {
-    public class Spline : ISceneObject, INotifyPropertyChanged
+    public class Spline : ISceneObject, INotifyPropertyChanged, IIntersect
     {
-        public Matrix WorldMatrix { get; set; }
+        private Matrix _worldMatrix;
+        public Matrix WorldMatrix { get { return _worldMatrix; } set { _worldMatrix = value; } }
         public Vec3 Position { get; set; }
         public Vec3 Rotation { get; set; }
         public Vec3 Scale { get; set; }
@@ -295,6 +296,51 @@ namespace ToolDev_IvyGenerator.Models
                     device.DrawIndexed(WireMesh.IndexCount, 0, 0);
                 }
             }
+        }
+
+        public bool Intersects(Ray ray, out Vector3 intersectionPoint)
+        {
+            float distance = float.MaxValue;
+            intersectionPoint = Vector3.Zero;
+            bool hit = false;
+            Matrix modelInverse = Matrix.Invert(WorldMatrix);
+
+            Ray r = new Ray(ray.Position, ray.Direction);
+            Vector3.Transform(r.Position, modelInverse);
+            Vector3.TransformNormal(r.Direction, modelInverse);
+            r.Direction.Normalize();
+
+            for (int i = 0; i < Mesh.IndexCount; i += 3)
+            {
+                uint t1 = Mesh.Indices[i];
+                uint t2 = Mesh.Indices[i + 1];
+                uint t3 = Mesh.Indices[i + 2];
+
+                var v = Vector3.Zero;
+
+                Vector3 p1; Vector3 p2; Vector3 p3;
+                Vector3.Transform(ref Mesh.Vertices[t1].Position, ref _worldMatrix, out p1);
+                Vector3.Transform(ref Mesh.Vertices[t2].Position, ref _worldMatrix, out p2);
+                Vector3.Transform(ref Mesh.Vertices[t3].Position, ref _worldMatrix, out p3);
+
+                if (ray.Intersects(ref p1, ref p2, ref p3, out v))
+                {
+                    float dist = Vector3.Distance(ray.Position, v);
+                    if (dist < distance)
+                    {
+                        intersectionPoint = v;
+                        distance = dist;
+                        hit = true;
+                    }
+                }
+            }
+
+            return hit;
+        }
+
+        public void ResetCollisionFlags()
+        {
+            
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

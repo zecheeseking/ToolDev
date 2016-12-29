@@ -76,18 +76,18 @@ namespace ToolDev_IvyGenerator.ViewModel
                                    {
                                        var mousePos = Mouse.GetPosition(control);
                                        var ray = cam.GetPickRay((float)mousePos.X, (float)mousePos.Y);
-                                           Model newModel = null;
+                                       ISceneObject newModel = null;
                                        foreach (var m in Models)
                                        {
                                            var model = m as IIntersect;
                                            if (model == null)
                                                break;
+
                                            Vector3 hitPoint;
 
                                            if (model.Intersects(ray, out hitPoint))
                                            {
-                                               if ((model as Model) != null)
-                                                   newModel = model as Model;
+                                               newModel = model as ISceneObject;
                                                //var newModel = new Model(model);
                                                //newModel.Position = new Vector3(hitPoint.X, hitPoint.Y, hitPoint.Z);
                                                //newModel.Scale = new Vector3(0.3f, 0.3f, 0.3f);
