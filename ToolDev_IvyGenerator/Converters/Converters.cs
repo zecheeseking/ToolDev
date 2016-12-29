@@ -20,4 +20,19 @@ namespace ToolDev_IvyGenerator.Converters
             return f;
         }
     }
+
+    public class StringToIntConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value.ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            int i = Int32.Parse(value.ToString());
+
+            return i;
+        }
+    }
 }

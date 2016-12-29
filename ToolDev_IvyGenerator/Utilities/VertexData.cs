@@ -22,6 +22,13 @@ namespace ToolDev_IvyGenerator.Utilities
         public Vector4 Color;
         public Vector3 Normal;
 
+        public VertexPosColNorm(Vector3 pos, Color col)
+        {
+            Position = pos;
+            Color = col.ToVector4();
+            Normal = Vector3.Up;
+        }
+
         public VertexPosColNorm(Vector3 pos, Color col, Vector3 norm)
         {
             Position = pos;

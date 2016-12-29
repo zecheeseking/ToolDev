@@ -9,13 +9,20 @@ namespace ToolDev_IvyGenerator.Structs
 {
     public struct SplineControlPoint
     {
+        private int number;
         public Vector3 Position { get; set; }
         public Vector3 Tangent { get; set; }
 
-        public SplineControlPoint(Vector3 pos, Vector3 tan)
+        public SplineControlPoint(int number, Vector3 pos, Vector3 tan)
         {
+            this.number = number;
             Position = pos;
-            Tangent = tan;
+            Tangent = tan - pos;
+        }
+
+        public override string ToString()
+        {
+            return "CP: " + number.ToString() + " Position: " + Position.ToString() + " Tangent: " + Tangent.ToString();
         }
     }
 }

@@ -52,6 +52,7 @@ namespace ToolDev_IvyGenerator.ViewModel
                                     obj.Mesh = ModelLoader<VertexPosColNorm>.LoadModel(dlg.FileName, control.GetDevice());
                                     obj.Initialize(control.GetDevice());
                                     Models.Add(obj);
+                                    SelectedModel = Models[Models.Count - 1];
                                 }
                             }
                         )
@@ -79,7 +80,7 @@ namespace ToolDev_IvyGenerator.ViewModel
                                        foreach (var m in Models)
                                        {
                                            var model = m as IIntersect;
-                                           if (m == null)
+                                           if (model == null)
                                                break;
                                            Vector3 hitPoint;
 
@@ -110,8 +111,8 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
 
-        private Model _selectedModel;
-        public Model SelectedModel
+        private ISceneObject _selectedModel;
+        public ISceneObject SelectedModel
         {
             get { return _selectedModel; }
             set
@@ -209,6 +210,7 @@ namespace ToolDev_IvyGenerator.ViewModel
                                 var testSpline = new Spline();
                                 testSpline.Initialize(control.GetDevice());
                                 Models.Add(testSpline);
+                                SelectedModel = Models[Models.Count - 1];
                             }
                         )
                     );

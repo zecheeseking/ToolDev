@@ -13,9 +13,11 @@ using ToolDev_IvyGenerator.Utilities;
 using Buffer = SharpDX.Direct3D10.Buffer;
 using Device = SharpDX.Direct3D10.Device1;
 
+using System.Diagnostics;
+
 namespace ToolDev_IvyGenerator.Models
 {
-    class Spline : ISceneObject, INotifyPropertyChanged
+    public class Spline : ISceneObject, INotifyPropertyChanged
     {
         public Matrix WorldMatrix { get; set; }
         public Vec3 Position { get; set; }
@@ -23,59 +25,68 @@ namespace ToolDev_IvyGenerator.Models
         public Vec3 Scale { get; set; }
 
         public IEffect Material { get; set; }
+        public IEffect WireMaterial { get; set; }
 
         public Vector3 LightDirection { get; set; }
 
+        private bool _refreshBuffers = false;
+        public bool Render { get; set; }
+
         public MeshData<VertexPosColNorm> Mesh { get; set; }
+        public MeshData<VertexPosColNorm> WireMesh { get; set; }
 
         private List<SplineControlPoint> _controlPoints = new List<SplineControlPoint>();
-        public int InterpolationSteps { get; set; }
+        public List<SplineControlPoint> ControlPoints
+        {
+            get { return _controlPoints; }
+        }
+
+        private int _interpolationSteps;
+        public int InterpolationSteps {
+            get { return _interpolationSteps; }
+            set
+            {
+                _interpolationSteps = value;
+                PopulateSpline();
+            }
+        }
+
+        private int _sides = 4;
+        public int Sides
+        {
+            get { return _sides; }
+            set
+            {
+                _sides = value;
+                PopulateSpline();
+            }
+        }
+
+        private float _thickness = 5.0f;
 
         public Spline()
         {
+            _interpolationSteps = 3;
+
             Position = new Vec3 {Value = Vector3.Zero};
             Rotation = new Vec3 { Value = Vector3.Zero };
             Scale = new Vec3 { Value = new Vector3(1.0f) };
 
             WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
 
-            _controlPoints.Add(new SplineControlPoint(Vector3.Zero, Vector3.Zero + Vector3.Up * 10.0f));
-            _controlPoints.Add(new SplineControlPoint(new Vector3(100, 50, 0), new Vector3(100, 50, 0) + Vector3.Down * 10.0f));
+            _controlPoints.Add(new SplineControlPoint(0, Vector3.Zero, new Vector3(50,0,0)));
+            _controlPoints.Add(new SplineControlPoint(1, new Vector3(50, 0, 50), new Vector3(0,0,50)));
 
             Mesh = new MeshData<VertexPosColNorm>();
-
-            Mesh.PrimitiveTopology = PrimitiveTopology.LineList;
+            Mesh.PrimitiveTopology = PrimitiveTopology.TriangleList;
             Mesh.VertexStride = Marshal.SizeOf(typeof(VertexPosColNorm));
-            InterpolationSteps = 10;
-            Mesh.IndexCount = (InterpolationSteps - 1) * 2;
 
-            Mesh.Positions = new Vector3[InterpolationSteps];
-            Mesh.Normals = new Vector3[InterpolationSteps];
-            Mesh.Positions[0] = _controlPoints[0].Position;
+            WireMesh = new MeshData<VertexPosColNorm>();
+            WireMesh.PrimitiveTopology = PrimitiveTopology.LineList;
+            WireMesh.VertexStride = Marshal.SizeOf(typeof(VertexPosColNorm));
 
-            for (int i = 1; i < InterpolationSteps - 1; ++i)
-            {
-                var t = (float)i / (InterpolationSteps - 1);
-                Mesh.Positions[i] = CalculateSplinePoint(t, _controlPoints[0], _controlPoints[1]);
-                Mesh.Normals[i] = Vector3.Up;
-            }
-            Mesh.Positions[Mesh.Positions.Length - 1] = _controlPoints[1].Position;
-            Mesh.Normals[Mesh.Normals.Length - 1] = Vector3.Up;
-
-            Mesh.Vertices = new VertexPosColNorm[Mesh.Positions.Length + 1];
-            for (int i = 0; i < Mesh.Positions.Length; ++i)
-                Mesh.Vertices[i] = new VertexPosColNorm(Mesh.Positions[i], Color.Gray, Mesh.Normals[i]);
-
-            Mesh.Vertices[Mesh.Vertices.Length - 1] = new VertexPosColNorm(_controlPoints[1].Position, Color.Pink, Vector3.Up);
-
-            Mesh.Indices = new uint[Mesh.IndexCount];
-            Mesh.Indices[0] = 0;
-            Mesh.Indices[1] = 1;
-            for (int i = 2; i < Mesh.IndexCount; i += 2)
-            {
-                Mesh.Indices[i] = Mesh.Indices[i - 1];
-                Mesh.Indices[i + 1] = Mesh.Indices[i - 1] + 1;
-            }
+            PopulateSpline();
+            _refreshBuffers = false;
         }
 
         public void Initialize(Device device)
@@ -83,8 +94,14 @@ namespace ToolDev_IvyGenerator.Models
             Material = new SceneGridEffect();
             Material.Create(device);
 
+            WireMaterial = new SceneGridEffect();
+            WireMaterial.Create(device);
+
             Mesh.CreateVertexBuffer(device);
             Mesh.CreateIndexBuffer(device);
+
+            WireMesh.CreateVertexBuffer(device);
+            WireMesh.CreateIndexBuffer(device);
         }
 
         public void Update(float deltaT)
@@ -92,30 +109,192 @@ namespace ToolDev_IvyGenerator.Models
             //throw new NotImplementedException();
         }
 
-        public void Draw(Device device, ICamera camera)
+        public void PopulateSpline()
         {
-            Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+            PopulateWireSpline();
+            PopulateMeshSpline();
 
-            device.InputAssembler.InputLayout = Material.InputLayout;
-            device.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;
-            device.InputAssembler.SetIndexBuffer(Mesh.IndexBuffer, Format.R32_UInt, 0);
-            device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(Mesh.VertexBuffer, Mesh.VertexStride, 0));
-
-            for (int i = 0; i < Material.Technique.Description.PassCount; ++i)
-            {
-                Material.Technique.GetPassByIndex(i).Apply();
-                device.DrawIndexed(Mesh.IndexCount, 0, 0);
-            }
+            _refreshBuffers = true;
         }
 
-        public Vector3 CalculateSplinePoint(float t, SplineControlPoint p0, SplineControlPoint p1)
+        private void PopulateWireSpline()
         {
-            Vector3 sp = (float)(2.0f * Math.Pow(t, 3.0f) - 3.0f * Math.Pow(t, 2.0f) + 1) * p0.Position +
-                (float)(Math.Pow(t, 3.0f) - 2.0f * Math.Pow(t, 2.0f) + t) * p0.Tangent +
-                (float)(-2.0f * Math.Pow(t, 3.0f) + 3.0f * Math.Pow(t, 2.0f)) * p1.Position +
-                (float)(Math.Pow(t, 3.0f) - Math.Pow(t, 2.0f)) * p1.Tangent;
+            //Position data
+            WireMesh.Positions = new Vector3[InterpolationSteps];
+            WireMesh.Normals = new Vector3[InterpolationSteps];
 
-            return sp;
+            for (int i = 0; i < InterpolationSteps; ++i)
+            {
+                var t = (float)i / (InterpolationSteps - 1);
+                WireMesh.Positions[i] = Vector3.Hermite(_controlPoints[0].Position, _controlPoints[0].Tangent, _controlPoints[1].Position, _controlPoints[1].Tangent, t);
+                WireMesh.Normals[i] = Vector3.Up;
+            }
+
+            WireMesh.Vertices = new VertexPosColNorm[WireMesh.Positions.Length + 1];
+            for (int i = 0; i < WireMesh.Positions.Length; ++i)
+                WireMesh.Vertices[i] = new VertexPosColNorm(WireMesh.Positions[i], Color.Pink);
+
+            WireMesh.Vertices[WireMesh.Vertices.Length - 1] = new VertexPosColNorm(_controlPoints[1].Position, Color.Pink);
+
+            //INDICES
+            WireMesh.IndexCount = (InterpolationSteps) * 2;
+
+            WireMesh.Indices = new uint[WireMesh.IndexCount];
+            WireMesh.Indices[0] = 0;
+            WireMesh.Indices[1] = 1;
+
+            for (int i = 2; i < WireMesh.IndexCount; i += 2)
+            {
+                WireMesh.Indices[i] = WireMesh.Indices[i - 1];
+                WireMesh.Indices[i + 1] = WireMesh.Indices[i - 1] + 1;
+            }
+
+        }
+
+        private void PopulateMeshSpline()
+        {
+            float angleIncrement = MathHelper.AngleToRadians(360.0f / _sides);
+
+            Mesh.Positions = new Vector3[InterpolationSteps * _sides];
+            Mesh.Normals = new Vector3[InterpolationSteps * _sides];
+
+            for (int i = 0; i < WireMesh.Positions.Length; ++i)
+            {
+                Vector3 forward = Vector3.Zero;
+                if (i == WireMesh.Positions.Length - 1)
+                    forward = WireMesh.Positions[i] - WireMesh.Positions[i - 1];
+                else
+                    forward = WireMesh.Positions[i + 1] - WireMesh.Positions[i];
+
+                forward.Normalize();
+
+                var rotationMat = Matrix.RotationAxis(forward, angleIncrement);
+                var lastPos = Vector3.Cross(forward, Vector3.Up);
+
+                for (int ii = 0; ii < _sides; ++ii)
+                {
+                    var vec = Vector3.Zero;
+                    Vector3.Transform(ref lastPos, ref rotationMat, out vec);
+                    vec.Normalize();
+                    Mesh.Positions[i * _sides + ii] = WireMesh.Positions[i] + (lastPos * _thickness);
+                    lastPos = new Vector3(vec.X, vec.Y, vec.Z);
+                    var norm = Mesh.Positions[i * _sides + ii] - WireMesh.Positions[i];
+                    norm.Normalize();
+                    Mesh.Normals[i * _sides + ii] = norm;
+                }
+            }
+
+            Mesh.Vertices = new VertexPosColNorm[Mesh.Positions.Length];
+
+            for (int i = 0; i < Mesh.Positions.Length; ++i)
+                Mesh.Vertices[i] = new VertexPosColNorm(Mesh.Positions[i], Color.Pink);
+
+            Mesh.IndexCount = _sides * 6 * (InterpolationSteps - 1);
+            Mesh.Indices = new uint[Mesh.IndexCount];
+
+            for(uint i = 0; i < InterpolationSteps - 1; ++i)
+            {
+                uint t = Convert.ToUInt32(_sides * 6 * i);
+
+                uint startIndex = t;
+                if(i == 0)
+                    Mesh.Indices[startIndex] = startIndex;
+                else
+                    Mesh.Indices[startIndex] = Mesh.Indices[startIndex - 2];
+
+                Mesh.Indices[startIndex + 1] = Mesh.Indices[startIndex] + 1;
+                Mesh.Indices[startIndex + 2] = Convert.ToUInt32(Mesh.Indices[startIndex] + _sides);
+                Mesh.Indices[startIndex + 3] = Mesh.Indices[startIndex + 1];
+                Mesh.Indices[startIndex + 4] = Convert.ToUInt32(Mesh.Indices[startIndex + 1] + _sides);
+                Mesh.Indices[startIndex + 5] = Convert.ToUInt32(Mesh.Indices[startIndex] + _sides);
+
+                for (uint s = 1; s < _sides - 1; ++s)
+                {
+                    startIndex = t + (s * 6);
+                    Mesh.Indices[startIndex] = Mesh.Indices[startIndex - 5];
+                    Mesh.Indices[startIndex + 1] = Mesh.Indices[startIndex] + 1;
+                    Mesh.Indices[startIndex + 2] = Mesh.Indices[startIndex - 2];
+                    Mesh.Indices[startIndex + 3] = Mesh.Indices[startIndex + 1];
+                    Mesh.Indices[startIndex + 4] = Mesh.Indices[startIndex + 2] + 1;
+                    Mesh.Indices[startIndex + 5] = Mesh.Indices[startIndex + 2];
+                }
+
+                startIndex = Convert.ToUInt32(t + ((_sides - 1) * 6));
+                Mesh.Indices[startIndex] = Mesh.Indices[startIndex - 5];
+                Mesh.Indices[startIndex + 1] = Mesh.Indices[t];
+                Mesh.Indices[startIndex + 2] = Mesh.Indices[startIndex - 2];
+                Mesh.Indices[startIndex + 3] = Mesh.Indices[startIndex + 1];
+                Mesh.Indices[startIndex + 4] = Convert.ToUInt32(Mesh.Indices[t] + _sides);
+                Mesh.Indices[startIndex + 5] = Mesh.Indices[startIndex + 2];
+                //if(i == 0)
+                //{
+                //    Mesh.Indices[t] = t;
+                //    Mesh.Indices[t + 1] = t + 1;
+                //}
+                //else
+                //{
+                //    Mesh.Indices[t] = Convert.ToUInt32(i * _sides);
+                //    Mesh.Indices[t + 1] = Mesh.Indices[t] + 1;
+
+                //}
+                //uint offset = t;
+                //for (uint s = 2; s < (_sides - 1) * 2; s+=2)
+                //{
+                //    offset = t + s;
+                //    Mesh.Indices[offset] = Mesh.Indices[offset - 1];
+                //    Mesh.Indices[offset + 1] = Mesh.Indices[offset] + 1;
+                //}
+
+                //offset += 2;
+                //Mesh.Indices[offset] = Mesh.Indices[offset - 1];
+                //Mesh.Indices[offset + 1] = Mesh.Indices[t];
+            }
+
+        }
+
+        public void Draw(Device device, ICamera camera)
+        {
+            if(_refreshBuffers)
+            {
+                Mesh.CreateVertexBuffer(device);
+                Mesh.CreateIndexBuffer(device);
+
+                WireMesh.CreateVertexBuffer(device);
+                WireMesh.CreateIndexBuffer(device);
+            }
+
+            if (Render)
+            {
+                WireMaterial.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+
+                device.InputAssembler.InputLayout = WireMaterial.InputLayout;
+                device.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;
+
+                device.InputAssembler.SetIndexBuffer(Mesh.IndexBuffer, Format.R32_UInt, 0);
+                device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(Mesh.VertexBuffer, Mesh.VertexStride, 0));
+
+                for (int i = 0; i < WireMaterial.Technique.Description.PassCount; ++i)
+                {
+                    WireMaterial.Technique.GetPassByIndex(i).Apply();
+                    device.DrawIndexed(Mesh.IndexCount, 0, 0);
+                }
+            }
+            else
+            {
+                WireMaterial.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+
+                device.InputAssembler.InputLayout = WireMaterial.InputLayout;
+                device.InputAssembler.PrimitiveTopology = WireMesh.PrimitiveTopology;
+
+                device.InputAssembler.SetIndexBuffer(WireMesh.IndexBuffer, Format.R32_UInt, 0);
+                device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(WireMesh.VertexBuffer, WireMesh.VertexStride, 0));
+
+                for (int i = 0; i < WireMaterial.Technique.Description.PassCount; ++i)
+                {
+                    WireMaterial.Technique.GetPassByIndex(i).Apply();
+                    device.DrawIndexed(WireMesh.IndexCount, 0, 0);
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
