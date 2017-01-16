@@ -92,7 +92,7 @@ namespace ToolDev_IvyGenerator.Models
 
         public void Initialize(Device device)
         {
-            Material = new SceneGridEffect();
+            Material = new PosNormColEffect();
             Material.Create(device);
 
             WireMaterial = new SceneGridEffect();
@@ -157,6 +157,7 @@ namespace ToolDev_IvyGenerator.Models
             float angleIncrement = MathHelper.AngleToRadians(360.0f / _sides);
 
             Mesh.Positions = new Vector3[InterpolationSteps * _sides];
+            Mesh.Colors = new Color[InterpolationSteps * _sides];
             Mesh.Normals = new Vector3[InterpolationSteps * _sides];
 
             for (int i = 0; i < WireMesh.Positions.Length; ++i)
@@ -178,10 +179,11 @@ namespace ToolDev_IvyGenerator.Models
                     Vector3.Transform(ref lastPos, ref rotationMat, out vec);
                     vec.Normalize();
                     Mesh.Positions[i * _sides + ii] = WireMesh.Positions[i] + (lastPos * _thickness);
-                    lastPos = new Vector3(vec.X, vec.Y, vec.Z);
-                    var norm = Mesh.Positions[i * _sides + ii] - WireMesh.Positions[i];
+                    var norm = WireMesh.Positions[i] - Mesh.Positions[i * _sides + ii];
                     norm.Normalize();
+                    Mesh.Colors[i * _sides + ii] = Color.Azure;
                     Mesh.Normals[i * _sides + ii] = norm;
+                    lastPos = new Vector3(vec.X, vec.Y, vec.Z);
                 }
             }
 
@@ -227,28 +229,6 @@ namespace ToolDev_IvyGenerator.Models
                 Mesh.Indices[startIndex + 3] = Mesh.Indices[startIndex + 1];
                 Mesh.Indices[startIndex + 4] = Convert.ToUInt32(Mesh.Indices[t] + _sides);
                 Mesh.Indices[startIndex + 5] = Mesh.Indices[startIndex + 2];
-                //if(i == 0)
-                //{
-                //    Mesh.Indices[t] = t;
-                //    Mesh.Indices[t + 1] = t + 1;
-                //}
-                //else
-                //{
-                //    Mesh.Indices[t] = Convert.ToUInt32(i * _sides);
-                //    Mesh.Indices[t + 1] = Mesh.Indices[t] + 1;
-
-                //}
-                //uint offset = t;
-                //for (uint s = 2; s < (_sides - 1) * 2; s+=2)
-                //{
-                //    offset = t + s;
-                //    Mesh.Indices[offset] = Mesh.Indices[offset - 1];
-                //    Mesh.Indices[offset + 1] = Mesh.Indices[offset] + 1;
-                //}
-
-                //offset += 2;
-                //Mesh.Indices[offset] = Mesh.Indices[offset - 1];
-                //Mesh.Indices[offset + 1] = Mesh.Indices[t];
             }
 
         }
@@ -266,17 +246,19 @@ namespace ToolDev_IvyGenerator.Models
 
             if (Render)
             {
-                WireMaterial.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+                Material.SetWorld(WorldMatrix);
+                Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+                Material.SetLightDirection(LightDirection);
 
-                device.InputAssembler.InputLayout = WireMaterial.InputLayout;
+                device.InputAssembler.InputLayout = Material.InputLayout;
                 device.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;
 
                 device.InputAssembler.SetIndexBuffer(Mesh.IndexBuffer, Format.R32_UInt, 0);
                 device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(Mesh.VertexBuffer, Mesh.VertexStride, 0));
 
-                for (int i = 0; i < WireMaterial.Technique.Description.PassCount; ++i)
+                for (int i = 0; i < Material.Technique.Description.PassCount; ++i)
                 {
-                    WireMaterial.Technique.GetPassByIndex(i).Apply();
+                    Material.Technique.GetPassByIndex(i).Apply();
                     device.DrawIndexed(Mesh.IndexCount, 0, 0);
                 }
             }

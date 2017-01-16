@@ -66,7 +66,7 @@ float4 PS(VS_OUTPUT input) : SV_TARGET{
 	diffuseStrength = diffuseStrength * 0.5 + 0.5;
 	diffuseStrength = saturate(diffuseStrength);
 
-	color_rgb = gColor.rgb * diffuseStrength;
+	color_rgb = color_rgb * diffuseStrength;
 	
 	return float4( color_rgb , color_a );
 }

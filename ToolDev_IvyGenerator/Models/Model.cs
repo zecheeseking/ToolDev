@@ -77,7 +77,6 @@ namespace ToolDev_IvyGenerator.Models
             Material.SetWorld(WorldMatrix);
             Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
             Material.SetLightDirection(LightDirection);
-            (Material as PosNormColEffect).SetColor(Color);
 
             device.InputAssembler.InputLayout = Material.InputLayout;
             device.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;
