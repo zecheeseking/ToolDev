@@ -6,7 +6,6 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D10;
 using SharpDX.DXGI;
 using ToolDev_IvyGenerator.Effects;
-using ToolDev_IvyGenerator.Interfaces;
 using Device1 = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Utilities

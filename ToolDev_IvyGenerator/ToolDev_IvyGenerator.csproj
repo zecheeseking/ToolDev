@@ -141,6 +141,9 @@
     <Compile Include="View\ModelView.xaml.cs">
       <DependentUpon>ModelView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\NumberTextbox.xaml.cs">
+      <DependentUpon>NumberTextbox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\SplineView.xaml.cs">
       <DependentUpon>SplineView.xaml</DependentUpon>
     </Compile>
@@ -162,6 +165,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="View\ModelView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomControls\NumberTextbox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

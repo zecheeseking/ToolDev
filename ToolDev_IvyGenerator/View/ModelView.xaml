@@ -7,6 +7,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding Source={StaticResource Locator}, Path=Model}">
     <Grid>
-        <Label Content="Poop."></Label>
+        <Label Content="Model."></Label>
     </Grid>
 </UserControl>

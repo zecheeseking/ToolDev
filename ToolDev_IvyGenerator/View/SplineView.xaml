@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ToolDev_IvyGenerator.View"
              xmlns:converters="clr-namespace:ToolDev_IvyGenerator.Converters"
-            xmlns:viewModels="clr-namespace:ToolDev_IvyGenerator.ViewModel"
+             xmlns:viewModels="clr-namespace:ToolDev_IvyGenerator.ViewModel"
+             xmlns:customcontrol="clr-namespace:ToolDev_IvyGenerator.CustomControls"
              mc:Ignorable="d" 
              Width="250" Height="250" DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
     <Grid x:Name="Root">
@@ -27,12 +28,13 @@
                 <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" IsChecked="{Binding SplineData.Render}"/>
 
                 <Label Grid.Row="1" Height="30" Content="Interpolation Steps: " FontSize="12"/>
-                <TextBox Grid.Row="1" Height="20" Width="50" HorizontalAlignment="Right" Text="{Binding SplineData.InterpolationSteps}"></TextBox>
+                <customcontrol:NumberTextbox Grid.Row="1" Width="80" HorizontalAlignment="Right" Value="{Binding DataContext.SplineData.InterpolationSteps, ElementName=Root, Mode=TwoWay}" MaxValue="100"/>
 
                 <Label Grid.Row="2" Height="30" Content="Sides: " FontSize="12"/>
-                <TextBox Grid.Row="2" Height="20" Width="50" HorizontalAlignment="Right" Text="{Binding SplineData.Sides}"></TextBox>
+                <customcontrol:NumberTextbox Grid.Row="2" Width="80" HorizontalAlignment="Right" Value="{Binding DataContext.SplineData.Sides, ElementName=Root, Mode=TwoWay}" MaxValue="100"/>
 
                 <ListBox Grid.Row="3" Margin="5" ItemsSource="{Binding SplineData.ControlPoints}"/>
+                
             </Grid>
         </GroupBox>
 
