@@ -67,7 +67,7 @@ namespace ToolDev_IvyGenerator.Models
 
         public Spline()
         {
-            _interpolationSteps = 3;
+            _interpolationSteps = 4;
 
             Position = new Vec3 {Value = Vector3.Zero};
             Rotation = new Vec3 { Value = Vector3.Zero };
@@ -77,6 +77,8 @@ namespace ToolDev_IvyGenerator.Models
 
             _controlPoints.Add(new SplineControlPoint(0, Vector3.Zero, new Vector3(50,0,0)));
             _controlPoints.Add(new SplineControlPoint(1, new Vector3(50, 0, 50), new Vector3(0,0,50)));
+            _controlPoints.Add(new SplineControlPoint(2, new Vector3(0, 0, 100), new Vector3(0,50,50)));
+            _controlPoints.Add(new SplineControlPoint(3, new Vector3(50, 0, 150), new Vector3(0, 50, 50)));
 
             Mesh = new MeshData<VertexPosColNorm>();
             Mesh.PrimitiveTopology = PrimitiveTopology.TriangleList;
@@ -121,24 +123,27 @@ namespace ToolDev_IvyGenerator.Models
         private void PopulateWireSpline()
         {
             //Position data
-            WireMesh.Positions = new Vector3[InterpolationSteps];
-            WireMesh.Normals = new Vector3[InterpolationSteps];
+            WireMesh.Positions = new Vector3[_controlPoints.Count + (InterpolationSteps - 2) * (_controlPoints.Count - 1)];
+            WireMesh.Normals = new Vector3[_controlPoints.Count + (InterpolationSteps - 2) * (_controlPoints.Count - 1)];
 
-            for (int i = 0; i < InterpolationSteps; ++i)
+            for(int i = 0; i < _controlPoints.Count - 1; ++i)
             {
-                var t = (float)i / (InterpolationSteps - 1);
-                WireMesh.Positions[i] = Vector3.Hermite(_controlPoints[0].Position, _controlPoints[0].Tangent, _controlPoints[1].Position, _controlPoints[1].Tangent, t);
-                WireMesh.Normals[i] = Vector3.Up;
+                for (int ii = 0; ii < InterpolationSteps - 1; ++ii)
+                {
+                    var t = (float)ii / (InterpolationSteps - 1);
+                    WireMesh.Positions[i * (InterpolationSteps - 1) + ii] = Vector3.Hermite(_controlPoints[i].Position, _controlPoints[i].Tangent, _controlPoints[i+1].Position, _controlPoints[i+1].Tangent, t);
+                    WireMesh.Normals[i * (InterpolationSteps - 1) + ii] = Vector3.Up;
+                }
             }
 
-            WireMesh.Vertices = new VertexPosColNorm[WireMesh.Positions.Length + 1];
+            WireMesh.Positions[WireMesh.Positions.Length - 1] = _controlPoints[_controlPoints.Count - 1].Position;
+
+            WireMesh.Vertices = new VertexPosColNorm[WireMesh.Positions.Length];
             for (int i = 0; i < WireMesh.Positions.Length; ++i)
                 WireMesh.Vertices[i] = new VertexPosColNorm(WireMesh.Positions[i], Color.Pink);
 
-            WireMesh.Vertices[WireMesh.Vertices.Length - 1] = new VertexPosColNorm(_controlPoints[1].Position, Color.Pink);
-
             //INDICES
-            WireMesh.IndexCount = (InterpolationSteps) * 2;
+            WireMesh.IndexCount = WireMesh.Positions.Length * 2 - 2;
 
             WireMesh.Indices = new uint[WireMesh.IndexCount];
             WireMesh.Indices[0] = 0;
@@ -149,16 +154,15 @@ namespace ToolDev_IvyGenerator.Models
                 WireMesh.Indices[i] = WireMesh.Indices[i - 1];
                 WireMesh.Indices[i + 1] = WireMesh.Indices[i - 1] + 1;
             }
-
         }
 
         private void PopulateMeshSpline()
         {
             float angleIncrement = MathHelper.AngleToRadians(360.0f / _sides);
 
-            Mesh.Positions = new Vector3[InterpolationSteps * _sides];
-            Mesh.Colors = new Color[InterpolationSteps * _sides];
-            Mesh.Normals = new Vector3[InterpolationSteps * _sides];
+            Mesh.Positions = new Vector3[WireMesh.Positions.Length * _sides];
+            Mesh.Colors = new Color[WireMesh.Positions.Length * _sides];
+            Mesh.Normals = new Vector3[WireMesh.Positions.Length * _sides];
 
             for (int i = 0; i < WireMesh.Positions.Length; ++i)
             {
@@ -190,12 +194,12 @@ namespace ToolDev_IvyGenerator.Models
             Mesh.Vertices = new VertexPosColNorm[Mesh.Positions.Length];
 
             for (int i = 0; i < Mesh.Positions.Length; ++i)
-                Mesh.Vertices[i] = new VertexPosColNorm(Mesh.Positions[i], Color.Pink);
+                Mesh.Vertices[i] = new VertexPosColNorm(Mesh.Positions[i], Mesh.Colors[i]);
 
-            Mesh.IndexCount = _sides * 6 * (InterpolationSteps - 1);
+            Mesh.IndexCount = _sides * 6 * (WireMesh.Positions.Length - 1);
             Mesh.Indices = new uint[Mesh.IndexCount];
 
-            for(uint i = 0; i < InterpolationSteps - 1; ++i)
+            for(uint i = 0; i < WireMesh.Positions.Length - 1; ++i)
             {
                 uint t = Convert.ToUInt32(_sides * 6 * i);
 
@@ -230,7 +234,6 @@ namespace ToolDev_IvyGenerator.Models
                 Mesh.Indices[startIndex + 4] = Convert.ToUInt32(Mesh.Indices[t] + _sides);
                 Mesh.Indices[startIndex + 5] = Mesh.Indices[startIndex + 2];
             }
-
         }
 
         public void Draw(Device device, ICamera camera)

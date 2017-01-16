@@ -43,11 +43,5 @@ namespace ToolDev_IvyGenerator.Effects
             if (Effect != null)
                 Effect.GetVariableByName("gLightDirection").AsVector().Set(dir);
         }
-
-        public void SetColor(Color color)
-        {
-            if(Effect != null)
-                Effect.GetVariableByName("gColor").AsVector().Set(color.ToVector4());
-        }
     }
 }

@@ -2,8 +2,6 @@ float4x4 gWorld : WORLD;
 float4x4 gWorldViewProj : WORLDVIEWPROJECTION; 
 float3 gLightDirection = float3(-0.577f, -0.577f, 0.577f);
 
-float4 gColor : COLOR;
-
 struct VS_INPUT{
 	float3 pos : POSITION;
 	float4 color : COLOR;
