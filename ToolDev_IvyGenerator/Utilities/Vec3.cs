@@ -11,6 +11,11 @@ namespace ToolDev_IvyGenerator.Utilities
             _vector = Vector3.Zero;
         }
 
+        public Vec3(Vector3 vec)
+        {
+            _vector = vec;
+        }
+
         public Vector3 Value
         {
             get { return _vector; }
@@ -33,6 +38,11 @@ namespace ToolDev_IvyGenerator.Utilities
         {
             get { return _vector.Z; }
             set { _vector.Z = value; }
+        }
+
+        public override string ToString()
+        {
+            return "x:" + X + " y:" + Y + " z:" + Z;
         }
     }
 }

@@ -124,12 +124,16 @@ namespace ToolDev_IvyGenerator.Models
                 for (int ii = 0; ii < InterpolationSteps - 1; ++ii)
                 {
                     var t = (float)ii / (InterpolationSteps - 1);
-                    WireMesh.Positions[i * (InterpolationSteps - 1) + ii] = Vector3.Hermite(_controlPoints[i].Position, _controlPoints[i].Tangent, _controlPoints[i+1].Position, _controlPoints[i+1].Tangent, t);
+                    WireMesh.Positions[i * (InterpolationSteps - 1) + ii] = 
+                        Vector3.Hermite(_controlPoints[i].Position.Value, 
+                        _controlPoints[i].Tangent.Value, 
+                        _controlPoints[i+1].Position.Value,
+                        _controlPoints[i+1].Tangent.Value, t);
                     WireMesh.Normals[i * (InterpolationSteps - 1) + ii] = Vector3.Up;
                 }
             }
 
-            WireMesh.Positions[WireMesh.Positions.Length - 1] = _controlPoints[_controlPoints.Count - 1].Position;
+            WireMesh.Positions[WireMesh.Positions.Length - 1] = _controlPoints[_controlPoints.Count - 1].Position.Value;
 
             WireMesh.Vertices = new VertexPosColNorm[WireMesh.Positions.Length];
             for (int i = 0; i < WireMesh.Positions.Length; ++i)

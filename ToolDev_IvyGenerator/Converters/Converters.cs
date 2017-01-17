@@ -35,4 +35,30 @@ namespace ToolDev_IvyGenerator.Converters
             return i;
         }
     }
+
+    public class IntToDoubleConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (double)(value as int?);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (int)(value as double?);
+        }
+    }
+
+    public class FloatToDoubleConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (float)(value as int?);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (int)(value as float?);
+        }
+    }
 }

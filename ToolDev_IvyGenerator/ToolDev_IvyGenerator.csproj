@@ -111,6 +111,9 @@
     </ApplicationDefinition>
     <Compile Include="Camera.cs" />
     <Compile Include="Converters\Converters.cs" />
+    <Compile Include="CustomControls\ControlPointListBox.xaml.cs">
+      <DependentUpon>ControlPointListBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DirectX\Disposer.cs" />
     <Compile Include="DirectX\Dx10ImageSource.cs" />
     <Compile Include="DirectX\Dx10RenderCanvas.cs" />
@@ -152,6 +155,10 @@
     <Compile Include="View\SplineView.xaml.cs">
       <DependentUpon>SplineView.xaml</DependentUpon>
     </Compile>
+    <Page Include="CustomControls\ControlPointListBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ControlPointView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

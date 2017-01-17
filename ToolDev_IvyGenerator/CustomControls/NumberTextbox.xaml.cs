@@ -9,11 +9,11 @@ namespace ToolDev_IvyGenerator.CustomControls
     public partial class NumberTextbox : UserControl
     {
         public static DependencyProperty ValueProperty = DependencyProperty.Register(
-        "Value", typeof(int), typeof(NumberTextbox), new FrameworkPropertyMetadata(0));
+        "Value", typeof(double), typeof(NumberTextbox), new PropertyMetadata((System.Windows.PropertyChangedCallback)OnValueChanged));
 
-        public int Value
+        public double Value
         {
-            get { return (int)GetValue(ValueProperty); }
+            get { return (double)GetValue(ValueProperty); }
             set
             {
                 SetValue(ValueProperty, value);
@@ -21,11 +21,11 @@ namespace ToolDev_IvyGenerator.CustomControls
         }
 
         public static readonly DependencyProperty MaxValueProperty = DependencyProperty.Register(
-        "MaxValue", typeof(int), typeof(NumberTextbox), new FrameworkPropertyMetadata(10));
+        "MaxValue", typeof(double), typeof(NumberTextbox), new FrameworkPropertyMetadata(10.0));
 
-        public int MaxValue
+        public double MaxValue
         {
-            get { return (int)GetValue(MaxValueProperty); }
+            get { return (double)GetValue(MaxValueProperty); }
             set
             {
                 SetValue(MaxValueProperty, value);
@@ -33,15 +33,20 @@ namespace ToolDev_IvyGenerator.CustomControls
         }
 
         public static readonly DependencyProperty MinValueProperty = DependencyProperty.Register(
-        "MinValue", typeof(int), typeof(NumberTextbox), new FrameworkPropertyMetadata(0));
+        "MinValue", typeof(double), typeof(NumberTextbox), new FrameworkPropertyMetadata(0.0));
 
-        public int MinValue
+        public double MinValue
         {
-            get { return (int)GetValue(MinValueProperty); }
+            get { return (double)GetValue(MinValueProperty); }
             set
             {
                 SetValue(MinValueProperty, value);
             }
+        }
+
+        private static void OnValueChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            (o as NumberTextbox).Value = (double)e.NewValue;
         }
 
         private RelayCommand _upCommand;

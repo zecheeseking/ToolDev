@@ -115,8 +115,6 @@ namespace ToolDev_IvyGenerator.Models
             Vector3.TransformNormal(r.Direction, modelInverse);
             r.Direction.Normalize();
 
-
-
             for (int i = 0; i < Mesh.IndexCount; i += 3)
             {
                 uint t1 = Mesh.Indices[i];
