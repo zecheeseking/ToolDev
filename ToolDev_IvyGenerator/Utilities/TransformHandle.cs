@@ -14,7 +14,7 @@ namespace ToolDev_IvyGenerator.Utilities
     {
         public Matrix WorldMatrix { get; set; }
         private Vec3 _position;
-
+        public bool Selected { get; set; }
         public Vec3 Position
         {
             get {return _position;}
@@ -64,20 +64,14 @@ namespace ToolDev_IvyGenerator.Utilities
             Mesh.CreateVertexBuffer(device);
             Mesh.CreateIndexBuffer(device);
 
-            Material = new SceneGridEffect();
+            Material = new DebugEffect();
             Material.Create(device);
 
             _xBoundingBox = new BoundingBox();
-            _xBoundingBox.Minimum = new Vector3(0.0f, -1.0f, -1.0f) + Position.Value;
-            _xBoundingBox.Maximum = new Vector3(10.0f, 1.0f, 1.0f) + Position.Value;
-
             _yBoundingBox = new BoundingBox();
-            _yBoundingBox.Minimum = new Vector3(-1.0f, 0.0f, -1.0f) + Position.Value;
-            _yBoundingBox.Maximum = new Vector3(1.0f, 10.0f, 1.0f) + Position.Value;
-
             _zBoundingBox = new BoundingBox();
-            _zBoundingBox.Minimum = new Vector3(-1.0f, -1.0f, 0.0f) + Position.Value;
-            _zBoundingBox.Maximum = new Vector3(1.0f, 1.0f, 10.0f) + Position.Value;
+
+            UpdateBoundingBoxes();
         }
 
         private void CreateTransformLines()
@@ -101,20 +95,37 @@ namespace ToolDev_IvyGenerator.Utilities
             Mesh.IndexCount = Mesh.Indices.Length;
         }
 
+        private void UpdateBoundingBoxes()
+        {
+            _xBoundingBox.Minimum = new Vector3(0.0f, -1.0f, -1.0f) + Position.Value;
+            _xBoundingBox.Maximum = new Vector3(10.0f, 1.0f, 1.0f) + Position.Value;
+
+            _yBoundingBox.Minimum = new Vector3(-1.0f, 0.0f, -1.0f) + Position.Value;
+            _yBoundingBox.Maximum = new Vector3(1.0f, 10.0f, 1.0f) + Position.Value;
+
+            _zBoundingBox.Minimum = new Vector3(-1.0f, -1.0f, 0.0f) + Position.Value;
+            _zBoundingBox.Maximum = new Vector3(1.0f, 1.0f, 10.0f) + Position.Value;
+        }
+
         public void Update(float deltaT)
         {
+            UpdateBoundingBoxes();
+
             var mouseMovement = InputManager.Instance.GetMouseDelta();
 
             if (_xHit)
             {
+                Debug.WriteLine("xhit");
                 Position.Value = _position.Value + (Vector3.Right * mouseMovement.X);
             }
-            else if (_yHit && InputManager.Instance.GetMouseButton(0))
+            else if (_yHit)
             {
-                Position.Value = _position.Value + (Vector3.Up * mouseMovement.Y);
+                Debug.WriteLine("yhit");
+                Position.Value = _position.Value + (Vector3.Up * -mouseMovement.Y);
             }
-            else if (_zHit && InputManager.Instance.GetMouseButton(0))
+            else if (_zHit)
             {
+                Debug.WriteLine("zhit");
                 Position.Value = _position.Value + (Vector3.ForwardRH * -1 * mouseMovement.X);
             }
 
@@ -147,7 +158,7 @@ namespace ToolDev_IvyGenerator.Utilities
 
             _zHit = ray.Intersects(_zBoundingBox);
 
-            return _xHit | _yHit | _zHit;
+            return (_xHit | _yHit | _zHit);
         }
 
         public void ResetCollisionFlags()

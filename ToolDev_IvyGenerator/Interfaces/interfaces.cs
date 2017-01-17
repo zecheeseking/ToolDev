@@ -8,6 +8,7 @@ namespace ToolDev_IvyGenerator.Interfaces
 {
     public interface IIntersect
     {
+        bool Selected { get; set; }
         bool Intersects(Ray ray, out Vector3 intersectionPoint);
         void ResetCollisionFlags();
     }
@@ -17,6 +18,7 @@ namespace ToolDev_IvyGenerator.Interfaces
         IEffect Material { get; set; }
         Vector3 LightDirection { get; set; }
         MeshData<VertexPosColNorm> Mesh { get; set; }
+
 
         void Initialize(Device device);
         void Update(float deltaT);

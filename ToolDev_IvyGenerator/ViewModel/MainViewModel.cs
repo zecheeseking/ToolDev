@@ -11,23 +11,8 @@ using ToolDev_IvyGenerator.Utilities;
 
 namespace ToolDev_IvyGenerator.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that the main View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// You can also use Blend to data bind with the tool's support.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        /// <summary>
-        /// Initializes a new instance of the MainViewModel class.
-        /// </summary>
         private RelayCommand<Dx10RenderCanvas> _loadModelCommand;
         public RelayCommand<Dx10RenderCanvas> LoadModelCommand
         {
@@ -99,12 +84,30 @@ namespace ToolDev_IvyGenerator.ViewModel
                                            }
 
                                        }
-                                       SelectedModel = newModel;
-                                       //foreach (Model m in toAdd)
-                                       //{
-                                       //     Models.Add(m);
-                                       //}
+
+                                       if(SelectedModel != newModel)
+                                            SelectedModel = newModel;
                                    }
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand _raycastResetCommand;
+        public RelayCommand RaycastResetCommand
+        {
+            get
+            {
+                return _raycastResetCommand ??
+                       (
+                           _raycastResetCommand = new RelayCommand
+                           (
+                               () =>
+                               {
+                                   var m = SelectedModel as IIntersect;
+                                   if (m != null)
+                                       m.ResetCollisionFlags();
                                }
                            )
                        );
@@ -117,7 +120,11 @@ namespace ToolDev_IvyGenerator.ViewModel
             get { return _selectedModel; }
             set
             {
+                if (_selectedModel != null)
+                    (_selectedModel as IIntersect).Selected = false;
                 _selectedModel = value;
+                if(_selectedModel != null)
+                    (_selectedModel as IIntersect).Selected = true;
                 RaisePropertyChanged("SelectedModel");
                 RaisePropertyChanged("ObjectSelected");
             }

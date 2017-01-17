@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SharpDX;
+﻿using SharpDX;
+using System.ComponentModel;
 
-namespace ToolDev_IvyGenerator.Structs
+namespace ToolDev_IvyGenerator.Models
 {
-    public struct SplineControlPoint
+    public class SplineControlPoint : INotifyPropertyChanged
     {
         private int number;
         public Vector3 Position { get; set; }
@@ -24,5 +20,7 @@ namespace ToolDev_IvyGenerator.Structs
         {
             return "CP: " + number.ToString() + " Position: " + Position.ToString() + " Tangent: " + Tangent.ToString();
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

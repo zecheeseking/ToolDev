@@ -10,23 +10,23 @@ using ToolDev_IvyGenerator.Effects;
 using Device1 = SharpDX.Direct3D10.Device1;
 using ToolDev_IvyGenerator.Utilities;
 
+using System.Diagnostics;
+
 namespace ToolDev_IvyGenerator.Models
 {
     public class Model : ISceneObject, INotifyPropertyChanged, IIntersect
     {
         private Matrix _worldMatrix;
         public Matrix WorldMatrix { get {return _worldMatrix;} set{ _worldMatrix = value;}  }
-        //public Vec3 Pos { get; set; }
+        public SharpDX.Vector3 LightDirection { get; set; }
         public Vec3 Position { get; set; }
-        //public Vector3 Position { get; set; }
         public Vec3 Rotation { get; set; }
         public Vec3 Scale { get; set; }
         public IEffect Material { get; set; }
         public MeshData<VertexPosColNorm> Mesh { get; set; }
-
-        public SharpDX.Vector3 LightDirection { get; set; }
-
+        public bool Selected { get; set; }
         public Color Color { get; set; }
+        private TransformHandle _tranformHandle;
 
         public Model()
         {
@@ -40,6 +40,8 @@ namespace ToolDev_IvyGenerator.Models
 
             WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
             LightDirection = Vector3.Zero;
+
+            _tranformHandle = new TransformHandle();
         }
 
         public Model(Model model)
@@ -65,11 +67,15 @@ namespace ToolDev_IvyGenerator.Models
 
             Mesh.CreateVertexBuffer(device);
             Mesh.CreateIndexBuffer(device);
+
+            _tranformHandle.Initialize(device);
         }
 
         public void Update(float deltaT)
         {
-            WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
+            _tranformHandle.Update(deltaT);
+            //WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
+            WorldMatrix = _tranformHandle.WorldMatrix;
         }
 
         public void Draw(Device1 device, ICamera camera)
@@ -88,6 +94,9 @@ namespace ToolDev_IvyGenerator.Models
                 Material.Technique.GetPassByIndex(i).Apply();
                 device.DrawIndexed(Mesh.IndexCount, 0, 0);
             }
+
+            if (Selected)
+                _tranformHandle.Draw(device, camera);
         }
 
         public bool Intersects(Ray ray, out Vector3 intersectionPoint)
@@ -95,12 +104,18 @@ namespace ToolDev_IvyGenerator.Models
             float distance = float.MaxValue;
             intersectionPoint = Vector3.Zero;
             bool hit = false;
+
+            if (Selected)
+                return _tranformHandle.Intersects(ray, out intersectionPoint);
+
             Matrix modelInverse = Matrix.Invert(WorldMatrix);
 
             Ray r = new Ray(ray.Position, ray.Direction);
             Vector3.Transform(r.Position, modelInverse);
             Vector3.TransformNormal(r.Direction, modelInverse);
             r.Direction.Normalize();
+
+
 
             for (int i = 0; i < Mesh.IndexCount; i += 3)
             {
@@ -132,6 +147,7 @@ namespace ToolDev_IvyGenerator.Models
 
         public void ResetCollisionFlags()
         {
+            _tranformHandle.ResetCollisionFlags();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

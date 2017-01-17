@@ -45,6 +45,7 @@ namespace ToolDev_IvyGenerator.ViewModel
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<SplineViewModel>();
             SimpleIoc.Default.Register<ModelViewModel>();
+            SimpleIoc.Default.Register<ControlPointViewModel>();
         }
 
         public MainViewModel Main

@@ -8,12 +8,9 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D10;
 using SharpDX.DXGI;
 using ToolDev_IvyGenerator.Effects;
-using ToolDev_IvyGenerator.Structs;
 using ToolDev_IvyGenerator.Utilities;
-using Buffer = SharpDX.Direct3D10.Buffer;
 using Device = SharpDX.Direct3D10.Device1;
 
-using System.Diagnostics;
 
 namespace ToolDev_IvyGenerator.Models
 {
@@ -24,18 +21,14 @@ namespace ToolDev_IvyGenerator.Models
         public Vec3 Position { get; set; }
         public Vec3 Rotation { get; set; }
         public Vec3 Scale { get; set; }
-
+        public bool Selected { get; set; }
         public IEffect Material { get; set; }
         public IEffect WireMaterial { get; set; }
-
         public Vector3 LightDirection { get; set; }
-
         private bool _refreshBuffers = false;
         public bool Render { get; set; }
-
         public MeshData<VertexPosColNorm> Mesh { get; set; }
         public MeshData<VertexPosColNorm> WireMesh { get; set; }
-
         private List<SplineControlPoint> _controlPoints = new List<SplineControlPoint>();
         public List<SplineControlPoint> ControlPoints
         {

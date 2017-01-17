@@ -9,23 +9,23 @@ namespace ToolDev_IvyGenerator.ViewModel
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public class SplineViewModel : ViewModelBase
+    public class ControlPointViewModel : ViewModelBase
     {
-        private Spline _splineData;
-        public Spline SplineData
+        private SplineControlPoint _splineCPData;
+        public SplineControlPoint SplineCPData
         {
             get
             {
-                return _splineData;
+                return _splineCPData;
             }
             set
             {
-                _splineData = value;
-                RaisePropertyChanged("SplineData");
+                _splineCPData = value;
+                RaisePropertyChanged("SplineCPData");
             }
         }
 
-        public SplineViewModel()
+        public ControlPointViewModel()
         {
         }
     }

@@ -5,10 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ToolDev_IvyGenerator.View"
              xmlns:converters="clr-namespace:ToolDev_IvyGenerator.Converters"
+             xmlns:models="clr-namespace:ToolDev_IvyGenerator.Models"
+             xmlns:views="clr-namespace:ToolDev_IvyGenerator.View"
              xmlns:viewModels="clr-namespace:ToolDev_IvyGenerator.ViewModel"
              xmlns:customcontrol="clr-namespace:ToolDev_IvyGenerator.CustomControls"
              mc:Ignorable="d" 
-             Width="250" Height="250" DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
+             Width="250" Height="350" DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
     <Grid x:Name="Root">
         <Grid.DataContext>
             <viewModels:SplineViewModel/>
@@ -21,7 +23,7 @@
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <Label Height="30" Content="Render: " FontSize="12"/>
@@ -33,8 +35,11 @@
                 <Label Grid.Row="2" Height="30" Content="Sides: " FontSize="12"/>
                 <customcontrol:NumberTextbox Grid.Row="2" Width="80" HorizontalAlignment="Right" Value="{Binding DataContext.SplineData.Sides, ElementName=Root, Mode=TwoWay}" MaxValue="100"/>
 
-                <ListBox Grid.Row="3" Margin="5" ItemsSource="{Binding SplineData.ControlPoints}"/>
-                
+                <ListBox x:Name="ControlPointListBox" Grid.Row="3" Margin="5" ItemsSource="{Binding SplineData.ControlPoints}"/>
+
+                <Viewbox Grid.Row="4" Stretch="Uniform" Margin="0,10,0,0">
+                    <views:ControlPointView  ControlPointSource="{Binding ElementName=ControlPointListBox, Path=SelectedItem}"/>
+                </Viewbox>
             </Grid>
         </GroupBox>
 
