@@ -77,10 +77,8 @@ namespace ToolDev_IvyGenerator.Models
 
             WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
 
-            _controlPoints.Add(new SplineControlPoint(0, Vector3.Zero, new Vector3(50,0,0)));
-            _controlPoints.Add(new SplineControlPoint(1, new Vector3(50, 0, 50), new Vector3(0,0,50)));
-            _controlPoints.Add(new SplineControlPoint(2, new Vector3(0, 0, 100), new Vector3(0,50,50)));
-            _controlPoints.Add(new SplineControlPoint(3, new Vector3(50, 0, 150), new Vector3(0, 50, 50)));
+            _controlPoints.Add(new SplineControlPoint(0, Vector3.Zero, new Vector3(0,0,10)));
+            _controlPoints.Add(new SplineControlPoint(1, new Vector3(0, 0, 50), new Vector3(0,0,10)));
 
             Mesh = new MeshData<VertexPosColNorm>();
             Mesh.PrimitiveTopology = PrimitiveTopology.TriangleList;

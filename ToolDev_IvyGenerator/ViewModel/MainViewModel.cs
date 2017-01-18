@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-
+using System.Windows;
 using System.Windows.Input;
 using SharpDX;
 using ToolDev_IvyGenerator.DirectX;
 using ToolDev_IvyGenerator.Interfaces;
 using ToolDev_IvyGenerator.Models;
 using ToolDev_IvyGenerator.Utilities;
+using ToolDev_IvyGenerator.View;
 
 namespace ToolDev_IvyGenerator.ViewModel
 {
@@ -203,21 +204,20 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
 
-        private RelayCommand<Dx10RenderCanvas> _createTestSplineCommand;
-        public RelayCommand<Dx10RenderCanvas> CreateTestSplineCommand
+        private RelayCommand<Window> _createSplineCommand;
+        public RelayCommand<Window> CreateSplineCommand
         {
             get
             {
-                return _createTestSplineCommand ??
+                return _createSplineCommand ??
                     (
-                        _createTestSplineCommand = new RelayCommand<Dx10RenderCanvas>
+                        _createSplineCommand = new RelayCommand<Window>
                         (
-                            (control) =>
+                            (window) =>
                             {
-                                var testSpline = new Spline();
-                                testSpline.Initialize(control.GetDevice());
-                                Models.Add(testSpline);
-                                SelectedModel = Models[Models.Count - 1];
+                                var createSplineView = new CreateSplineView();
+                                createSplineView.Owner = window;
+                                createSplineView.Show();
                             }
                         )
                     );

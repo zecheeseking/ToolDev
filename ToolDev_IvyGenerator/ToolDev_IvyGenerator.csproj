@@ -136,12 +136,16 @@
     <Compile Include="Utilities\Vec3.cs" />
     <Compile Include="Utilities\VertexData.cs" />
     <Compile Include="ViewModel\ControlPointViewModel.cs" />
+    <Compile Include="ViewModel\CreateSplineViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ModelViewModel.cs" />
     <Compile Include="ViewModel\SplineViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\ControlPointView.xaml.cs">
       <DependentUpon>ControlPointView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CreateSplineView.xaml.cs">
+      <DependentUpon>CreateSplineView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\DefaultView.xaml.cs">
       <DependentUpon>DefaultView.xaml</DependentUpon>
@@ -161,6 +165,10 @@
     </Page>
     <Page Include="View\ControlPointView.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CreateSplineView.xaml">
+      <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\DefaultView.xaml">

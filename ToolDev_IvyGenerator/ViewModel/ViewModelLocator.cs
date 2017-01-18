@@ -46,6 +46,7 @@ namespace ToolDev_IvyGenerator.ViewModel
             SimpleIoc.Default.Register<SplineViewModel>();
             SimpleIoc.Default.Register<ModelViewModel>();
             SimpleIoc.Default.Register<ControlPointViewModel>();
+            SimpleIoc.Default.Register<CreateSplineViewModel>();
         }
 
         public MainViewModel Main
@@ -69,6 +70,14 @@ namespace ToolDev_IvyGenerator.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<ModelViewModel>();
+            }
+        }
+
+        public CreateSplineViewModel CreateSpline
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<CreateSplineViewModel>();
             }
         }
 
