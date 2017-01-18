@@ -49,6 +49,18 @@ namespace ToolDev_IvyGenerator.CustomControls
             (o as NumberTextbox).Value = (double)e.NewValue;
         }
 
+        public static readonly DependencyProperty IncrementValueProperty = DependencyProperty.Register(
+        "IncrementValue", typeof(double), typeof(NumberTextbox), new FrameworkPropertyMetadata(1.0));
+
+        public double IncrementValue
+        {
+            get { return (double)GetValue(IncrementValueProperty); }
+            set
+            {
+                SetValue(IncrementValueProperty, value);
+            }
+        }
+
         private RelayCommand _upCommand;
         public RelayCommand UpCommand
         {
@@ -60,7 +72,7 @@ namespace ToolDev_IvyGenerator.CustomControls
                         (
                             () =>
                             {
-                                Value++;
+                                Value += IncrementValue;
                                 if (Value > MaxValue)
                                     Value = MaxValue;
                             }
@@ -80,7 +92,7 @@ namespace ToolDev_IvyGenerator.CustomControls
                         (
                             () =>
                             {
-                                Value--;
+                                Value -= IncrementValue;
                                 if (Value < MinValue)
                                     Value = MinValue;
                             }

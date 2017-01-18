@@ -19,14 +19,14 @@ namespace ToolDev_IvyGenerator.Models
         private Matrix _worldMatrix;
         public Matrix WorldMatrix { get {return _worldMatrix;} set{ _worldMatrix = value;}  }
         public SharpDX.Vector3 LightDirection { get; set; }
-        public Vec3 Position { get; set; }
-        public Vec3 Rotation { get; set; }
-        public Vec3 Scale { get; set; }
+        public Vec3 Position { get { return _tranformHandle.Position; } set { _tranformHandle.Position = value; } }
+        public Vec3 Rotation { get { return _tranformHandle.Rotation; } set { _tranformHandle.Rotation = value; } }
+        public Vec3 Scale { get { return _tranformHandle.Scale; } set { _tranformHandle.Scale = value; } }
         public IEffect Material { get; set; }
         public MeshData<VertexPosColNorm> Mesh { get; set; }
         public bool Selected { get; set; }
         public Color Color { get; set; }
-        private TransformHandle _tranformHandle;
+        private TransformHandle _tranformHandle = new TransformHandle();
 
         public Model()
         {
@@ -40,8 +40,6 @@ namespace ToolDev_IvyGenerator.Models
 
             WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
             LightDirection = Vector3.Zero;
-
-            _tranformHandle = new TransformHandle();
         }
 
         public Model(Model model)

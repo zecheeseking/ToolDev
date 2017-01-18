@@ -1,4 +1,5 @@
-﻿<UserControl x:Class="ToolDev_IvyGenerator.CustomControls.NumberTextbox"
+﻿<UserControl x:Name="Root"
+             x:Class="ToolDev_IvyGenerator.CustomControls.NumberTextbox"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -26,14 +27,14 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Button>
+            <Button FontFamily="Marlett" FontSize="12" Content="5">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <command:EventToCommand Command="{Binding UpCommand}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Button>
-            <Button Grid.Row="1">
+            <Button Grid.Row="1" FontFamily="Marlett" FontSize="12" Content="6">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <command:EventToCommand Command="{Binding DownCommand}"/>

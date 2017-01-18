@@ -11,8 +11,14 @@
         <Grid.DataContext>
             <viewModels:ControlPointViewModel/>
         </Grid.DataContext>
-        <GroupBox Margin="5" Height="100" Header="Control Point Parameters">
+        <GroupBox Margin="5" Header="Control Point Parameters">
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="{Binding SplineCPData.Position}"/>
+                <TextBlock Grid.Row="1" Text="{Binding SplineCPData.Tangent}"/>
                 <!--Put CP stuff in here!-->
             </Grid>
         </GroupBox>

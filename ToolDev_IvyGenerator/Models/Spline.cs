@@ -57,6 +57,15 @@ namespace ToolDev_IvyGenerator.Models
         }
 
         private float _thickness = 5.0f;
+        public float Thickness
+        {
+            get { return _thickness; }
+            set
+            {
+                _thickness = value;
+                PopulateSpline();
+            }
+        }
 
         public Spline()
         {
