@@ -10,7 +10,7 @@ using SharpDX.DXGI;
 using ToolDev_IvyGenerator.Effects;
 using ToolDev_IvyGenerator.Utilities;
 using Device = SharpDX.Direct3D10.Device1;
-
+using System.Diagnostics;
 
 namespace ToolDev_IvyGenerator.Models
 {
@@ -29,12 +29,14 @@ namespace ToolDev_IvyGenerator.Models
         public bool Render { get; set; }
         public MeshData<VertexPosColNorm> Mesh { get; set; }
         public MeshData<VertexPosColNorm> WireMesh { get; set; }
+        private bool _refreshSpline = false;
         private List<SplineControlPoint> _controlPoints = new List<SplineControlPoint>();
         public List<SplineControlPoint> ControlPoints
         {
             get { return _controlPoints; }
             set {
                 _controlPoints = value;
+                _refreshSpline = true;
             }
         }
 
@@ -44,8 +46,7 @@ namespace ToolDev_IvyGenerator.Models
             set
             {
                 _interpolationSteps = value;
-                if(_controlPoints.Count != 0)
-                    PopulateSpline();
+                _refreshSpline = true;
             }
         }
 
@@ -56,8 +57,7 @@ namespace ToolDev_IvyGenerator.Models
             set
             {
                 _sides = value;
-                if(_controlPoints.Count != 0)
-                    PopulateSpline();
+                _refreshSpline = true;
             }
         }
 
@@ -68,14 +68,13 @@ namespace ToolDev_IvyGenerator.Models
             set
             {
                 _thickness = value;
-                if(_controlPoints.Count != 0)
-                    PopulateSpline();
+                _refreshSpline = true;
             }
         }
 
         public Spline()
         {
-            Position = new Vec3 {Value = Vector3.Zero};
+            Position = new Vec3 { Value = Vector3.Zero };
             Rotation = new Vec3 { Value = Vector3.Zero };
             Scale = new Vec3 { Value = new Vector3(1.0f) };
 
@@ -88,13 +87,15 @@ namespace ToolDev_IvyGenerator.Models
             WireMesh = new MeshData<VertexPosColNorm>();
             WireMesh.PrimitiveTopology = PrimitiveTopology.LineList;
             WireMesh.VertexStride = Marshal.SizeOf(typeof(VertexPosColNorm));
-
-            _refreshBuffers = false;
         }
 
         public void Initialize(Device device)
         {
-            PopulateSpline();
+            if(_refreshSpline)
+                PopulateSpline();
+
+            foreach (SplineControlPoint cp in _controlPoints)
+                cp.TransformHandle.Initialize(device);
 
             Material = new PosNormColEffect();
             Material.Create(device);
@@ -111,7 +112,19 @@ namespace ToolDev_IvyGenerator.Models
 
         public void Update(float deltaT)
         {
-            //throw new NotImplementedException();
+            if (_refreshSpline)
+                PopulateSpline();
+
+            if (Selected)
+            {
+                foreach (SplineControlPoint cp in _controlPoints)
+                {
+                    cp.TransformHandle.Update(deltaT);
+
+                    cp.Position = cp.TransformHandle.Position;
+                    _refreshBuffers = true;
+                }
+            }
         }
 
         public void PopulateSpline()
@@ -244,6 +257,14 @@ namespace ToolDev_IvyGenerator.Models
 
         public void Draw(Device device, ICamera camera)
         {
+            if(Selected)
+            {
+                foreach(SplineControlPoint cp in _controlPoints)
+                {
+                    cp.TransformHandle.Draw(device, camera);
+                }
+            }
+
             if(_refreshBuffers)
             {
                 Mesh.CreateVertexBuffer(device);
@@ -291,6 +312,15 @@ namespace ToolDev_IvyGenerator.Models
 
         public bool Intersects(Ray ray, out Vector3 intersectionPoint)
         {
+            if(Selected)
+            {
+                foreach(SplineControlPoint cp in _controlPoints)
+                {
+                    if (cp.TransformHandle.Intersects(ray, out intersectionPoint))
+                        Debug.WriteLine("Hit a control point handle.");
+                }
+            }
+
             float distance = float.MaxValue;
             intersectionPoint = Vector3.Zero;
             bool hit = false;

@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Input;
 using SharpDX;
 using ToolDev_IvyGenerator.DirectX;
@@ -9,6 +11,8 @@ using ToolDev_IvyGenerator.Interfaces;
 using ToolDev_IvyGenerator.Models;
 using ToolDev_IvyGenerator.Utilities;
 using ToolDev_IvyGenerator.View;
+
+using System.Diagnostics;
 
 namespace ToolDev_IvyGenerator.ViewModel
 {
@@ -86,7 +90,7 @@ namespace ToolDev_IvyGenerator.ViewModel
 
                                        }
 
-                                       if(SelectedModel != newModel)
+                                       if(SelectedModel != newModel && _lockSelection != true)
                                             SelectedModel = newModel;
                                    }
                                }
@@ -109,6 +113,40 @@ namespace ToolDev_IvyGenerator.ViewModel
                                    var m = SelectedModel as IIntersect;
                                    if (m != null)
                                        m.ResetCollisionFlags();
+                               }
+                           )
+                       );
+            }
+        }
+
+        private bool _lockSelection;
+        public bool LockSelection
+        {
+            get { return _lockSelection; }
+            set
+            {
+                _lockSelection = value;
+                RaisePropertyChanged("LockSelection");
+            }
+        }
+
+        private RelayCommand<Button> _lockSelectionCommand;
+        public RelayCommand<Button> LockSelectionCommand
+        {
+            get
+            {
+                return _lockSelectionCommand ??
+                       (
+                           _lockSelectionCommand = new RelayCommand<Button>
+                           (
+                               (button) =>
+                               {
+                                   LockSelection = !LockSelection;
+
+                                   if (LockSelection)
+                                       button.Background = Brushes.CornflowerBlue;
+                                   else
+                                       button.ClearValue(Button.BackgroundProperty);
                                }
                            )
                        );

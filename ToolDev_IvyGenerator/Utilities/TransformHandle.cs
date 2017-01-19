@@ -10,7 +10,7 @@ using Device1 = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Utilities
 {
-    class TransformHandle : ISceneObject, IIntersect
+    public class TransformHandle : ISceneObject, IIntersect
     {
         public Matrix WorldMatrix { get; set; }
         private Vec3 _position;
@@ -46,15 +46,6 @@ namespace ToolDev_IvyGenerator.Utilities
 
         public void Initialize(Device1 device)
         {
-            Position = new Vec3();
-            Position.Value = Vector3.Zero;
-
-            Rotation = new Vec3();
-            Rotation.Value = Vector3.Zero;
-
-            Scale = new Vec3();
-            Scale.Value = new Vector3(1.0f);
-
             Mesh = new MeshData<VertexPosColNorm>();
 
             Mesh.PrimitiveTopology = PrimitiveTopology.LineList;
@@ -113,17 +104,17 @@ namespace ToolDev_IvyGenerator.Utilities
 
             var mouseMovement = InputManager.Instance.GetMouseDelta();
 
-            if (_xHit)
+            if (_xHit && InputManager.Instance.GetMouseButton(0))
             {
                 Debug.WriteLine("xhit");
                 Position.Value = _position.Value + (Vector3.Right * mouseMovement.X);
             }
-            else if (_yHit)
+            else if (_yHit && InputManager.Instance.GetMouseButton(0))
             {
                 Debug.WriteLine("yhit");
                 Position.Value = _position.Value + (Vector3.Up * -mouseMovement.Y);
             }
-            else if (_zHit)
+            else if (_zHit && InputManager.Instance.GetMouseButton(0))
             {
                 Debug.WriteLine("zhit");
                 Position.Value = _position.Value + (Vector3.ForwardRH * -1 * mouseMovement.X);
