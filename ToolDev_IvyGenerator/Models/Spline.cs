@@ -33,15 +33,19 @@ namespace ToolDev_IvyGenerator.Models
         public List<SplineControlPoint> ControlPoints
         {
             get { return _controlPoints; }
+            set {
+                _controlPoints = value;
+            }
         }
 
-        private int _interpolationSteps;
+        private int _interpolationSteps = 4;
         public int InterpolationSteps {
             get { return _interpolationSteps; }
             set
             {
                 _interpolationSteps = value;
-                PopulateSpline();
+                if(_controlPoints.Count != 0)
+                    PopulateSpline();
             }
         }
 
@@ -52,7 +56,8 @@ namespace ToolDev_IvyGenerator.Models
             set
             {
                 _sides = value;
-                PopulateSpline();
+                if(_controlPoints.Count != 0)
+                    PopulateSpline();
             }
         }
 
@@ -63,22 +68,18 @@ namespace ToolDev_IvyGenerator.Models
             set
             {
                 _thickness = value;
-                PopulateSpline();
+                if(_controlPoints.Count != 0)
+                    PopulateSpline();
             }
         }
 
         public Spline()
         {
-            _interpolationSteps = 4;
-
             Position = new Vec3 {Value = Vector3.Zero};
             Rotation = new Vec3 { Value = Vector3.Zero };
             Scale = new Vec3 { Value = new Vector3(1.0f) };
 
             WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
-
-            _controlPoints.Add(new SplineControlPoint(0, Vector3.Zero, new Vector3(0,0,10)));
-            _controlPoints.Add(new SplineControlPoint(1, new Vector3(0, 0, 50), new Vector3(0,0,10)));
 
             Mesh = new MeshData<VertexPosColNorm>();
             Mesh.PrimitiveTopology = PrimitiveTopology.TriangleList;
@@ -88,12 +89,13 @@ namespace ToolDev_IvyGenerator.Models
             WireMesh.PrimitiveTopology = PrimitiveTopology.LineList;
             WireMesh.VertexStride = Marshal.SizeOf(typeof(VertexPosColNorm));
 
-            PopulateSpline();
             _refreshBuffers = false;
         }
 
         public void Initialize(Device device)
         {
+            PopulateSpline();
+
             Material = new PosNormColEffect();
             Material.Create(device);
 

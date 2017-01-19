@@ -27,14 +27,14 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Button FontFamily="Marlett" FontSize="12" Content="5">
+            <Button FontFamily="Marlett" FontSize="12" Content="5" KeyboardNavigation.IsTabStop="false">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <command:EventToCommand Command="{Binding UpCommand}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Button>
-            <Button Grid.Row="1" FontFamily="Marlett" FontSize="12" Content="6">
+            <Button Grid.Row="1" FontFamily="Marlett" FontSize="12" Content="6" KeyboardNavigation.IsTabStop="false">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <command:EventToCommand Command="{Binding DownCommand}"/>

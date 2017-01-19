@@ -16,7 +16,12 @@ namespace ToolDev_IvyGenerator.CustomControls
             get { return (double)GetValue(ValueProperty); }
             set
             {
-                SetValue(ValueProperty, value);
+                if (value < MinValue)
+                    SetValue(ValueProperty, MinValue);
+                else if (value > MaxValue)
+                    SetValue(ValueProperty, MaxValue);
+                else
+                    SetValue(ValueProperty, value);
             }
         }
 
