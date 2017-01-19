@@ -24,7 +24,7 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
 
-        private int _sides;
+        private int _sides = 2;
         public int Sides
         {
             get { return _sides; }
@@ -35,7 +35,7 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
 
-        private int _interpSteps;
+        private int _interpSteps = 3;
         public int InterpSteps
         {
             get { return _interpSteps; }
@@ -46,7 +46,7 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
 
-        private double _splineThickness;
+        private double _splineThickness = 1.0;
         public double SplineThickness
         {
             get { return _splineThickness; }
@@ -68,21 +68,33 @@ namespace ToolDev_IvyGenerator.ViewModel
                         (
                             (window) =>
                             {
-                                var dataContext = window.DataContext as MainViewModel;
-                                var canvasControl = window.Owner.FindName("SceneWindow") as Dx10RenderCanvas;
-                                var spline = new Spline();
+                                if (_controlPoints.Count >= 2)
+                                {
+                                    var dataContext = window.DataContext as MainViewModel;
+                                    var canvasControl = window.Owner.FindName("SceneWindow") as Dx10RenderCanvas;
+                                    var spline = new Spline();
 
-                                spline.InterpolationSteps = InterpSteps;
-                                spline.Sides = Sides;
-                                List<SplineControlPoint> cps = new List<SplineControlPoint>();
-                                foreach (var cp in ControlPoints)
-                                    cps.Add(cp);
-                                spline.ControlPoints = cps;
+                                    spline.InterpolationSteps = InterpSteps;
+                                    spline.Sides = Sides;
+                                    spline.Thickness = (float)SplineThickness;
+                                    List<SplineControlPoint> cps = new List<SplineControlPoint>();
+                                    foreach (var cp in ControlPoints)
+                                        cps.Add(cp);
+                                    spline.ControlPoints = cps;
 
-                                spline.Initialize(canvasControl.GetDevice());
-                                dataContext.Models.Add(spline);
-                                dataContext.SelectedModel = dataContext.Models[dataContext.Models.Count - 1];
-                                window.Close();
+                                    spline.Initialize(canvasControl.GetDevice());
+                                    dataContext.Models.Add(spline);
+                                    dataContext.SelectedModel = dataContext.Models[dataContext.Models.Count - 1];
+                                    window.Close();
+                                }
+                                else
+                                {
+                                    MessageBoxResult result = MessageBox.Show(
+                                        "Cannot create a spline with less than 2 control points.\n Please add more control points.",
+                                        "Creating Spline Error!", 
+                                        MessageBoxButton.OK, 
+                                        MessageBoxImage.Exclamation);
+                                }
                             }
                         )
                     );

@@ -111,9 +111,6 @@
     </ApplicationDefinition>
     <Compile Include="Camera.cs" />
     <Compile Include="Converters\Converters.cs" />
-    <Compile Include="CustomControls\ControlPointListBox.xaml.cs">
-      <DependentUpon>ControlPointListBox.xaml</DependentUpon>
-    </Compile>
     <Compile Include="DirectX\Disposer.cs" />
     <Compile Include="DirectX\Dx10ImageSource.cs" />
     <Compile Include="DirectX\Dx10RenderCanvas.cs" />
@@ -135,15 +132,11 @@
     <Compile Include="Utilities\TransformHandle.cs" />
     <Compile Include="Utilities\Vec3.cs" />
     <Compile Include="Utilities\VertexData.cs" />
-    <Compile Include="ViewModel\ControlPointViewModel.cs" />
     <Compile Include="ViewModel\CreateSplineViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ModelViewModel.cs" />
     <Compile Include="ViewModel\SplineViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="View\ControlPointView.xaml.cs">
-      <DependentUpon>ControlPointView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\CreateSplineView.xaml.cs">
       <DependentUpon>CreateSplineView.xaml</DependentUpon>
     </Compile>
@@ -159,14 +152,6 @@
     <Compile Include="View\SplineView.xaml.cs">
       <DependentUpon>SplineView.xaml</DependentUpon>
     </Compile>
-    <Page Include="CustomControls\ControlPointListBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\ControlPointView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\CreateSplineView.xaml">
       <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>

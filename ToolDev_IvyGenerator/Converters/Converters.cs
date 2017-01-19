@@ -53,12 +53,12 @@ namespace ToolDev_IvyGenerator.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (float)(value as int?);
+            return (float)(value as double?);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (int)(value as float?);
+            return (double)(value as float?);
         }
     }
 
