@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ToolDev_IvyGenerator.DirectX;
 using ToolDev_IvyGenerator.Interfaces;
 
 namespace ToolDev_IvyGenerator.DirectX
@@ -18,7 +17,7 @@ namespace ToolDev_IvyGenerator.DirectX
 
     public partial class Dx10RenderCanvas : Image
     {
-        private Device _device;
+        //private Device _device;
         private Texture2D _renderTarget;
         private Texture2D _depthStencil;
         private RenderTargetView _renderTargetView;
@@ -41,6 +40,15 @@ namespace ToolDev_IvyGenerator.DirectX
         {
             get { return (List<ISceneObject>) GetValue(ModelProperty); }
             set { SetValue(ModelProperty, value); }
+        }
+
+        public static readonly DependencyProperty DeviceProperty = DependencyProperty.Register(
+        "Device", typeof(Device), typeof(Dx10RenderCanvas), new PropertyMetadata(default(ISceneObject[])));
+
+        public Device Device
+        {
+            get { return (Device)GetValue(DeviceProperty); }
+            set { SetValue(DeviceProperty, value); }
         }
 
         public static readonly DependencyProperty CameraProperty = DependencyProperty.Register(
@@ -79,7 +87,7 @@ namespace ToolDev_IvyGenerator.DirectX
 
         private void StartD3D()
         {
-            _device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
+            //Device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
 
             _d3DSurface = new Dx10ImageSource();
             _d3DSurface.IsFrontBufferAvailableChanged += OnIsFrontBufferAvailableChanged;
@@ -105,7 +113,7 @@ namespace ToolDev_IvyGenerator.DirectX
             Disposer.RemoveAndDispose(ref _depthStencilView);
             Disposer.RemoveAndDispose(ref _renderTarget);
             Disposer.RemoveAndDispose(ref _depthStencil);
-            Disposer.RemoveAndDispose(ref _device);
+            //Disposer.RemoveAndDispose(ref Device);
         }
 
         private void CreateAndBindTargets()
@@ -148,10 +156,10 @@ namespace ToolDev_IvyGenerator.DirectX
                 ArraySize = 1,
             };
 
-            _renderTarget = new Texture2D(_device, colordesc);
-            _depthStencil = new Texture2D(_device, depthdesc);
-            _renderTargetView = new RenderTargetView(_device, _renderTarget);
-            _depthStencilView = new DepthStencilView(_device, _depthStencil);
+            _renderTarget = new Texture2D(Device, colordesc);
+            _depthStencil = new Texture2D(Device, depthdesc);
+            _renderTargetView = new RenderTargetView(Device, _renderTarget);
+            _depthStencilView = new DepthStencilView(Device, _depthStencil);
 
             _d3DSurface.SetRenderTargetDX10(_renderTarget);
         }
@@ -201,7 +209,7 @@ namespace ToolDev_IvyGenerator.DirectX
                 CreateAndBindTargets();
             }
 
-            Device device = _device;
+            Device device = Device;
             if (device == null)
                 return;
 
@@ -223,7 +231,7 @@ namespace ToolDev_IvyGenerator.DirectX
                 if (!_sceneAttached)
                 {
                     _sceneAttached = true;
-                    _viewport.Initialize(_device, _renderTargetView, this);
+                    _viewport.Initialize(Device, _renderTargetView, this);
                 }
 
                 _viewport.Update(deltaT);
@@ -275,7 +283,7 @@ namespace ToolDev_IvyGenerator.DirectX
 
         public Device GetDevice()
         {
-            return _device;
+            return Device;
         }
     }
 }

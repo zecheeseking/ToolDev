@@ -114,6 +114,7 @@
     <Compile Include="DirectX\Disposer.cs" />
     <Compile Include="DirectX\Dx10ImageSource.cs" />
     <Compile Include="DirectX\Dx10RenderCanvas.cs" />
+    <Compile Include="DirectX\Line.cs" />
     <Compile Include="Effects\PosNormColEffect.cs" />
     <Compile Include="Effects\DebugEffect.cs" />
     <Compile Include="Effects\SceneGridEffect.cs" />

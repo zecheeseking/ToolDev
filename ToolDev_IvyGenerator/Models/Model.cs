@@ -49,7 +49,6 @@ namespace ToolDev_IvyGenerator.Models
             Position = model.Position;
             Rotation = model.Rotation;
             Scale = model.Scale;
-            WorldMatrix = model.WorldMatrix;
 
             Mesh = model.Mesh;
 

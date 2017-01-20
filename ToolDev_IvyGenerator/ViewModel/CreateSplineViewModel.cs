@@ -154,7 +154,7 @@ namespace ToolDev_IvyGenerator.ViewModel
                                 {
                                     var lastCp = _controlPoints[_controlPoints.Count - 1];
                                     ControlPoints.Add(new SplineControlPoint(_controlPoints.Count, 
-                                        lastCp.Position.Value + (Vector3.Right * 10), lastCp.Position.Value + (Vector3.Right * 10) + (Vector3.Right * 10f)));
+                                        lastCp.Position.Value + (Vector3.Right * 50), lastCp.Position.Value + (Vector3.Right * 50) + (Vector3.Right * 10f)));
                                 }
                             }
                         )

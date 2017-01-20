@@ -72,6 +72,19 @@ namespace ToolDev_IvyGenerator.Models
             }
         }
 
+        private Model _leafModel;
+        public Model LeafModel {
+            get { return _leafModel; }
+            set
+            {
+                _leafModel = value;
+            }
+        }
+
+        private List<Model> _leaves = new List<Model>();
+
+        private float _leafInterval = 0.2f;
+
         public Spline()
         {
             Position = new Vec3 { Value = Vector3.Zero };
@@ -95,7 +108,7 @@ namespace ToolDev_IvyGenerator.Models
                 PopulateSpline();
 
             foreach (SplineControlPoint cp in _controlPoints)
-                cp.TransformHandle.Initialize(device);
+                cp.Initialize(device);
 
             Material = new PosNormColEffect();
             Material.Create(device);
@@ -113,17 +126,48 @@ namespace ToolDev_IvyGenerator.Models
         public void Update(float deltaT)
         {
             if (_refreshSpline)
+            {
                 PopulateSpline();
+                PopulateLeaves();
+            }
+
+            foreach (Model leaf in _leaves)
+                leaf.Update(deltaT);
 
             if (Selected)
             {
                 foreach (SplineControlPoint cp in _controlPoints)
                 {
-                    cp.TransformHandle.Update(deltaT);
+                    cp.Update(deltaT);
 
-                    cp.Position = cp.TransformHandle.Position;
+                    cp.Position = cp.TransformHandlePosition.Position;
+                    cp.Tangent = cp.TransformHandleTangent.Position;
                     _refreshBuffers = true;
                 }
+            }
+        }
+
+        public void PopulateLeaves()
+        {
+            if (_leafModel == null)
+                return;
+
+            _leaves.Clear();
+
+            int frequency = Convert.ToInt32(1.0 / _leafInterval);
+
+            for(int i = 0; i < frequency; ++i)
+            {
+                var leaf = new Model();
+                leaf.Mesh = _leafModel.Mesh;
+                leaf.Position.Value = Vector3.Hermite(_controlPoints[0].Position.Value,
+                        _controlPoints[0].Tangent.Value,
+                        _controlPoints[0 + 1].Position.Value,
+                        _controlPoints[0 + 1].Tangent.Value, _leafInterval * i);
+
+                leaf.Material = _leafModel.Material;
+
+                _leaves.Add(leaf);
             }
         }
 
@@ -257,14 +301,6 @@ namespace ToolDev_IvyGenerator.Models
 
         public void Draw(Device device, ICamera camera)
         {
-            if(Selected)
-            {
-                foreach(SplineControlPoint cp in _controlPoints)
-                {
-                    cp.TransformHandle.Draw(device, camera);
-                }
-            }
-
             if(_refreshBuffers)
             {
                 Mesh.CreateVertexBuffer(device);
@@ -291,6 +327,9 @@ namespace ToolDev_IvyGenerator.Models
                     Material.Technique.GetPassByIndex(i).Apply();
                     device.DrawIndexed(Mesh.IndexCount, 0, 0);
                 }
+
+                foreach(Model leaf in _leaves)
+                    leaf.Draw(device, camera);
             }
             else
             {
@@ -308,6 +347,10 @@ namespace ToolDev_IvyGenerator.Models
                     device.DrawIndexed(WireMesh.IndexCount, 0, 0);
                 }
             }
+
+            if (Selected)
+                foreach (SplineControlPoint cp in _controlPoints)
+                    cp.Draw(device, camera);
         }
 
         public bool Intersects(Ray ray, out Vector3 intersectionPoint)
@@ -316,8 +359,8 @@ namespace ToolDev_IvyGenerator.Models
             {
                 foreach(SplineControlPoint cp in _controlPoints)
                 {
-                    if (cp.TransformHandle.Intersects(ray, out intersectionPoint))
-                        Debug.WriteLine("Hit a control point handle.");
+                    if (cp.Intersects(ray, out intersectionPoint))
+                        return true;
                 }
             }
 

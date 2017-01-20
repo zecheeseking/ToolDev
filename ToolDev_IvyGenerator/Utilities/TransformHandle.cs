@@ -37,6 +37,8 @@ namespace ToolDev_IvyGenerator.Utilities
         public Vector3 LightDirection { get; set; }
         public MeshData<VertexPosColNorm> Mesh { get; set; }
 
+        public float HandleLength = 10.0f;
+
         private bool _xHit = false;
         private BoundingBox _xBoundingBox;
         private bool _yHit = false;
@@ -71,9 +73,9 @@ namespace ToolDev_IvyGenerator.Utilities
             Mesh.Vertices[0] = new VertexPosColNorm(Vector3.Zero, Color.Blue, Vector3.Up);
             Mesh.Vertices[1] = new VertexPosColNorm(Vector3.Zero, Color.Red, Vector3.Up);
             Mesh.Vertices[2] = new VertexPosColNorm(Vector3.Zero, Color.Green, Vector3.Up);
-            Mesh.Vertices[3] = new VertexPosColNorm(Vector3.ForwardLH * 10.0f, Color.Blue, Vector3.Up);
-            Mesh.Vertices[4] = new VertexPosColNorm(Vector3.Right * 10.0f, Color.Red, Vector3.Up);
-            Mesh.Vertices[5] = new VertexPosColNorm(Vector3.Up * 10.0f, Color.Green, Vector3.Up);
+            Mesh.Vertices[3] = new VertexPosColNorm(Vector3.ForwardLH * HandleLength, Color.Blue, Vector3.Up);
+            Mesh.Vertices[4] = new VertexPosColNorm(Vector3.Right * HandleLength, Color.Red, Vector3.Up);
+            Mesh.Vertices[5] = new VertexPosColNorm(Vector3.Up * HandleLength, Color.Green, Vector3.Up);
             Mesh.VertexStride = Marshal.SizeOf(typeof(VertexPosColNorm));
 
             Mesh.Indices = new uint[6];
@@ -106,17 +108,14 @@ namespace ToolDev_IvyGenerator.Utilities
 
             if (_xHit && InputManager.Instance.GetMouseButton(0))
             {
-                Debug.WriteLine("xhit");
                 Position.Value = _position.Value + (Vector3.Right * mouseMovement.X);
             }
             else if (_yHit && InputManager.Instance.GetMouseButton(0))
             {
-                Debug.WriteLine("yhit");
                 Position.Value = _position.Value + (Vector3.Up * -mouseMovement.Y);
             }
             else if (_zHit && InputManager.Instance.GetMouseButton(0))
             {
-                Debug.WriteLine("zhit");
                 Position.Value = _position.Value + (Vector3.ForwardRH * -1 * mouseMovement.X);
             }
 

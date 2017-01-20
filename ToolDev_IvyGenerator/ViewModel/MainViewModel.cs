@@ -11,6 +11,8 @@ using ToolDev_IvyGenerator.Interfaces;
 using ToolDev_IvyGenerator.Models;
 using ToolDev_IvyGenerator.Utilities;
 using ToolDev_IvyGenerator.View;
+using Device = SharpDX.Direct3D10.Device1;
+using SharpDX.Direct3D10;
 
 using System.Diagnostics;
 
@@ -47,6 +49,18 @@ namespace ToolDev_IvyGenerator.ViewModel
                             }
                         )
                     );
+            }
+        }
+
+        private Device _device;
+        public Device Device
+        {
+            get
+            {
+                if(_device == null)
+                    _device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
+
+                    return _device;
             }
         }
 
