@@ -31,7 +31,6 @@ namespace ToolDev_IvyGenerator.Models
             TransformHandlePosition.Position = new Vec3();
             TransformHandlePosition.Position.Value = Position.Value;
             TransformHandlePosition.Rotation = new Vec3();
-            TransformHandlePosition.Rotation.Value = Vector3.Zero;
             TransformHandlePosition.Scale = new Vec3();
             TransformHandlePosition.Scale.Value = new Vector3(1.0f);
 
@@ -40,7 +39,6 @@ namespace ToolDev_IvyGenerator.Models
             TransformHandleTangent.Position = new Vec3();
             TransformHandleTangent.Position.Value = Position.Value + Tangent.Value;
             TransformHandleTangent.Rotation = new Vec3();
-            TransformHandleTangent.Rotation.Value = Vector3.Zero;
             TransformHandleTangent.Scale = new Vec3();
             TransformHandleTangent.Scale.Value = new Vector3(1.0f);
 

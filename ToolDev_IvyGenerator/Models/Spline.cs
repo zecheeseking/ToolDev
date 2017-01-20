@@ -85,6 +85,17 @@ namespace ToolDev_IvyGenerator.Models
 
         private float _leafInterval = 0.2f;
 
+        private bool _symmetrical = true;
+        public bool Symmetrical
+        {
+            get { return _symmetrical; }
+            set
+            {
+                _symmetrical = value;
+                _refreshSpline = true;
+            }
+        }
+
         public Spline()
         {
             Position = new Vec3 { Value = Vector3.Zero };
@@ -156,18 +167,48 @@ namespace ToolDev_IvyGenerator.Models
 
             int frequency = Convert.ToInt32(1.0 / _leafInterval);
 
-            for(int i = 0; i < frequency; ++i)
+            if(_symmetrical)
             {
-                var leaf = new Model();
-                leaf.Mesh = _leafModel.Mesh;
-                leaf.Position.Value = Vector3.Hermite(_controlPoints[0].Position.Value,
-                        _controlPoints[0].Tangent.Value,
-                        _controlPoints[0 + 1].Position.Value,
-                        _controlPoints[0 + 1].Tangent.Value, _leafInterval * i);
+                for (int i = 0; i < frequency; ++i)
+                {
+                    var leaf1 = new Model();
+                    var leaf2 = new Model();
+                    leaf1.Mesh = _leafModel.Mesh;
+                    leaf2.Mesh = _leafModel.Mesh;
+                    leaf1.Position.Value = Vector3.Hermite(_controlPoints[0].Position.Value,
+                            _controlPoints[0].Tangent.Value,
+                            _controlPoints[0 + 1].Position.Value,
+                            _controlPoints[0 + 1].Tangent.Value, _leafInterval * i) + (Vector3.ForwardRH * Thickness);
+                    leaf2.Position.Value = Vector3.Hermite(_controlPoints[0].Position.Value,
+                            _controlPoints[0].Tangent.Value,
+                            _controlPoints[0 + 1].Position.Value,
+                            _controlPoints[0 + 1].Tangent.Value, _leafInterval * i) + (Vector3.BackwardRH * Thickness);
 
-                leaf.Material = _leafModel.Material;
+                    
 
-                _leaves.Add(leaf);
+                    leaf1.Material = _leafModel.Material;
+                    leaf2.Material = _leafModel.Material;
+
+                    _leaves.Add(leaf1);
+                    _leaves.Add(leaf2);
+                }
+            }
+            else
+            {
+                float dir = 1;
+                for (int i = 0; i < frequency; ++i)
+                {
+                    var leaf = new Model();
+                    leaf.Mesh = _leafModel.Mesh;
+                    leaf.Position.Value = Vector3.Hermite(_controlPoints[0].Position.Value,
+                            _controlPoints[0].Tangent.Value,
+                            _controlPoints[0 + 1].Position.Value,
+                            _controlPoints[0 + 1].Tangent.Value, _leafInterval * i) + (Vector3.ForwardRH * dir * Thickness);
+
+                    leaf.Material = _leafModel.Material;
+                    dir = dir * -1;
+                    _leaves.Add(leaf);
+                }
             }
         }
 
@@ -231,9 +272,11 @@ namespace ToolDev_IvyGenerator.Models
             {
                 Vector3 forward = Vector3.Zero;
                 if (i == WireMesh.Positions.Length - 1)
-                    forward = WireMesh.Positions[i] - WireMesh.Positions[i - 1];
-                else
+                    forward = (WireMesh.Positions[i] - WireMesh.Positions[i - 1]);
+                else if(i == 0)
                     forward = WireMesh.Positions[i + 1] - WireMesh.Positions[i];
+                else
+                    forward = (WireMesh.Positions[i + 1] - WireMesh.Positions[i]) + (WireMesh.Positions[i] - WireMesh.Positions[i - 1]);
 
                 forward.Normalize();
 
