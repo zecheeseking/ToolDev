@@ -9,6 +9,7 @@ using SharpDX.Direct3D10;
 using SharpDX.DXGI;
 using ToolDev_IvyGenerator.Effects;
 using ToolDev_IvyGenerator.Utilities;
+using ToolDev_IvyGenerator.DirectX;
 using Device = SharpDX.Direct3D10.Device1;
 using System.Diagnostics;
 
@@ -92,6 +93,9 @@ namespace ToolDev_IvyGenerator.Models
             Scale = new Vec3 { Value = new Vector3(1.0f) };
 
             WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
+
+            _controlPoints.Add(new SplineControlPoint(0, Vector3.Zero, new Vector3(10,0,0)));
+            _controlPoints.Add(new SplineControlPoint(1, new Vector3(50,0,0), new Vector3(50,0,0) + new Vector3(10,0,0)));
 
             Mesh = new MeshData<VertexPosColNorm>();
             Mesh.PrimitiveTopology = PrimitiveTopology.TriangleList;

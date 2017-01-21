@@ -75,12 +75,9 @@ namespace ToolDev_IvyGenerator.ViewModel
                                 if (CreatedIvy.Stem.ControlPoints.Count >= 2)
                                 {
                                     var dataContext = window.DataContext as MainViewModel;
-                                    CreatedIvy.Stem = new Spline();
-
                                     CreatedIvy.Stem.InterpolationSteps = InterpSteps;
                                     CreatedIvy.Stem.Sides = Sides;
                                     CreatedIvy.Stem.Thickness = (float)SplineThickness;
-                                    List<SplineControlPoint> cps = new List<SplineControlPoint>();
 
                                     CreatedIvy.Initialize(dataContext.Device);
                                     dataContext.Models.Add(CreatedIvy);

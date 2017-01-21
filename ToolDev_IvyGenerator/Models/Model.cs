@@ -3,11 +3,11 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using ToolDev_IvyGenerator.Interfaces;
 using SharpDX;
-using SharpDX.Direct3D11;
+using SharpDX.Direct3D10;
 using SharpDX.DXGI;
 using ToolDev_IvyGenerator.Annotations;
 using ToolDev_IvyGenerator.Effects;
-using Device = SharpDX.Direct3D11.Device;
+using Device = SharpDX.Direct3D10.Device1;
 using ToolDev_IvyGenerator.Utilities;
 using ToolDev_IvyGenerator.DirectX;
 
@@ -76,25 +76,25 @@ namespace ToolDev_IvyGenerator.Models
             WorldMatrix = _tranformHandle.WorldMatrix;
         }
 
-        public void Draw(AppContext appContext)
+        public void Draw(Device device, ICamera camera)
         {
             Material.SetWorld(WorldMatrix);
-            Material.SetWorldViewProjection(WorldMatrix * appContext.camera.ViewMatrix * appContext.camera.ProjectionMatrix);
+            Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
             Material.SetLightDirection(LightDirection);
 
-            appContext._deviceContext.InputAssembler.InputLayout = Material.InputLayout;
-            appContext._deviceContext.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;
-            appContext._deviceContext.InputAssembler.SetIndexBuffer(Mesh.IndexBuffer, Format.R32_UInt, 0);
-            appContext._deviceContext.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(Mesh.VertexBuffer, Mesh.VertexStride, 0));
+            device.InputAssembler.InputLayout = Material.InputLayout;
+            device.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;
+            device.InputAssembler.SetIndexBuffer(Mesh.IndexBuffer, Format.R32_UInt, 0);
+            device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(Mesh.VertexBuffer, Mesh.VertexStride, 0));
             
             for (int i = 0; i < Material.Technique.Description.PassCount; ++i)
             {
-                Material.Technique.GetPassByIndex(i).Apply(appContext._deviceContext);
-                appContext._deviceContext.DrawIndexed(Mesh.IndexCount, 0, 0);
+                Material.Technique.GetPassByIndex(i).Apply();
+                device.DrawIndexed(Mesh.IndexCount, 0, 0);
             }
 
             if (Selected)
-                _tranformHandle.Draw(appContext);
+                _tranformHandle.Draw(device, camera);
         }
 
         public bool Intersects(Ray ray, out Vector3 intersectionPoint)

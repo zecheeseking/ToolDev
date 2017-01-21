@@ -2,9 +2,9 @@
 using ToolDev_IvyGenerator.Interfaces;
 using SharpDX;
 using SharpDX.D3DCompiler;
-using SharpDX.Direct3D11;
+using SharpDX.Direct3D10;
 using ToolDev_IvyGenerator.Utilities;
-using Device = SharpDX.Direct3D11.Device;
+using Device = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Effects
 {

@@ -5,6 +5,7 @@ using SharpDX.Direct3D11;
 using ToolDev_IvyGenerator.Interfaces;
 using ToolDev_IvyGenerator.Utilities;
 using ToolDev_IvyGenerator.DirectX;
+using Device = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Models
 {
@@ -47,9 +48,9 @@ namespace ToolDev_IvyGenerator.Models
             WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
         }
 
-        public void Draw(AppContext appContext)
+        public void Draw(Device device, ICamera camera)
         {
-            _stem.Draw(appContext);
+            _stem.Draw(device, camera);
         }
 
         public bool Intersects(Ray ray, out Vector3 intersectionPoint)

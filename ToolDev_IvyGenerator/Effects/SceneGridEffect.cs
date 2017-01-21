@@ -2,9 +2,9 @@
 using ToolDev_IvyGenerator.Interfaces;
 using SharpDX;
 using SharpDX.D3DCompiler;
-using SharpDX.Direct3D11;
+using SharpDX.Direct3D10;
 using ToolDev_IvyGenerator.Utilities;
-using Device = SharpDX.Direct3D11.Device;
+using Device = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Effects
 {
@@ -16,7 +16,7 @@ namespace ToolDev_IvyGenerator.Effects
         public void Create(Device device)
         {
             var shaderSource = File.ReadAllText("Resources\\SceneGrid.fx");
-            var shaderByteCode = ShaderBytecode.Compile(shaderSource, "fx_5_0", ShaderFlags.None, EffectFlags.None);
+            var shaderByteCode = ShaderBytecode.Compile(shaderSource, "fx_4_0", ShaderFlags.None, EffectFlags.None);
             Effect = new Effect(device, shaderByteCode.Bytecode);
             Technique = Effect.GetTechniqueByIndex(0);
 

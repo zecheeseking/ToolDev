@@ -11,7 +11,7 @@ using ToolDev_IvyGenerator.Interfaces;
 using ToolDev_IvyGenerator.Models;
 using ToolDev_IvyGenerator.Utilities;
 using ToolDev_IvyGenerator.View;
-using Device = SharpDX.Direct3D11.Device;
+using Device = SharpDX.Direct3D10.Device1;
 using SharpDX.Direct3D10;
 
 using System.Diagnostics;
@@ -20,16 +20,16 @@ namespace ToolDev_IvyGenerator.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        private RelayCommand<Dx10RenderCanvas> _loadModelCommand;
-        public RelayCommand<Dx10RenderCanvas> LoadModelCommand
+        private RelayCommand _loadModelCommand;
+        public RelayCommand LoadModelCommand
         {
             get
             {
                 return _loadModelCommand ??
                     (
-                        _loadModelCommand = new RelayCommand<Dx10RenderCanvas>
+                        _loadModelCommand = new RelayCommand
                         (
-                            (control) =>
+                            () =>
                             {
                                 var dlg = new Microsoft.Win32.OpenFileDialog();
                                 dlg.DefaultExt = ".obj";
@@ -41,8 +41,8 @@ namespace ToolDev_IvyGenerator.ViewModel
                                 if ((bool) result)
                                 {
                                     var obj = new Model();
-                                    obj.Mesh = ModelLoader<VertexPosColNorm>.LoadModel(dlg.FileName, control.GetDevice());
-                                    obj.Initialize(control.GetDevice());
+                                    obj.Mesh = ModelLoader<VertexPosColNorm>.LoadModel(dlg.FileName, Device);
+                                    obj.Initialize(Device);
                                     Models.Add(obj);
                                     SelectedModel = Models[Models.Count - 1];
                                 }
@@ -57,12 +57,10 @@ namespace ToolDev_IvyGenerator.ViewModel
         {
             get
             {
-                if(_device == null)
-                    _device = new Device(SharpDX.Direct3D.DriverType.Hardware, 
-                        SharpDX.Direct3D11.DeviceCreationFlags.BgraSupport, 
-                        SharpDX.Direct3D.FeatureLevel.Level_11_0);
+                if (_device == null)
+                    _device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_1);
 
-                    return _device;
+                return _device;
             }
         }
 

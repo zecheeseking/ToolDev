@@ -9,15 +9,14 @@ namespace ToolDev_IvyGenerator.DirectX
     using System.Windows;
     using System.Windows.Media;
     using SharpDX;
-    using SharpDX.Direct3D11;
+    using SharpDX.Direct3D10;
     using SharpDX.DXGI;
-    using Device = SharpDX.Direct3D11.Device;
+    using Device = SharpDX.Direct3D10.Device1;
     using Image = System.Windows.Controls.Image;
-
 
     public partial class Dx10RenderCanvas : Image
     {
-        //private Device _device;
+        private Device _device;
         private Texture2D _renderTarget;
         private Texture2D _depthStencil;
         private RenderTargetView _renderTargetView;
@@ -209,12 +208,9 @@ namespace ToolDev_IvyGenerator.DirectX
                 CreateAndBindTargets();
             }
 
-            AppContext appContext = new AppContext();
-            appContext._device = Device;
-            appContext._deviceContext = new DeviceContext(appContext._device);
-            appContext.camera = Camera;
+            _device = Device;
 
-            if (appContext._deviceContext == null)
+            if (_device == null)
                 return;
 
             Texture2D renderTarget = _renderTarget;
@@ -224,26 +220,26 @@ namespace ToolDev_IvyGenerator.DirectX
             int targetWidth = renderTarget.Description.Width;
             int targetHeight = renderTarget.Description.Height;
 
-            appContext._deviceContext.OutputMerger.SetTargets(_depthStencilView, _renderTargetView);
+            _device.OutputMerger.SetTargets(_depthStencilView, _renderTargetView);
             //appContext._deviceContext.Rasterizer.SetViewports(new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f));
-            appContext._deviceContext.Rasterizer.SetViewports(new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f));
+            _device.Rasterizer.SetViewports(new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f));
 
-            appContext._deviceContext.ClearRenderTargetView(_renderTargetView, ClearColor);
-            appContext._deviceContext.ClearDepthStencilView(_depthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
+            _device.ClearRenderTargetView(_renderTargetView, ClearColor);
+            _device.ClearDepthStencilView(_depthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
 
             if (_viewport != null)
             {
                 if (!_sceneAttached)
                 {
                     _sceneAttached = true;
-                    _viewport.Initialize(appContext, _renderTargetView, this);
+                    _viewport.Initialize(_device, _renderTargetView, this);
                 }
 
                 _viewport.Update(deltaT);
                 _viewport.Render(deltaT);
             }
 
-            appContext._deviceContext.Flush();
+            _device.Flush();
         }
 
         private void OnIsFrontBufferAvailableChanged(object sender, DependencyPropertyChangedEventArgs e)

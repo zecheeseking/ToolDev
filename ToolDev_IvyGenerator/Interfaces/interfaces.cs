@@ -1,8 +1,8 @@
 ﻿using SharpDX;
 using SharpDX.Direct3D;
-using SharpDX.Direct3D11;
+using SharpDX.Direct3D10;
 using ToolDev_IvyGenerator.DirectX;
-using Device = SharpDX.Direct3D11.Device;
+using Device = SharpDX.Direct3D10.Device1;
 using ToolDev_IvyGenerator.Utilities;
 
 namespace ToolDev_IvyGenerator.Interfaces
@@ -25,7 +25,7 @@ namespace ToolDev_IvyGenerator.Interfaces
     {
         void Initialize(Device device);
         void Update(float deltaT);
-        void Draw(AppContext appContext);
+        void Draw(Device device, ICamera camera);
     }
 
     public interface ITransform

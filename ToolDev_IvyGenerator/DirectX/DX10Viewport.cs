@@ -1,14 +1,14 @@
 ﻿using ToolDev_IvyGenerator.Interfaces;
 using SharpDX;
-using SharpDX.Direct3D11;
+using SharpDX.Direct3D10;
 using ToolDev_IvyGenerator.Utilities;
+using Device = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.DirectX
 {
     class DX10Viewport : IDx10Viewport
     {
-        private AppContext _appContext;
-
+        private Device _device;
         private RenderTargetView _renderTargetView;
         private Dx10RenderCanvas _renderControl;
 
@@ -19,9 +19,9 @@ namespace ToolDev_IvyGenerator.DirectX
         private Vector3 _lightDirection;
 
 
-        public void Initialize(AppContext appContext, RenderTargetView renderTarget, Dx10RenderCanvas canvasControl)
+        public void Initialize(Device device, RenderTargetView renderTarget, Dx10RenderCanvas canvasControl)
         {
-            _appContext = appContext;
+            _device = device;
             _renderTargetView = renderTarget;
             _renderControl = canvasControl;
 
@@ -35,7 +35,7 @@ namespace ToolDev_IvyGenerator.DirectX
             _worldMatrix *= Matrix.RotationY(0.0f);
 
             _grid = new SceneGrid();
-            _grid.Initialize(_appContext._device);
+            _grid.Initialize(_device);
         }
 
         public void Deinitialize()
@@ -60,17 +60,17 @@ namespace ToolDev_IvyGenerator.DirectX
 
         public void Render(float deltaT)
         {
-            if (_appContext._device == null)
+            if (_device == null)
                 return;
 
-            _grid.Draw(_appContext);
+            _grid.Draw(_device, _renderControl.Camera);
 
             if (_renderControl.Models.Count != 0)
             {
                 foreach (ISceneObject sObj in _renderControl.Models)
                 {
                     //sObj.LightDirection = _lightDirection;
-                    sObj.Draw(_appContext);
+                    sObj.Draw(_device, _renderControl.Camera);
                 }
             }
         }

@@ -1,5 +1,5 @@
 ﻿using SharpDX;
-using SharpDX.Direct3D11;
+using SharpDX.Direct3D10;
 using SharpDX.DXGI;
 
 namespace ToolDev_IvyGenerator.Utilities

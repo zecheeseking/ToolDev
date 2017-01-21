@@ -1,12 +1,12 @@
 ﻿using SharpDX;
 using SharpDX.Direct3D;
-using SharpDX.Direct3D11;
+using SharpDX.Direct3D10;
 using SharpDX.DXGI;
 using System.Runtime.InteropServices;
 using ToolDev_IvyGenerator.Effects;
 using ToolDev_IvyGenerator.Interfaces;
 using ToolDev_IvyGenerator.Utilities;
-using Device = SharpDX.Direct3D11.Device;
+using Device = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.DirectX
 {
@@ -77,7 +77,7 @@ namespace ToolDev_IvyGenerator.DirectX
         {
         }
 
-        public void Draw(AppContext appContext)
+        public void Draw(Device device, ICamera camera)
         {
             if(_updateBuffers)
             {
@@ -89,17 +89,17 @@ namespace ToolDev_IvyGenerator.DirectX
                 _updateBuffers = false;
             }
 
-            Material.SetWorldViewProjection(WorldMatrix * appContext.camera.ViewMatrix * appContext.camera.ProjectionMatrix);
+            Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
 
-            appContext._deviceContext.InputAssembler.InputLayout = Material.InputLayout;
-            appContext._deviceContext.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;
-            appContext._deviceContext.InputAssembler.SetIndexBuffer(Mesh.IndexBuffer, Format.R32_UInt, 0);
-            appContext._deviceContext.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(Mesh.VertexBuffer, Mesh.VertexStride, 0));
+            device.InputAssembler.InputLayout = Material.InputLayout;
+            device.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;
+            device.InputAssembler.SetIndexBuffer(Mesh.IndexBuffer, Format.R32_UInt, 0);
+            device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(Mesh.VertexBuffer, Mesh.VertexStride, 0));
 
             for (int i = 0; i < Material.Technique.Description.PassCount; ++i)
             {
-                Material.Technique.GetPassByIndex(i).Apply(appContext._deviceContext);
-                appContext._deviceContext.DrawIndexed(Mesh.IndexCount, 0, 0);
+                Material.Technique.GetPassByIndex(i).Apply();
+                device.DrawIndexed(Mesh.IndexCount, 0, 0);
             }
         }
     }
