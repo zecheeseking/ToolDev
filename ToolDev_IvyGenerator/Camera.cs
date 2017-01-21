@@ -1,5 +1,6 @@
 ﻿using ToolDev_IvyGenerator.Interfaces;
 using SharpDX;
+using ToolDev_IvyGenerator.DirectX;
 using ToolDev_IvyGenerator.Utilities;
 using Key = SharpDX.DirectInput.Key;
 

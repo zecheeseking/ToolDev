@@ -40,7 +40,7 @@ namespace ToolDev_IvyGenerator.DirectX
             }
         }
 
-        public void SetRenderTargetDX10(SharpDX.Direct3D10.Texture2D renderTarget)
+        public void SetRenderTargetDX10(SharpDX.Direct3D11.Texture2D renderTarget)
         {
             if (RenderTarget != null)
             {
@@ -103,7 +103,7 @@ namespace ToolDev_IvyGenerator.DirectX
             Disposer.RemoveAndDispose(ref Dx10ImageSource.D3DContext);
         }
 
-        private IntPtr GetSharedHandle(SharpDX.Direct3D10.Texture2D Texture)
+        private IntPtr GetSharedHandle(SharpDX.Direct3D11.Texture2D Texture)
         {
             SharpDX.DXGI.Resource resource = Texture.QueryInterface<SharpDX.DXGI.Resource>();
             IntPtr result = resource.SharedHandle;
@@ -111,7 +111,7 @@ namespace ToolDev_IvyGenerator.DirectX
             return result;
         }
 
-        private static Format TranslateFormat(SharpDX.Direct3D10.Texture2D Texture)
+        private static Format TranslateFormat(SharpDX.Direct3D11.Texture2D Texture)
         {
             switch (Texture.Description.Format)
             {
@@ -129,9 +129,9 @@ namespace ToolDev_IvyGenerator.DirectX
             }
         }
 
-        private static bool IsShareable(SharpDX.Direct3D10.Texture2D Texture)
+        private static bool IsShareable(SharpDX.Direct3D11.Texture2D Texture)
         {
-            return (Texture.Description.OptionFlags & SharpDX.Direct3D10.ResourceOptionFlags.Shared) != 0;
+            return (Texture.Description.OptionFlags & SharpDX.Direct3D11.ResourceOptionFlags.Shared) != 0;
         }
     }
 }

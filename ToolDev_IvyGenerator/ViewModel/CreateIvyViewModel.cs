@@ -2,24 +2,28 @@
 using GalaSoft.MvvmLight.CommandWpf;
 using System.Windows;
 using System.Windows.Controls;
-using ToolDev_IvyGenerator.DirectX;
 using ToolDev_IvyGenerator.Models;
-using System.Diagnostics;
 using System.Collections.Generic;
 using SharpDX;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+
+using System.Diagnostics;
+using System.Windows.Data;
 
 namespace ToolDev_IvyGenerator.ViewModel
 {
-    public class CreateSplineViewModel : ViewModelBase
+    public class CreateIvyViewModel : ViewModelBase
     {
-        private ObservableCollection<SplineControlPoint> _controlPoints = new ObservableCollection<SplineControlPoint>();
-        public ObservableCollection<SplineControlPoint> ControlPoints
+        public List<SplineControlPoint> ControlPoints
         {
-            get { return _controlPoints; }
+            get
+            {
+                return CreatedIvy.Stem.ControlPoints;
+            }
             set
             {
-                _controlPoints = value;
+                CreatedIvy.Stem.ControlPoints = value;
                 RaisePropertyChanged("ControlPoints");
             }
         }
@@ -57,33 +61,29 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
 
-        private RelayCommand<Window> _createSplineCommand;
-        public RelayCommand<Window> CreateSplineCommand
+        private RelayCommand<Window> _createIvyCommand;
+        public RelayCommand<Window> CreateIvyCommand
         {
             get
             {
-                return _createSplineCommand ??
+                return _createIvyCommand ??
                     (
-                        _createSplineCommand = new RelayCommand<Window>
+                        _createIvyCommand = new RelayCommand<Window>
                         (
                             (window) =>
                             {
-                                if (_controlPoints.Count >= 2)
+                                if (CreatedIvy.Stem.ControlPoints.Count >= 2)
                                 {
                                     var dataContext = window.DataContext as MainViewModel;
-                                    var canvasControl = window.Owner.FindName("SceneWindow") as Dx10RenderCanvas;
-                                    var spline = new Spline();
+                                    CreatedIvy.Stem = new Spline();
 
-                                    spline.InterpolationSteps = InterpSteps;
-                                    spline.Sides = Sides;
-                                    spline.Thickness = (float)SplineThickness;
+                                    CreatedIvy.Stem.InterpolationSteps = InterpSteps;
+                                    CreatedIvy.Stem.Sides = Sides;
+                                    CreatedIvy.Stem.Thickness = (float)SplineThickness;
                                     List<SplineControlPoint> cps = new List<SplineControlPoint>();
-                                    foreach (var cp in ControlPoints)
-                                        cps.Add(cp);
-                                    spline.ControlPoints = cps;
 
-                                    spline.Initialize(canvasControl.GetDevice());
-                                    dataContext.Models.Add(spline);
+                                    CreatedIvy.Initialize(dataContext.Device);
+                                    dataContext.Models.Add(CreatedIvy);
                                     dataContext.SelectedModel = dataContext.Models[dataContext.Models.Count - 1];
                                     window.Close();
                                 }
@@ -137,51 +137,76 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
 
-        private RelayCommand _addCPCommand;
-        public RelayCommand AddCPCommand
+        private RelayCommand<ListBox> _addCPCommand;
+        public RelayCommand<ListBox> AddCPCommand
         {
             get
             {
                 return _addCPCommand ??
                     (
-                        _addCPCommand = new RelayCommand
+                        _addCPCommand = new RelayCommand<ListBox>
                         (
-                            () =>
+                            (listbox) =>
                             {
-                                if (ControlPoints.Count == 0)
-                                    ControlPoints.Add(new SplineControlPoint(_controlPoints.Count, Vector3.Zero, Vector3.Right * 10f));
+                                if (CreatedIvy.Stem.ControlPoints.Count == 0)
+                                    CreatedIvy.Stem.ControlPoints.Add(
+                                        new SplineControlPoint(CreatedIvy.Stem.ControlPoints.Count, 
+                                        Vector3.Zero, Vector3.Right * 10f));
                                 else
                                 {
-                                    var lastCp = _controlPoints[_controlPoints.Count - 1];
-                                    ControlPoints.Add(new SplineControlPoint(_controlPoints.Count, 
-                                        lastCp.Position.Value + (Vector3.Right * 50), lastCp.Position.Value + (Vector3.Right * 50) + (Vector3.Right * 10f)));
+                                    var lastCp = CreatedIvy.Stem.ControlPoints[CreatedIvy.Stem.ControlPoints.Count - 1];
+                                    CreatedIvy.Stem.ControlPoints.Add(new SplineControlPoint(CreatedIvy.Stem.ControlPoints.Count, 
+                                        lastCp.Position.Value + (Vector3.Right * 50), 
+                                        lastCp.Position.Value + (Vector3.Right * 50) + (Vector3.Right * 10f)));
                                 }
+
+                                listbox.Items.Refresh();
                             }
                         )
                     );
             }
         }
 
-        private RelayCommand _deleteCPCommand;
-        public RelayCommand DeleteCPCommand
+        private RelayCommand<ListBox> _deleteCPCommand;
+        public RelayCommand<ListBox> DeleteCPCommand
         {
             get
             {
                 return _deleteCPCommand ??
                     (
-                        _deleteCPCommand = new RelayCommand
+                        _deleteCPCommand = new RelayCommand<ListBox>
                         (
-                            () =>
+                            (listbox) =>
                             {
-                                if(ControlPoints.Count > 0)
-                                    ControlPoints.RemoveAt(ControlPoints.Count - 1);
+                                if(CreatedIvy.Stem.ControlPoints.Count > 0)
+                                    CreatedIvy.Stem.ControlPoints.RemoveAt(CreatedIvy.Stem.ControlPoints.Count - 1);
+
+                                listbox.Items.Refresh();
                             }
                         )
                     );
             }
         }
 
-        public CreateSplineViewModel()
+        private Ivy _createdIvy;
+        public Ivy CreatedIvy
+        {
+            get
+            {
+                if (_createdIvy == null)
+                    _createdIvy = new Ivy();
+
+                return _createdIvy;
+            }
+
+            set
+            {
+                _createdIvy = value;
+                RaisePropertyChanged("CreatedIvy");
+            }
+        }
+
+        public CreateIvyViewModel()
         {
         }
     }

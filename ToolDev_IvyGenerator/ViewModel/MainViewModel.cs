@@ -11,7 +11,7 @@ using ToolDev_IvyGenerator.Interfaces;
 using ToolDev_IvyGenerator.Models;
 using ToolDev_IvyGenerator.Utilities;
 using ToolDev_IvyGenerator.View;
-using Device = SharpDX.Direct3D10.Device1;
+using Device = SharpDX.Direct3D11.Device;
 using SharpDX.Direct3D10;
 
 using System.Diagnostics;
@@ -58,7 +58,9 @@ namespace ToolDev_IvyGenerator.ViewModel
             get
             {
                 if(_device == null)
-                    _device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
+                    _device = new Device(SharpDX.Direct3D.DriverType.Hardware, 
+                        SharpDX.Direct3D11.DeviceCreationFlags.BgraSupport, 
+                        SharpDX.Direct3D.FeatureLevel.Level_11_0);
 
                     return _device;
             }
@@ -92,10 +94,6 @@ namespace ToolDev_IvyGenerator.ViewModel
                                            if (model.Intersects(ray, out hitPoint))
                                            {
                                                newModel = model as ISceneObject;
-                                               //var newModel = new Model(model);
-                                               //newModel.Position = new Vector3(hitPoint.X, hitPoint.Y, hitPoint.Z);
-                                               //newModel.Scale = new Vector3(0.3f, 0.3f, 0.3f);
-                                               //toAdd.Add(newModel);
                                            }
                                            else
                                            {
@@ -267,9 +265,9 @@ namespace ToolDev_IvyGenerator.ViewModel
                         (
                             (window) =>
                             {
-                                var createSplineView = new CreateSplineView();
-                                createSplineView.Owner = window;
-                                createSplineView.Show();
+                                var createIvyView = new CreateIvyView();
+                                createIvyView.Owner = window;
+                                createIvyView.Show();
                             }
                         )
                     );
@@ -278,14 +276,7 @@ namespace ToolDev_IvyGenerator.ViewModel
 
         public MainViewModel()
         {
-            ////if (IsInDesignMode)
-            ////{
-            ////    // Code runs in Blend --> create design time data.
-            ////}
-            ////else
-            ////{
-            ////    // Code runs "for real"
-            ////}
+
         }
     }
 }

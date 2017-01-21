@@ -1,5 +1,5 @@
 ﻿<UserControl x:Name="SplineViewInstance"
-             x:Class="ToolDev_IvyGenerator.View.SplineView"
+             x:Class="ToolDev_IvyGenerator.View.IvyParametersView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -23,7 +23,7 @@
 
     <Grid x:Name="Root">
         <Grid.DataContext>
-            <viewModels:SplineViewModel/>
+            <viewModels:IvyParametersViewModel/>
         </Grid.DataContext>
 
         <GroupBox Margin="5" Header="Ivy Parameters">
@@ -40,19 +40,19 @@
                 </Grid.RowDefinitions>
 
                 <Label Height="30" Content="Render: " FontSize="12"/>
-                <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" IsChecked="{Binding SplineData.Render}"/>
+                <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" IsChecked="{Binding IvyData.Stem.Render}"/>
 
                 <Label Grid.Row="1" Height="30" Content="Interpolation Steps: " FontSize="12"/>
                 <customcontrol:NumberTextbox Grid.Row="1" Width="50" HorizontalAlignment="Right" Margin="0,0,5,0"
-                                             Value="{Binding DataContext.SplineData.InterpolationSteps, ElementName=Root, Mode=TwoWay, Converter={StaticResource intToDoubleConverter} }" MaxValue="100.00"/>
+                                             Value="{Binding DataContext.IvyData.Stem.InterpolationSteps, ElementName=Root, Mode=TwoWay, Converter={StaticResource intToDoubleConverter} }" MaxValue="100.00"/>
 
                 <Label Grid.Row="2" Height="30" Content="Sides: " FontSize="12"/>
                 <customcontrol:NumberTextbox Grid.Row="2" Width="50" HorizontalAlignment="Right" Margin="0,0,5,0"
-                                             Value="{Binding DataContext.SplineData.Sides, ElementName=Root, Mode=TwoWay, Converter={StaticResource intToDoubleConverter}}" MaxValue="100.00"/>
+                                             Value="{Binding DataContext.IvyData.Stem.Sides, ElementName=Root, Mode=TwoWay, Converter={StaticResource intToDoubleConverter}}" MaxValue="100.00"/>
 
                 <Label Grid.Row="3" Height="30" Content="Thickness: " FontSize="12"/>
                 <customcontrol:NumberTextbox Grid.Row="3" Width="50" HorizontalAlignment="Right" Margin="0,0,5,0"
-                                             Value="{Binding DataContext.SplineData.Thickness, ElementName=Root, Mode=TwoWay}" MinValue="0.1" IncrementValue="0.1" MaxValue="100.00"/>
+                                             Value="{Binding DataContext.IvyData.Stem.Thickness, ElementName=Root, Mode=TwoWay}" MinValue="0.1" IncrementValue="0.1" MaxValue="100.00"/>
                 <Grid Grid.Row="4">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="28"/>
@@ -71,7 +71,7 @@
                         <Label Grid.Column="2" Content="Tangent"/>
                     </Grid>
                     
-                    <ListBox x:Name="ControlPointListBox" Grid.Row="2" Margin="5,0" ItemsSource="{Binding SplineData.ControlPoints}"
+                    <ListBox x:Name="ControlPointListBox" Grid.Row="2" Margin="5,0" ItemsSource="{Binding IvyData.Stem.ControlPoints}"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -132,7 +132,7 @@
                             </Grid.ColumnDefinitions>
 
                             <ContentControl IsEnabled="{Binding SelectedItem, ElementName=ControlPointListBox, Converter={StaticResource itemToBoolConverter}}" Grid.Column="1" KeyboardNavigation.IsTabStop="false">
-                                <customcontrol:NumberTextbox Value="{Binding Path=SelectedItem.Position.X,ElementName=ControlPointListBox, Mode=TwoWay}" MaxValue="10000" MinValue="-10000">
+                                <customcontrol:NumberTextbox Value="{Binding Path=SelectedItem.Position.X, ElementName=ControlPointListBox, Mode=TwoWay}" MaxValue="10000" MinValue="-10000">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseMove">
                                             <command:EventToCommand Command="{Binding DataContext.RefreshLBCommand, ElementName=Root}" CommandParameter="{Binding ElementName=ControlPointListBox}"/>
@@ -232,7 +232,23 @@
                                 CommandParameter="{Binding Path=DataContext, ElementName=SplineViewInstance}"/>
 
                             <Label Grid.Row="1" Height="30" Content="Symmetrical: " FontSize="12"/>
-                            <CheckBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" IsChecked="{Binding SplineData.Symmetrical}"/>
+                            <CheckBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" 
+                                      IsChecked="{Binding IvyData.Symmetrical}"/>
+                        </Grid>
+
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!--<customcontrol:NumberTextbox Value="{Binding DataContext.SplineData.LeafModel.Rotation.X, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="360" MinValue="-360"/>
+                            <customcontrol:NumberTextbox Value="{Binding DataContext.SplineData.LeafModel.Rotation.Y, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="360" MinValue="-360" Grid.Column="1"/>
+                            <customcontrol:NumberTextbox Value="{Binding DataContext.SplineData.LeafModel.Rotation.Z, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="360" MinValue="-360" Grid.Column="2"/>-->
                         </Grid>
                     </Grid>
                 </GroupBox>

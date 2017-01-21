@@ -1,8 +1,8 @@
 ﻿using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D10;
-using Buffer = SharpDX.Direct3D10.Buffer;
-using Device = SharpDX.Direct3D10.Device1;
+using Buffer = SharpDX.Direct3D11.Buffer;
+using Device = SharpDX.Direct3D11.Device;
 
 namespace ToolDev_IvyGenerator.Utilities
 {
@@ -28,11 +28,11 @@ namespace ToolDev_IvyGenerator.Utilities
                 BindFlags = BindFlags.VertexBuffer,
                 CpuAccessFlags = CpuAccessFlags.None,
                 OptionFlags = ResourceOptionFlags.None,
-                Usage = ResourceUsage.Immutable,
+                Usage = ResourceUsage.Dynamic,
                 SizeInBytes = VertexStride * Vertices.Length
             };
 
-            VertexBuffer = new Buffer(device, DataStream.Create(Vertices, false, false), bufferDescription);
+            //VertexBuffer = new Buffer(device, DataStream.Create(Vertices, false, true), bufferDescription);
         }
 
         public void CreateIndexBuffer(Device device)
@@ -48,7 +48,7 @@ namespace ToolDev_IvyGenerator.Utilities
                 SizeInBytes = sizeof(uint) * IndexCount
             };
 
-            IndexBuffer = new Buffer(device, DataStream.Create(Indices, false, false), bufferDescription);
+            //IndexBuffer = new Buffer(device, DataStream.Create(Indices, false, false), bufferDescription);
         }
     }
 }

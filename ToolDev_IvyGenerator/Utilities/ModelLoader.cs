@@ -5,7 +5,7 @@ using System.IO;
 using SharpDX.Direct3D;
 using System.Runtime.InteropServices;
 using SharpDX;
-using Device = SharpDX.Direct3D10.Device1;
+using Device = SharpDX.Direct3D11.Device;
 using SharpDX.Direct3D10;
 
 namespace ToolDev_IvyGenerator.Utilities

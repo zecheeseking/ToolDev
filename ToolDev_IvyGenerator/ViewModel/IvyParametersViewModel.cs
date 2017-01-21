@@ -15,7 +15,7 @@ namespace ToolDev_IvyGenerator.ViewModel
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public class SplineViewModel : ViewModelBase
+    public class IvyParametersViewModel : ViewModelBase
     {
         private RelayCommand<ListBox> _refreshLBCommand;
         public RelayCommand<ListBox> RefreshLBCommand
@@ -48,11 +48,11 @@ namespace ToolDev_IvyGenerator.ViewModel
                             {
                                 var dc = userControl.DataContext as MainViewModel;
 
-                                var lastCp = SplineData.ControlPoints[SplineData.ControlPoints.Count - 1];
-                                var cp = new SplineControlPoint(SplineData.ControlPoints.Count,
+                                var lastCp = IvyData.Stem.ControlPoints[IvyData.Stem.ControlPoints.Count - 1];
+                                var cp = new SplineControlPoint(IvyData.Stem.ControlPoints.Count,
                                     lastCp.Position.Value + (Vector3.Right * 50), lastCp.Position.Value + (Vector3.Right * 50) + (Vector3.Right * 10f));
                                 cp.Initialize(dc.Device);
-                                SplineData.ControlPoints.Add(cp);
+                                IvyData.Stem.ControlPoints.Add(cp);
                             }
                         )
                     );
@@ -71,8 +71,8 @@ namespace ToolDev_IvyGenerator.ViewModel
                             () =>
                             {
 
-                                if (SplineData.ControlPoints.Count > 0)
-                                    SplineData.ControlPoints.RemoveAt(SplineData.ControlPoints.Count - 1);
+                                if (IvyData.Stem.ControlPoints.Count > 0)
+                                    IvyData.Stem.ControlPoints.RemoveAt(IvyData.Stem.ControlPoints.Count - 1);
                             }
                         )
                     );
@@ -99,10 +99,10 @@ namespace ToolDev_IvyGenerator.ViewModel
                                 ////Add new model
                                 if ((bool)result)
                                 {
-                                    SplineData.LeafModel = new Model();
-                                    SplineData.LeafModel.Mesh = ModelLoader<VertexPosColNorm>.LoadModel(dlg.FileName, mvm.Device);
-                                    SplineData.LeafModel.Initialize(mvm.Device);
-                                    SplineData.PopulateLeaves();
+                                    //IvyData.LeafModel = new Model();
+                                    //IvyData.LeafModel.Mesh = ModelLoader<VertexPosColNorm>.LoadModel(dlg.FileName, mvm.Device);
+                                    //IvyData.LeafModel.Initialize(mvm.Device);
+                                    //IvyData.PopulateLeaves();
                                 }
                             }
                         )
@@ -121,28 +121,28 @@ namespace ToolDev_IvyGenerator.ViewModel
                         (
                             () =>
                             {
-                                SplineData.LeafModel = null;
+                                //IvyData.LeafModel = null;
                             }
                         )
                     );
             }
         }
 
-        private Spline _splineData;
-        public Spline SplineData
+        private Ivy _ivyData;
+        public Ivy IvyData
         {
             get
             {
-                return _splineData;
+                return _ivyData;
             }
             set
             {
-                _splineData = value;
-                RaisePropertyChanged("SplineData");
+                _ivyData = value;
+                RaisePropertyChanged("IvyData");
             }
         }
 
-        public SplineViewModel()
+        public IvyParametersViewModel()
         {
         }
     }

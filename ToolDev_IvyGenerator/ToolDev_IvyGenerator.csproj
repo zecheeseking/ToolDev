@@ -73,6 +73,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\LIBRARIES\SharpDX\2.6.3\Bin\DirectX11-net40\SharpDX.Direct3D10.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX.Direct3D11">
+      <HintPath>D:\LIBRARIES\SharpDX\2.6.3\Bin\DirectX11-net40\SharpDX.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11.Effects">
+      <HintPath>D:\LIBRARIES\SharpDX\2.6.3\Bin\DirectX11-net40\SharpDX.Direct3D11.Effects.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX.Direct3D9, Version=3.1.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\LIBRARIES\SharpDX\2.6.3\Bin\DirectX11-net40\SharpDX.Direct3D9.dll</HintPath>
@@ -114,6 +120,7 @@
     <Compile Include="DirectX\Disposer.cs" />
     <Compile Include="DirectX\Dx10ImageSource.cs" />
     <Compile Include="DirectX\Dx10RenderCanvas.cs" />
+    <Compile Include="DirectX\ICamera.cs" />
     <Compile Include="DirectX\Line.cs" />
     <Compile Include="Effects\PosNormColEffect.cs" />
     <Compile Include="Effects\DebugEffect.cs" />
@@ -121,6 +128,7 @@
     <Compile Include="DirectX\IDX10Viewport.cs" />
     <Compile Include="Interfaces\interfaces.cs" />
     <Compile Include="MathHelper.cs" />
+    <Compile Include="Models\Ivy.cs" />
     <Compile Include="Utilities\MeshData.cs" />
     <Compile Include="Models\Model.cs" />
     <Compile Include="Models\Spline.cs" />
@@ -133,13 +141,13 @@
     <Compile Include="Utilities\TransformHandle.cs" />
     <Compile Include="Utilities\Vec3.cs" />
     <Compile Include="Utilities\VertexData.cs" />
-    <Compile Include="ViewModel\CreateSplineViewModel.cs" />
+    <Compile Include="ViewModel\CreateIvyViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ModelViewModel.cs" />
-    <Compile Include="ViewModel\SplineViewModel.cs" />
+    <Compile Include="ViewModel\IvyParametersViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="View\CreateSplineView.xaml.cs">
-      <DependentUpon>CreateSplineView.xaml</DependentUpon>
+    <Compile Include="View\CreateIvyView.xaml.cs">
+      <DependentUpon>CreateIvyView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\DefaultView.xaml.cs">
       <DependentUpon>DefaultView.xaml</DependentUpon>
@@ -150,11 +158,11 @@
     <Compile Include="CustomControls\NumberTextbox.xaml.cs">
       <DependentUpon>NumberTextbox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\SplineView.xaml.cs">
-      <DependentUpon>SplineView.xaml</DependentUpon>
+    <Compile Include="View\IvyParametersView.xaml.cs">
+      <DependentUpon>IvyParametersView.xaml</DependentUpon>
     </Compile>
-    <Page Include="View\CreateSplineView.xaml">
-      <SubType>Form</SubType>
+    <Page Include="View\CreateIvyView.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\DefaultView.xaml">
@@ -182,7 +190,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\SplineView.xaml">
+    <Page Include="View\IvyParametersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -228,6 +236,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\SceneGrid.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sharpdx_direct3d11_effects_x86.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

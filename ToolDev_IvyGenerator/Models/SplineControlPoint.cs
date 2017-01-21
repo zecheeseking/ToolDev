@@ -3,7 +3,7 @@ using System.ComponentModel;
 using ToolDev_IvyGenerator.DirectX;
 using ToolDev_IvyGenerator.Utilities;
 using ToolDev_IvyGenerator.Interfaces;
-using Device1 = SharpDX.Direct3D10.Device1;
+using Device = SharpDX.Direct3D11.Device;
 using System;
 
 namespace ToolDev_IvyGenerator.Models
@@ -47,7 +47,7 @@ namespace ToolDev_IvyGenerator.Models
             _handleLine.EndPosition = TransformHandleTangent.Position;
         }
 
-        public void Initialize(Device1 device)
+        public void Initialize(Device device)
         {
             TransformHandlePosition.Initialize(device);
             TransformHandleTangent.Initialize(device);
@@ -62,11 +62,11 @@ namespace ToolDev_IvyGenerator.Models
             _handleLine.EndPosition = TransformHandleTangent.Position;
         }
 
-        public void Draw(Device1 device, ICamera camera)
+        public void Draw(AppContext appContext)
         {
-            TransformHandlePosition.Draw(device, camera);
-            _handleLine.Draw(device, camera);
-            TransformHandleTangent.Draw(device, camera);
+            TransformHandlePosition.Draw(appContext);
+            _handleLine.Draw(appContext);
+            TransformHandleTangent.Draw(appContext);
         }
 
         public override string ToString()

@@ -2,9 +2,9 @@
 using ToolDev_IvyGenerator.Interfaces;
 using SharpDX;
 using SharpDX.D3DCompiler;
-using SharpDX.Direct3D10;
+using SharpDX.Direct3D11;
 using ToolDev_IvyGenerator.Utilities;
-using Device1 = SharpDX.Direct3D10.Device1;
+using Device = SharpDX.Direct3D11.Device;
 
 namespace ToolDev_IvyGenerator.Effects
 {
@@ -13,7 +13,7 @@ namespace ToolDev_IvyGenerator.Effects
         public EffectTechnique Technique { get; set; }
         public Effect Effect { get; set; }
         public InputLayout InputLayout { get; set; }
-        public void Create(Device1 device)
+        public void Create(Device device)
         {
             //Load Effect
             var shaderSource = File.ReadAllText("Resources\\PosColNorm3D.fx");

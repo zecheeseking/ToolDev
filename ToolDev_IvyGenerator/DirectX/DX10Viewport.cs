@@ -1,13 +1,14 @@
 ﻿using ToolDev_IvyGenerator.Interfaces;
 using SharpDX;
-using SharpDX.Direct3D10;
+using SharpDX.Direct3D11;
 using ToolDev_IvyGenerator.Utilities;
 
 namespace ToolDev_IvyGenerator.DirectX
 {
     class DX10Viewport : IDx10Viewport
     {
-        private Device1 _device;
+        private AppContext _appContext;
+
         private RenderTargetView _renderTargetView;
         private Dx10RenderCanvas _renderControl;
 
@@ -18,9 +19,9 @@ namespace ToolDev_IvyGenerator.DirectX
         private Vector3 _lightDirection;
 
 
-        public void Initialize(Device1 device, RenderTargetView renderTarget, Dx10RenderCanvas canvasControl)
+        public void Initialize(AppContext appContext, RenderTargetView renderTarget, Dx10RenderCanvas canvasControl)
         {
-            _device = device;
+            _appContext = appContext;
             _renderTargetView = renderTarget;
             _renderControl = canvasControl;
 
@@ -34,7 +35,7 @@ namespace ToolDev_IvyGenerator.DirectX
             _worldMatrix *= Matrix.RotationY(0.0f);
 
             _grid = new SceneGrid();
-            _grid.Initialize(device);
+            _grid.Initialize(_appContext._device);
         }
 
         public void Deinitialize()
@@ -59,24 +60,19 @@ namespace ToolDev_IvyGenerator.DirectX
 
         public void Render(float deltaT)
         {
-            if (_device == null)
+            if (_appContext._device == null)
                 return;
 
-            _grid.Draw(_device, _renderControl.Camera);
+            _grid.Draw(_appContext);
 
             if (_renderControl.Models.Count != 0)
             {
                 foreach (ISceneObject sObj in _renderControl.Models)
                 {
-                    sObj.LightDirection = _lightDirection;
-                    sObj.Draw(_device, _renderControl.Camera);
+                    //sObj.LightDirection = _lightDirection;
+                    sObj.Draw(_appContext);
                 }
             }
-        }
-
-        public Device1 GetDevice()
-        {
-            return _device;
         }
     }
 }

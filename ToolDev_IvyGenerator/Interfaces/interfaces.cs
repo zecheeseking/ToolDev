@@ -1,7 +1,8 @@
 ﻿using SharpDX;
 using SharpDX.Direct3D;
-using SharpDX.Direct3D10;
-using Device = SharpDX.Direct3D10.Device1;
+using SharpDX.Direct3D11;
+using ToolDev_IvyGenerator.DirectX;
+using Device = SharpDX.Direct3D11.Device;
 using ToolDev_IvyGenerator.Utilities;
 
 namespace ToolDev_IvyGenerator.Interfaces
@@ -13,16 +14,18 @@ namespace ToolDev_IvyGenerator.Interfaces
         void ResetCollisionFlags();
     }
 
+    public interface IMesh
+    {
+        Vector3 LightDirection { get; set; }
+        IEffect Material { get; set; }
+        MeshData<VertexPosColNorm> Mesh { get; set; }
+    }
+
     public interface ISceneObject : ITransform
     {
-        IEffect Material { get; set; }
-        Vector3 LightDirection { get; set; }
-        MeshData<VertexPosColNorm> Mesh { get; set; }
-
-
         void Initialize(Device device);
         void Update(float deltaT);
-        void Draw(Device device, ICamera camera);
+        void Draw(AppContext appContext);
     }
 
     public interface ITransform
@@ -34,23 +37,13 @@ namespace ToolDev_IvyGenerator.Interfaces
         Vec3 Scale { get; set; }
     }
 
-    public interface ICamera
-    {
-        Matrix TransformationMatrix { get; }
-        Matrix ViewMatrix { get; }
-        Matrix ProjectionMatrix { get; }
-
-        void Initialize(float width, float height);
-        void Update(float deltaT);
-    }
-
     public interface IEffect
     {
         EffectTechnique Technique { get; set; }
         Effect Effect { get; set; }
         InputLayout InputLayout { get; set; }
 
-        void Create(Device1 device);
+        void Create(Device device);
         void SetWorld(Matrix world);
         void SetWorldViewProjection(Matrix wvp);
         void SetLightDirection(Vector3 dir);

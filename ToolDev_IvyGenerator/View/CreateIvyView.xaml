@@ -1,5 +1,5 @@
 ﻿<Window x:Name="CreateSplineWindow"
-        x:Class="ToolDev_IvyGenerator.View.CreateSplineView"
+        x:Class="ToolDev_IvyGenerator.View.CreateIvyView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -11,7 +11,7 @@
         xmlns:command="http://www.galasoft.ch/mvvmlight"
         xmlns:ignore="http://www.galasoft.ch/ignore"
         mc:Ignorable="d ignore"
-        Title="Create Spline" Width="400" Height="300" ResizeMode="NoResize"
+        Title="Create Ivy" Width="400" Height="300" ResizeMode="NoResize"
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
     <Window.Resources>
         <converters:IntToDoubleConverter x:Key="intToDoubleConverter"/>
@@ -19,7 +19,7 @@
     </Window.Resources>
     <Grid x:Name="Root">
         <Grid.DataContext>
-            <viewModels:CreateSplineViewModel/>
+            <viewModels:CreateIvyViewModel/>
         </Grid.DataContext>
         
         <Grid.RowDefinitions>
@@ -79,7 +79,8 @@
                             <RowDefinition Height="20"/>
                         </Grid.RowDefinitions>
 
-                        <ListBox x:Name="ControlPointListbox" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Path=ControlPoints}">
+                        <ListBox x:Name="ControlPointListbox" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                                 ItemsSource="{Binding Path=ControlPoints}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>
@@ -102,20 +103,10 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Button Content="Add">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="Click">
-                                        <command:EventToCommand Command="{Binding AddCPCommand}"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </Button>
-                            <Button Content="Delete" Grid.Column="1" >
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="Click">
-                                        <command:EventToCommand Command="{Binding DeleteCPCommand}"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </Button>
+                            <Button Content="Add" Command="{Binding AddCPCommand}" 
+                                    CommandParameter="{Binding ElementName=ControlPointListbox}"/>
+                            <Button Content="Delete" Grid.Column="1" Command="{Binding DeleteCPCommand}" 
+                                    CommandParameter="{Binding ElementName=ControlPointListbox}"/>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -221,7 +212,7 @@
             <Button Grid.Row="1" Margin="60,10,10,10" Content="Create">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
-                        <command:EventToCommand Command="{Binding CreateSplineCommand}"  CommandParameter="{Binding ElementName=CreateSplineWindow}"/>
+                        <command:EventToCommand Command="{Binding CreateIvyCommand}"  CommandParameter="{Binding ElementName=CreateSplineWindow}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Button>
