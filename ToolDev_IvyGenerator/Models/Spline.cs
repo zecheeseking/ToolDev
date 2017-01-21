@@ -5,18 +5,16 @@ using System.Runtime.InteropServices;
 using ToolDev_IvyGenerator.Interfaces;
 using SharpDX;
 using SharpDX.Direct3D;
-using SharpDX.Direct3D11;
+using SharpDX.Direct3D10;
 using SharpDX.DXGI;
-using ToolDev_IvyGenerator.DirectX;
 using ToolDev_IvyGenerator.Effects;
 using ToolDev_IvyGenerator.Utilities;
-using Device = SharpDX.Direct3D11.Device;
-using Buffer = SharpDX.Direct3D11.Buffer;
+using Device = SharpDX.Direct3D10.Device1;
 using System.Diagnostics;
 
 namespace ToolDev_IvyGenerator.Models
 {
-    public class Spline : ISceneObject, IMesh, INotifyPropertyChanged, IIntersect
+    public class Spline : ISceneObject, INotifyPropertyChanged, IIntersect
     {
         private Matrix _worldMatrix;
         public Matrix WorldMatrix { get { return _worldMatrix; } set { _worldMatrix = value; } }
@@ -38,6 +36,7 @@ namespace ToolDev_IvyGenerator.Models
             get { return _controlPoints; }
             set {
                 _controlPoints = value;
+                _refreshSpline = true;
             }
         }
 
@@ -69,10 +68,22 @@ namespace ToolDev_IvyGenerator.Models
             set
             {
                 _thickness = value;
+                _refreshSpline = true;
+            }
+        }
+
+        private Model _leafModel;
+        public Model LeafModel {
+            get { return _leafModel; }
+            set
+            {
+                _leafModel = value;
             }
         }
 
         private List<Model> _leaves = new List<Model>();
+
+        private float _leafInterval = 0.2f;
 
         public Spline()
         {
@@ -82,9 +93,6 @@ namespace ToolDev_IvyGenerator.Models
 
             WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
 
-            _controlPoints.Add(new SplineControlPoint(0, Vector3.Zero, new Vector3(10,0,0)));
-            _controlPoints.Add(new SplineControlPoint(1, new Vector3(50,0,0), new Vector3(50, 0, 0) + new Vector3(10, 0, 0)));
-
             Mesh = new MeshData<VertexPosColNorm>();
             Mesh.PrimitiveTopology = PrimitiveTopology.TriangleList;
             Mesh.VertexStride = Marshal.SizeOf(typeof(VertexPosColNorm));
@@ -92,13 +100,12 @@ namespace ToolDev_IvyGenerator.Models
             WireMesh = new MeshData<VertexPosColNorm>();
             WireMesh.PrimitiveTopology = PrimitiveTopology.LineList;
             WireMesh.VertexStride = Marshal.SizeOf(typeof(VertexPosColNorm));
-
-            _refreshSpline = false;
         }
 
         public void Initialize(Device device)
         {
-            PopulateSpline();
+            if(_refreshSpline)
+                PopulateSpline();
 
             foreach (SplineControlPoint cp in _controlPoints)
                 cp.Initialize(device);
@@ -109,19 +116,8 @@ namespace ToolDev_IvyGenerator.Models
             WireMaterial = new SceneGridEffect();
             WireMaterial.Create(device);
 
-        //    SharpDX.Direct3D10.Buffer d3d10Buffer = new SharpDX.Direct3D10.Buffer(_d3d10Device,
-        //new BufferDescription(size,
-        //ResourceUsage.Dynamic,
-        //BindFlags.VertexBuffer,
-        //CpuAccessFlags.Write,
-        //ResourceOptionFlags.None));
             Mesh.CreateVertexBuffer(device);
-            //Mesh.VertexBuffer = new Buffer(device, new BufferDescription(10000 * Mesh.VertexStride, 
-            //    ResourceUsage.Dynamic, 
-            //    BindFlags.VertexBuffer, 
-            //    CpuAccessFlags.Write, 
-            //    ResourceOptionFlags.None));
-            //Mesh.CreateIndexBuffer(device);
+            Mesh.CreateIndexBuffer(device);
 
             WireMesh.CreateVertexBuffer(device);
             WireMesh.CreateIndexBuffer(device);
@@ -132,7 +128,11 @@ namespace ToolDev_IvyGenerator.Models
             if (_refreshSpline)
             {
                 PopulateSpline();
+                PopulateLeaves();
             }
+
+            foreach (Model leaf in _leaves)
+                leaf.Update(deltaT);
 
             if (Selected)
             {
@@ -147,6 +147,29 @@ namespace ToolDev_IvyGenerator.Models
             }
         }
 
+        public void PopulateLeaves()
+        {
+            if (_leafModel == null)
+                return;
+
+            _leaves.Clear();
+
+            int frequency = Convert.ToInt32(1.0 / _leafInterval);
+
+            for(int i = 0; i < frequency; ++i)
+            {
+                var leaf = new Model();
+                leaf.Mesh = _leafModel.Mesh;
+                leaf.Position.Value = Vector3.Hermite(_controlPoints[0].Position.Value,
+                        _controlPoints[0].Tangent.Value,
+                        _controlPoints[0 + 1].Position.Value,
+                        _controlPoints[0 + 1].Tangent.Value, _leafInterval * i);
+
+                leaf.Material = _leafModel.Material;
+
+                _leaves.Add(leaf);
+            }
+        }
 
         public void PopulateSpline()
         {
@@ -208,11 +231,9 @@ namespace ToolDev_IvyGenerator.Models
             {
                 Vector3 forward = Vector3.Zero;
                 if (i == WireMesh.Positions.Length - 1)
-                    forward = (WireMesh.Positions[i] - WireMesh.Positions[i - 1]);
-                else if(i == 0)
-                    forward = WireMesh.Positions[i + 1] - WireMesh.Positions[i];
+                    forward = WireMesh.Positions[i] - WireMesh.Positions[i - 1];
                 else
-                    forward = (WireMesh.Positions[i + 1] - WireMesh.Positions[i]) + (WireMesh.Positions[i] - WireMesh.Positions[i - 1]);
+                    forward = WireMesh.Positions[i + 1] - WireMesh.Positions[i];
 
                 forward.Normalize();
 
@@ -278,55 +299,58 @@ namespace ToolDev_IvyGenerator.Models
             }
         }
 
-        public void Draw(AppContext appContext)
+        public void Draw(Device device, ICamera camera)
         {
             if(_refreshBuffers)
             {
-                //Mesh.CreateVertexBuffer(device);
-                //Mesh.CreateIndexBuffer(device);
+                Mesh.CreateVertexBuffer(device);
+                Mesh.CreateIndexBuffer(device);
 
-                //WireMesh.CreateVertexBuffer(device);
-                //WireMesh.CreateIndexBuffer(device);
+                WireMesh.CreateVertexBuffer(device);
+                WireMesh.CreateIndexBuffer(device);
             }
 
             if (Render)
             {
                 Material.SetWorld(WorldMatrix);
-                Material.SetWorldViewProjection(WorldMatrix * appContext.camera.ViewMatrix * appContext.camera.ProjectionMatrix);
+                Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
                 Material.SetLightDirection(LightDirection);
 
-                appContext._deviceContext.InputAssembler.InputLayout = Material.InputLayout;
-                appContext._deviceContext.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;
-                appContext._deviceContext.InputAssembler.SetIndexBuffer(Mesh.IndexBuffer, Format.R32_UInt, 0);
-                appContext._deviceContext.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(Mesh.VertexBuffer, Mesh.VertexStride, 0));
-                
-                //At some point some dynamic mapping should be done here!
+                device.InputAssembler.InputLayout = Material.InputLayout;
+                device.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;
+
+                device.InputAssembler.SetIndexBuffer(Mesh.IndexBuffer, Format.R32_UInt, 0);
+                device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(Mesh.VertexBuffer, Mesh.VertexStride, 0));
 
                 for (int i = 0; i < Material.Technique.Description.PassCount; ++i)
                 {
-                    Material.Technique.GetPassByIndex(i).Apply(appContext._deviceContext);
-                    appContext._deviceContext.DrawIndexed(Mesh.IndexCount, 0, 0);
+                    Material.Technique.GetPassByIndex(i).Apply();
+                    device.DrawIndexed(Mesh.IndexCount, 0, 0);
                 }
+
+                foreach(Model leaf in _leaves)
+                    leaf.Draw(device, camera);
             }
             else
             {
-                WireMaterial.SetWorldViewProjection(WorldMatrix * appContext.camera.ViewMatrix * appContext.camera.ProjectionMatrix);
+                WireMaterial.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
 
-                appContext._deviceContext.InputAssembler.InputLayout = WireMaterial.InputLayout;
-                appContext._deviceContext.InputAssembler.PrimitiveTopology = WireMesh.PrimitiveTopology;
-                appContext._deviceContext.InputAssembler.SetIndexBuffer(WireMesh.IndexBuffer, Format.R32_UInt, 0);
-                appContext._deviceContext.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(WireMesh.VertexBuffer, WireMesh.VertexStride, 0));
+                device.InputAssembler.InputLayout = WireMaterial.InputLayout;
+                device.InputAssembler.PrimitiveTopology = WireMesh.PrimitiveTopology;
+
+                device.InputAssembler.SetIndexBuffer(WireMesh.IndexBuffer, Format.R32_UInt, 0);
+                device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(WireMesh.VertexBuffer, WireMesh.VertexStride, 0));
 
                 for (int i = 0; i < WireMaterial.Technique.Description.PassCount; ++i)
                 {
-                    WireMaterial.Technique.GetPassByIndex(i).Apply(appContext._deviceContext);
-                    appContext._deviceContext.DrawIndexed(WireMesh.IndexCount, 0, 0);
+                    WireMaterial.Technique.GetPassByIndex(i).Apply();
+                    device.DrawIndexed(WireMesh.IndexCount, 0, 0);
                 }
             }
 
             if (Selected)
                 foreach (SplineControlPoint cp in _controlPoints)
-                    cp.Draw(appContext);
+                    cp.Draw(device, camera);
         }
 
         public bool Intersects(Ray ray, out Vector3 intersectionPoint)
