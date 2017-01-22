@@ -142,6 +142,7 @@
     <Compile Include="Utilities\Vec3.cs" />
     <Compile Include="Utilities\VertexData.cs" />
     <Compile Include="ViewModel\CreateIvyViewModel.cs" />
+    <Compile Include="ViewModel\IvyViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ModelViewModel.cs" />
     <Compile Include="ViewModel\IvyParametersViewModel.cs" />

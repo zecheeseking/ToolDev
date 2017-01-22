@@ -22,13 +22,6 @@ namespace ToolDev_IvyGenerator.Utilities
             set
             {
                 _position = value;
-
-                _xBoundingBox.Minimum = new Vector3(0.0f, -1.0f, -1.0f) + _position.Value;
-                _xBoundingBox.Maximum = new Vector3(10.0f, 1.0f, 1.0f) + _position.Value;
-                _yBoundingBox.Minimum = new Vector3(-1.0f, 0.0f, -1.0f) + _position.Value;
-                _yBoundingBox.Maximum = new Vector3(1.0f, 10.0f, 1.0f) + _position.Value;
-                _zBoundingBox.Minimum = new Vector3(-1.0f, -1.0f, 0.0f) + _position.Value;
-                _zBoundingBox.Maximum = new Vector3(1.0f, 1.0f, 10.0f) + _position.Value;
             }
         }
         public Vec3 Rotation { get; set; }
@@ -39,6 +32,8 @@ namespace ToolDev_IvyGenerator.Utilities
         public MeshData<VertexPosColNorm> Mesh { get; set; }
 
         public float HandleLength = 10.0f;
+
+        private float _mouseDamping = 0.3f;
 
         private bool _xHit = false;
         private BoundingBox _xBoundingBox;
@@ -91,14 +86,14 @@ namespace ToolDev_IvyGenerator.Utilities
 
         private void UpdateBoundingBoxes()
         {
-            _xBoundingBox.Minimum = new Vector3(0.0f, -1.0f, -1.0f) + Position.Value;
-            _xBoundingBox.Maximum = new Vector3(10.0f, 1.0f, 1.0f) + Position.Value;
+            _xBoundingBox.Minimum = Vector3.TransformCoordinate(new Vector3(0.0f, -1.0f, -1.0f),WorldMatrix);
+            _xBoundingBox.Maximum = Vector3.TransformCoordinate(new Vector3(10.0f, 1.0f, 1.0f), WorldMatrix);
 
-            _yBoundingBox.Minimum = new Vector3(-1.0f, 0.0f, -1.0f) + Position.Value;
-            _yBoundingBox.Maximum = new Vector3(1.0f, 10.0f, 1.0f) + Position.Value;
+            _yBoundingBox.Minimum =  Vector3.TransformCoordinate(new Vector3(-1.0f, 0.0f, -1.0f), WorldMatrix);
+            _yBoundingBox.Maximum =  Vector3.TransformCoordinate(new Vector3(1.0f, 10.0f, 1.0f), WorldMatrix);
 
-            _zBoundingBox.Minimum = new Vector3(-1.0f, -1.0f, 0.0f) + Position.Value;
-            _zBoundingBox.Maximum = new Vector3(1.0f, 1.0f, 10.0f) + Position.Value;
+            _zBoundingBox.Minimum =  Vector3.TransformCoordinate(new Vector3(-1.0f, -1.0f, 0.0f), WorldMatrix);
+            _zBoundingBox.Maximum =  Vector3.TransformCoordinate(new Vector3(1.0f, 1.0f, 10.0f), WorldMatrix);
         }
 
         public void Update(float deltaT)
@@ -109,15 +104,15 @@ namespace ToolDev_IvyGenerator.Utilities
 
             if (_xHit && InputManager.Instance.GetMouseButton(0))
             {
-                Position.Value = _position.Value + (Vector3.Right * mouseMovement.X);
+                Position.Value = _position.Value + (Vector3.Right * (mouseMovement.X * _mouseDamping));
             }
             else if (_yHit && InputManager.Instance.GetMouseButton(0))
             {
-                Position.Value = _position.Value + (Vector3.Up * -mouseMovement.Y);
+                Position.Value = _position.Value + (Vector3.Up * (-mouseMovement.Y * _mouseDamping) );
             }
             else if (_zHit && InputManager.Instance.GetMouseButton(0))
             {
-                Position.Value = _position.Value + (Vector3.ForwardRH * -1 * mouseMovement.X);
+                Position.Value = _position.Value + (Vector3.ForwardRH * -1 * (mouseMovement.X * _mouseDamping));
             }
 
             WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
@@ -144,9 +139,7 @@ namespace ToolDev_IvyGenerator.Utilities
             intersectionPoint = Vector3.Zero;
 
             _xHit = ray.Intersects(_xBoundingBox);
-
             _yHit = ray.Intersects(_yBoundingBox);
-
             _zHit = ray.Intersects(_zBoundingBox);
 
             return (_xHit | _yHit | _zHit);

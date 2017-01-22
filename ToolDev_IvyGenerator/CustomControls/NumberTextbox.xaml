@@ -19,7 +19,8 @@
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
 
-        <TextBox x:Name="NumberTextboxTarget" Text="{Binding Value, Mode=TwoWay}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+        <TextBox x:Name="NumberTextboxTarget" Text="{Binding Value, Mode=TwoWay}" 
+                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>

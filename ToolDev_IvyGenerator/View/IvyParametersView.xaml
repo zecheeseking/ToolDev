@@ -13,7 +13,7 @@
              xmlns:viewModels="clr-namespace:ToolDev_IvyGenerator.ViewModel"
              xmlns:customcontrol="clr-namespace:ToolDev_IvyGenerator.CustomControls"
              mc:Ignorable="d" 
-             Width="240" Height="800" DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
+             Width="240" Height="850" DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
     <UserControl.Resources>
         <!--Put converters here-->
         <converters:IntToDoubleConverter x:Key="intToDoubleConverter"/>
@@ -40,19 +40,22 @@
                 </Grid.RowDefinitions>
 
                 <Label Height="30" Content="Render: " FontSize="12"/>
-                <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" IsChecked="{Binding IvyData.Stem.Render}"/>
+                <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" IsChecked="{Binding IvyData.Render}"/>
 
                 <Label Grid.Row="1" Height="30" Content="Interpolation Steps: " FontSize="12"/>
                 <customcontrol:NumberTextbox Grid.Row="1" Width="50" HorizontalAlignment="Right" Margin="0,0,5,0"
-                                             Value="{Binding DataContext.IvyData.Stem.InterpolationSteps, ElementName=Root, Mode=TwoWay, Converter={StaticResource intToDoubleConverter} }" MaxValue="100.00"/>
+                                             Value="{Binding DataContext.IvyData.StemInterpolationSteps, ElementName=Root, Mode=TwoWay, 
+                    Converter={StaticResource intToDoubleConverter} }" MinValue="2" MaxValue="100.00"/>
 
                 <Label Grid.Row="2" Height="30" Content="Sides: " FontSize="12"/>
                 <customcontrol:NumberTextbox Grid.Row="2" Width="50" HorizontalAlignment="Right" Margin="0,0,5,0"
-                                             Value="{Binding DataContext.IvyData.Stem.Sides, ElementName=Root, Mode=TwoWay, Converter={StaticResource intToDoubleConverter}}" MaxValue="100.00"/>
+                                             Value="{Binding DataContext.IvyData.StemSides, ElementName=Root, Mode=TwoWay, 
+                    Converter={StaticResource intToDoubleConverter}}" MinValue="3" MaxValue="100.00"/>
 
                 <Label Grid.Row="3" Height="30" Content="Thickness: " FontSize="12"/>
                 <customcontrol:NumberTextbox Grid.Row="3" Width="50" HorizontalAlignment="Right" Margin="0,0,5,0"
-                                             Value="{Binding DataContext.IvyData.Stem.Thickness, ElementName=Root, Mode=TwoWay}" MinValue="0.1" IncrementValue="0.1" MaxValue="100.00"/>
+                                             Value="{Binding DataContext.IvyData.StemThickness, ElementName=Root, Mode=TwoWay}" 
+                                             MinValue="0.1" IncrementValue="0.1" MaxValue="100.00"/>
                 <Grid Grid.Row="4">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="28"/>
@@ -71,7 +74,7 @@
                         <Label Grid.Column="2" Content="Tangent"/>
                     </Grid>
                     
-                    <ListBox x:Name="ControlPointListBox" Grid.Row="2" Margin="5,0" ItemsSource="{Binding IvyData.Stem.ControlPoints}"
+                    <ListBox x:Name="ControlPointListBox" Grid.Row="2" Margin="5,0" ItemsSource="{Binding IvyData.ControlPoints}"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -207,7 +210,6 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5"/>
                             <RowDefinition Height="*"/>
-                            <RowDefinition Height="30"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
@@ -220,8 +222,8 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="30"/>
-                                <RowDefinition Height="30"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="23"/>
                             </Grid.RowDefinitions>
 
                             <Button Content="Load Leaf Mesh..." Margin="3"
@@ -234,21 +236,61 @@
                             <Label Grid.Row="1" Height="30" Content="Symmetrical: " FontSize="12"/>
                             <CheckBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" 
                                       IsChecked="{Binding IvyData.Symmetrical}"/>
+                            <Label Grid.Row="2" Content="Offset"/>
+                            <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="2" Grid.Column="1" Margin="35,0,0,0"
+                                            KeyboardNavigation.IsTabStop="false">
+                                <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafOffset, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" IncrementValue="0.1" MaxValue="100" MinValue="0"/>
+                            </ContentControl>
                         </Grid>
 
                         <Grid Grid.Row="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="25"/>
+                            </Grid.RowDefinitions>
+                            
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-
-                            <!--<customcontrol:NumberTextbox Value="{Binding DataContext.SplineData.LeafModel.Rotation.X, ElementName=Root, Mode=TwoWay}" 
+                            <Label Content="Rotation"/>
+                            <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="1" Grid.Column="0" KeyboardNavigation.IsTabStop="false">
+                                <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelRotX, ElementName=Root, Mode=TwoWay}" 
                                                          Width="50" MaxValue="360" MinValue="-360"/>
-                            <customcontrol:NumberTextbox Value="{Binding DataContext.SplineData.LeafModel.Rotation.Y, ElementName=Root, Mode=TwoWay}" 
-                                                         Width="50" MaxValue="360" MinValue="-360" Grid.Column="1"/>
-                            <customcontrol:NumberTextbox Value="{Binding DataContext.SplineData.LeafModel.Rotation.Z, ElementName=Root, Mode=TwoWay}" 
-                                                         Width="50" MaxValue="360" MinValue="-360" Grid.Column="2"/>-->
+                            </ContentControl>
+                            <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="1" Grid.Column="1" KeyboardNavigation.IsTabStop="false">
+                                <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelRotY, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="360" MinValue="-360"/>
+                            </ContentControl>
+                            <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="1" Grid.Column="2" KeyboardNavigation.IsTabStop="false">
+                                <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelRotZ, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="360" MinValue="-360"/>
+                            </ContentControl>
+
+                            <Label Content="Scale" Grid.Row="2"/>
+                            <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="4" Grid.Column="0" KeyboardNavigation.IsTabStop="false">
+                                <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelScaleX, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="360" MinValue="-360"/>
+                            </ContentControl>
+                            <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="4" Grid.Column="1" KeyboardNavigation.IsTabStop="false">
+                                <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelScaleY, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="360" MinValue="-360"/>
+                            </ContentControl>
+                            <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="4" Grid.Column="2" KeyboardNavigation.IsTabStop="false">
+                                <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelScaleZ, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="360" MinValue="-360"/>
+                            </ContentControl>
                         </Grid>
                     </Grid>
                 </GroupBox>

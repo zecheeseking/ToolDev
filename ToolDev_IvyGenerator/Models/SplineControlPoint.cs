@@ -38,7 +38,7 @@ namespace ToolDev_IvyGenerator.Models
             TransformHandleTangent = new TransformHandle();
             TransformHandleTangent.HandleLength = 3.0f;
             TransformHandleTangent.Position = new Vec3();
-            TransformHandleTangent.Position.Value = Position.Value + Tangent.Value;
+            TransformHandleTangent.Position.Value = Tangent.Value;
             TransformHandleTangent.Rotation = new Vec3();
             TransformHandleTangent.Rotation.Value = Vector3.Zero;
             TransformHandleTangent.Scale = new Vec3();
@@ -58,10 +58,16 @@ namespace ToolDev_IvyGenerator.Models
 
         public void Update(float deltaT)
         {
+            //Tangent.Value = TransformHandleTangent.Position.Value - TransformHandlePosition.Position.Value;
             TransformHandlePosition.Update(deltaT);
+            //TransformHandleTangent.Position.Value = TransformHandlePosition.Position.Value + Tangent.Value;
             TransformHandleTangent.Update(deltaT);
+            TransformHandleTangent.WorldMatrix *= TransformHandlePosition.WorldMatrix;
             _handleLine.StartPosition = TransformHandlePosition.Position;
-            _handleLine.EndPosition = TransformHandleTangent.Position;
+            _handleLine.EndPosition = new Vec3(_handleLine.StartPosition.Value + Tangent.Value);
+            Position = new Vec3(TransformHandlePosition.Position.Value);
+            Tangent = new Vec3(TransformHandleTangent.Position.Value);
+
         }
 
         public void Draw(Device device, ICamera camera)
@@ -78,9 +84,6 @@ namespace ToolDev_IvyGenerator.Models
 
         public bool Intersects(Ray ray, out Vector3 intersectionPoint)
         {
-            TransformHandlePosition.ResetCollisionFlags();
-            TransformHandlePosition.ResetCollisionFlags();
-
             if (TransformHandlePosition.Intersects(ray, out intersectionPoint))
                 return true;
             else if (TransformHandleTangent.Intersects(ray, out intersectionPoint))

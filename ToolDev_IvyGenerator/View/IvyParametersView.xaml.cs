@@ -13,9 +13,9 @@ namespace ToolDev_IvyGenerator.View
         public static readonly DependencyProperty IvySourceProperty = DependencyProperty.Register(
         "IvySource", typeof(Ivy), typeof(IvyParametersView), new FrameworkPropertyMetadata(OnIvySourceChanged));
 
-        public Spline IvySource
+        public Ivy IvySource
         {
-            get { return (Spline)GetValue(IvySourceProperty); }
+            get { return (Ivy)GetValue(IvySourceProperty); }
             set {
                 SetValue(IvySourceProperty, value);
             }
@@ -23,7 +23,7 @@ namespace ToolDev_IvyGenerator.View
 
         private static void OnIvySourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            (d as IvyParametersView)._vm.IvyData = e.NewValue as Ivy;
+            (d as IvyParametersView)._vm.IvyData = new IvyViewModel(e.NewValue as Ivy);
         }
 
         public IvyParametersView()

@@ -73,19 +73,6 @@ namespace ToolDev_IvyGenerator.Models
             }
         }
 
-        private Model _leafModel;
-        public Model LeafModel {
-            get { return _leafModel; }
-            set
-            {
-                _leafModel = value;
-            }
-        }
-
-        private List<Model> _leaves = new List<Model>();
-
-        private float _leafInterval = 0.2f;
-
         public Spline()
         {
             Position = new Vec3 { Value = Vector3.Zero };
@@ -130,13 +117,7 @@ namespace ToolDev_IvyGenerator.Models
         public void Update(float deltaT)
         {
             if (_refreshSpline)
-            {
                 PopulateSpline();
-                PopulateLeaves();
-            }
-
-            foreach (Model leaf in _leaves)
-                leaf.Update(deltaT);
 
             if (Selected)
             {
@@ -144,34 +125,11 @@ namespace ToolDev_IvyGenerator.Models
                 {
                     cp.Update(deltaT);
 
-                    cp.Position = cp.TransformHandlePosition.Position;
-                    cp.Tangent = cp.TransformHandleTangent.Position;
+                    //cp.Position = cp.TransformHandlePosition.Position;
+                    //cp.Tangent.Value = cp.TransformHandleTangent.Position.Value - cp.TransformHandlePosition.Position.Value;
+
                     _refreshBuffers = true;
                 }
-            }
-        }
-
-        public void PopulateLeaves()
-        {
-            if (_leafModel == null)
-                return;
-
-            _leaves.Clear();
-
-            int frequency = Convert.ToInt32(1.0 / _leafInterval);
-
-            for(int i = 0; i < frequency; ++i)
-            {
-                var leaf = new Model();
-                leaf.Mesh = _leafModel.Mesh;
-                leaf.Position.Value = Vector3.Hermite(_controlPoints[0].Position.Value,
-                        _controlPoints[0].Tangent.Value,
-                        _controlPoints[0 + 1].Position.Value,
-                        _controlPoints[0 + 1].Tangent.Value, _leafInterval * i);
-
-                leaf.Material = _leafModel.Material;
-
-                _leaves.Add(leaf);
             }
         }
 
@@ -331,9 +289,6 @@ namespace ToolDev_IvyGenerator.Models
                     Material.Technique.GetPassByIndex(i).Apply();
                     device.DrawIndexed(Mesh.IndexCount, 0, 0);
                 }
-
-                foreach(Model leaf in _leaves)
-                    leaf.Draw(device, camera);
             }
             else
             {
@@ -408,7 +363,8 @@ namespace ToolDev_IvyGenerator.Models
 
         public void ResetCollisionFlags()
         {
-            
+            foreach (SplineControlPoint cp in ControlPoints)
+                cp.ResetCollisionFlags();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

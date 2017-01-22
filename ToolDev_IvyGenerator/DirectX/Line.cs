@@ -84,7 +84,7 @@ namespace ToolDev_IvyGenerator.DirectX
                 Mesh.Vertices[0] = new VertexPosColNorm(_linePositions[0].Value, Color.Gray);
                 Mesh.Vertices[1] = new VertexPosColNorm(_linePositions[1].Value, Color.Gray);
 
-                //Mesh.CreateVertexBuffer(device);
+                Mesh.CreateVertexBuffer(device);
 
                 _updateBuffers = false;
             }

@@ -9,12 +9,7 @@ using System.Diagnostics;
 
 namespace ToolDev_IvyGenerator.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
+
     public class IvyParametersViewModel : ViewModelBase
     {
         private RelayCommand<ListBox> _refreshLBCommand;
@@ -96,13 +91,12 @@ namespace ToolDev_IvyGenerator.ViewModel
 
                                 bool? result = dlg.ShowDialog();
 
-                                ////Add new model
+                                //Add new model
                                 if ((bool)result)
                                 {
-                                    //IvyData.LeafModel = new Model();
-                                    //IvyData.LeafModel.Mesh = ModelLoader<VertexPosColNorm>.LoadModel(dlg.FileName, mvm.Device);
-                                    //IvyData.LeafModel.Initialize(mvm.Device);
-                                    //IvyData.PopulateLeaves();
+                                    IvyData.LeafModel = new Model();
+                                    IvyData.LeafModel.Mesh = ModelLoader<VertexPosColNorm>.LoadModel(dlg.FileName, mvm.Device);
+                                    IvyData.LeafModel.Initialize(mvm.Device);
                                 }
                             }
                         )
@@ -121,15 +115,15 @@ namespace ToolDev_IvyGenerator.ViewModel
                         (
                             () =>
                             {
-                                //IvyData.LeafModel = null;
+                                IvyData.LeafModel = null;
                             }
                         )
                     );
             }
         }
 
-        private Ivy _ivyData;
-        public Ivy IvyData
+        private IvyViewModel _ivyData;
+        public IvyViewModel IvyData
         {
             get
             {
@@ -141,6 +135,20 @@ namespace ToolDev_IvyGenerator.ViewModel
                 RaisePropertyChanged("IvyData");
             }
         }
+
+        //private Ivy _ivyData;
+        //public Ivy IvyData
+        //{
+        //    get
+        //    {
+        //        return _ivyData;
+        //    }
+        //    set
+        //    {
+        //        _ivyData = value;
+        //        RaisePropertyChanged("IvyData");
+        //    }
+        //}
 
         public IvyParametersViewModel()
         {
