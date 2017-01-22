@@ -14,8 +14,6 @@ using ToolDev_IvyGenerator.View;
 using Device = SharpDX.Direct3D10.Device1;
 using SharpDX.Direct3D10;
 
-using System.Diagnostics;
-
 namespace ToolDev_IvyGenerator.ViewModel
 {
     public class MainViewModel : ViewModelBase

@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using ToolDev_IvyGenerator.Models;
 using System.Collections.ObjectModel;
+using System.Windows.Data;
 
 namespace ToolDev_IvyGenerator.ViewModel
 {
@@ -103,7 +104,23 @@ namespace ToolDev_IvyGenerator.ViewModel
 
         public ObservableCollection<SplineControlPoint> ControlPoints
         {
-            get { return new ObservableCollection<SplineControlPoint>(_ivy.Stem.ControlPoints); }
+            get
+            {
+                return new ObservableCollection<SplineControlPoint>(_ivy.Stem.ControlPoints);
+            }
+        }
+
+        public void AddCp(SplineControlPoint cp)
+        {
+            _ivy.Stem.ControlPoints.Add(cp);
+            RaisePropertyChanged(() => ControlPoints);
+        }
+
+        public void DeleteCp()
+        {
+            if (_ivy.Stem.ControlPoints.Count > 0)
+                _ivy.Stem.ControlPoints.RemoveAt(_ivy.Stem.ControlPoints.Count - 1);
+            RaisePropertyChanged(() => ControlPoints);
         }
 
         public IvyViewModel(Ivy ivy)

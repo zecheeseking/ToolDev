@@ -135,31 +135,16 @@
                             </Grid.ColumnDefinitions>
 
                             <ContentControl IsEnabled="{Binding SelectedItem, ElementName=ControlPointListBox, Converter={StaticResource itemToBoolConverter}}" Grid.Column="1" KeyboardNavigation.IsTabStop="false">
-                                <customcontrol:NumberTextbox Value="{Binding Path=SelectedItem.Position.X, ElementName=ControlPointListBox, Mode=TwoWay}" MaxValue="10000" MinValue="-10000">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseMove">
-                                            <command:EventToCommand Command="{Binding DataContext.RefreshLBCommand, ElementName=Root}" CommandParameter="{Binding ElementName=ControlPointListBox}"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </customcontrol:NumberTextbox>
+                                <customcontrol:NumberTextbox Value="{Binding Path=SelectedItem.Position.X, ElementName=ControlPointListBox, Mode=TwoWay}" 
+                                                             MaxValue="10000" MinValue="-10000"/>
                             </ContentControl >
                             <ContentControl IsEnabled="{Binding SelectedItem, ElementName=ControlPointListBox, Converter={StaticResource itemToBoolConverter}}" Grid.Column="2" KeyboardNavigation.IsTabStop="false">
-                                <customcontrol:NumberTextbox Value="{Binding Path=SelectedItem.Position.Y,ElementName=ControlPointListBox, Mode=TwoWay}" MaxValue="10000" MinValue="-10000">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseMove">
-                                            <command:EventToCommand Command="{Binding DataContext.RefreshLBCommand, ElementName=Root}" CommandParameter="{Binding ElementName=ControlPointListBox}"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </customcontrol:NumberTextbox>
+                                <customcontrol:NumberTextbox Value="{Binding Path=SelectedItem.Position.Y,ElementName=ControlPointListBox, Mode=TwoWay}" 
+                                                             MaxValue="10000" MinValue="-10000"/>
                             </ContentControl>
                             <ContentControl IsEnabled="{Binding SelectedItem, ElementName=ControlPointListBox, Converter={StaticResource itemToBoolConverter}}" Grid.Column="3" KeyboardNavigation.IsTabStop="false">
-                                <customcontrol:NumberTextbox Value="{Binding Path=SelectedItem.Position.Z,ElementName=ControlPointListBox, Mode=TwoWay}" MaxValue="10000" MinValue="-10000">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseMove">
-                                            <command:EventToCommand Command="{Binding DataContext.RefreshLBCommand, ElementName=Root}" CommandParameter="{Binding ElementName=ControlPointListBox}"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </customcontrol:NumberTextbox>
+                                <customcontrol:NumberTextbox Value="{Binding Path=SelectedItem.Position.Z,ElementName=ControlPointListBox, Mode=TwoWay}" 
+                                                             MaxValue="10000" MinValue="-10000"/>
                             </ContentControl>
                         </Grid>
                         <Label Grid.Row="2" Content="Tangent" VerticalContentAlignment="Bottom"/>
@@ -296,6 +281,5 @@
                 </GroupBox>
             </Grid>
         </GroupBox>
-
     </Grid>
 </UserControl>

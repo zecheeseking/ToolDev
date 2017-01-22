@@ -47,7 +47,7 @@ namespace ToolDev_IvyGenerator.ViewModel
                                 var cp = new SplineControlPoint(IvyData.Stem.ControlPoints.Count,
                                     lastCp.Position.Value + (Vector3.Right * 50), lastCp.Position.Value + (Vector3.Right * 50) + (Vector3.Right * 10f));
                                 cp.Initialize(dc.Device);
-                                IvyData.Stem.ControlPoints.Add(cp);
+                                IvyData.AddCp(cp);
                             }
                         )
                     );
@@ -65,9 +65,7 @@ namespace ToolDev_IvyGenerator.ViewModel
                         (
                             () =>
                             {
-
-                                if (IvyData.Stem.ControlPoints.Count > 0)
-                                    IvyData.Stem.ControlPoints.RemoveAt(IvyData.Stem.ControlPoints.Count - 1);
+                                IvyData.DeleteCp();
                             }
                         )
                     );

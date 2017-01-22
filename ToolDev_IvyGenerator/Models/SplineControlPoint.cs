@@ -8,7 +8,7 @@ using System;
 
 namespace ToolDev_IvyGenerator.Models
 {
-    public class SplineControlPoint : INotifyPropertyChanged, IIntersect
+    public class SplineControlPoint :  IIntersect
     {
         private int _id;
         public int ID { get { return _id; } }
@@ -97,7 +97,5 @@ namespace ToolDev_IvyGenerator.Models
             TransformHandlePosition.ResetCollisionFlags();
             TransformHandleTangent.ResetCollisionFlags();
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

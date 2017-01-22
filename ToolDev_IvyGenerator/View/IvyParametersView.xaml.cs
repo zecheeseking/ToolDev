@@ -23,7 +23,10 @@ namespace ToolDev_IvyGenerator.View
 
         private static void OnIvySourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            (d as IvyParametersView)._vm.IvyData = new IvyViewModel(e.NewValue as Ivy);
+            if(e.NewValue == null)
+                (d as IvyParametersView)._vm.IvyData = new IvyViewModel(new Ivy());
+            else 
+                (d as IvyParametersView)._vm.IvyData = new IvyViewModel(e.NewValue as Ivy);
         }
 
         public IvyParametersView()
