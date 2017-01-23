@@ -30,14 +30,12 @@ namespace ToolDev_IvyGenerator.Models
         public bool Render { get; set; }
         public MeshData<VertexPosColNorm> Mesh { get; set; }
         public MeshData<VertexPosColNorm> WireMesh { get; set; }
-        private bool _refreshSpline = false;
         private List<SplineControlPoint> _controlPoints = new List<SplineControlPoint>();
         public List<SplineControlPoint> ControlPoints
         {
             get { return _controlPoints; }
             set {
                 _controlPoints = value;
-                _refreshSpline = true;
             }
         }
 
@@ -47,7 +45,6 @@ namespace ToolDev_IvyGenerator.Models
             set
             {
                 _interpolationSteps = value;
-                _refreshSpline = true;
             }
         }
 
@@ -58,18 +55,16 @@ namespace ToolDev_IvyGenerator.Models
             set
             {
                 _sides = value;
-                _refreshSpline = true;
             }
         }
 
-        private float _thickness = 5.0f;
+        private float _thickness = 1.0f;
         public float Thickness
         {
             get { return _thickness; }
             set
             {
                 _thickness = value;
-                _refreshSpline = true;
             }
         }
 
@@ -95,8 +90,7 @@ namespace ToolDev_IvyGenerator.Models
 
         public void Initialize(Device device)
         {
-            if(_refreshSpline)
-                PopulateSpline();
+            PopulateSpline();
 
             foreach (SplineControlPoint cp in _controlPoints)
                 cp.Initialize(device);
@@ -116,21 +110,15 @@ namespace ToolDev_IvyGenerator.Models
 
         public void Update(float deltaT)
         {
-            if (_refreshSpline)
-                PopulateSpline();
-
             if (Selected)
             {
                 foreach (SplineControlPoint cp in _controlPoints)
-                {
                     cp.Update(deltaT);
 
-                    //cp.Position = cp.TransformHandlePosition.Position;
-                    //cp.Tangent.Value = cp.TransformHandleTangent.Position.Value - cp.TransformHandlePosition.Position.Value;
-
-                    _refreshBuffers = true;
-                }
+                PopulateSpline();
             }
+
+            
         }
 
         public void PopulateSpline()
@@ -270,6 +258,7 @@ namespace ToolDev_IvyGenerator.Models
 
                 WireMesh.CreateVertexBuffer(device);
                 WireMesh.CreateIndexBuffer(device);
+                _refreshBuffers = false;
             }
 
             if (Render)

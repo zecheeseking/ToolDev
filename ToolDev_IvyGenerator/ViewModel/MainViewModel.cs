@@ -88,18 +88,14 @@ namespace ToolDev_IvyGenerator.ViewModel
                                            Vector3 hitPoint;
 
                                            if (model.Intersects(ray, out hitPoint))
-                                           {
                                                newModel = model as ISceneObject;
-                                           }
                                            else
-                                           {
                                                model.ResetCollisionFlags();
-                                           }
-
                                        }
 
                                        if(SelectedModel != newModel && _lockSelection != true)
                                             SelectedModel = newModel;
+
                                    }
                                }
                            )
@@ -118,9 +114,9 @@ namespace ToolDev_IvyGenerator.ViewModel
                            (
                                () =>
                                {
-                                   var m = SelectedModel as IIntersect;
-                                   if (m != null)
-                                       m.ResetCollisionFlags();
+                                   //var m = SelectedModel as IIntersect;
+                                   //if (m != null)
+                                   //    m.ResetCollisionFlags();
                                }
                            )
                        );

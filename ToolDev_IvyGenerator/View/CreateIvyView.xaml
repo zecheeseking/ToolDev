@@ -48,7 +48,8 @@
 
                         <Label Content="Sides: "/>
                         <customControls:NumberTextbox Grid.Column="1" Width="50" MinValue="3" MaxValue="100"
-                                                      Value="{Binding DataContext.Sides, ElementName=Root, Mode=TwoWay, Converter={StaticResource intToDoubleConverter} }"/>
+                                                      Value="{Binding DataContext.IvyData.StemSides, ElementName=Root, Mode=TwoWay, 
+                            Converter={StaticResource intToDoubleConverter} }"/>
                     </Grid>
 
                     <Grid Grid.Row="1">
@@ -59,7 +60,9 @@
 
                         <Label Grid.Row="1" Content="Interpolations: "/>
                         <customControls:NumberTextbox Grid.Row="1" Grid.Column="1" Width="50" MinValue="2"  MaxValue="100"
-                                                      Value="{Binding DataContext.InterpSteps, ElementName=Root, Mode=TwoWay, Converter={StaticResource intToDoubleConverter} }"/>
+                                                      Value="{Binding DataContext.IvyData.StemInterpolationSteps, 
+                            ElementName=Root, Mode=TwoWay, 
+                            Converter={StaticResource intToDoubleConverter} }"/>
                     </Grid>
 
                     <Grid Grid.Row="2">
@@ -69,8 +72,9 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Row="1" Content="Spline Thickness: "/>
-                        <customControls:NumberTextbox Grid.Row="1" Grid.Column="1" Width="50" MinValue="0.1"  MaxValue="100" IncrementValue="0.1"
-                                                      Value="{Binding DataContext.SplineThickness, ElementName=Root, Mode=TwoWay}"/>
+                        <customControls:NumberTextbox Grid.Row="1" Grid.Column="1" Width="50" MinValue="0.1"  
+                                                      MaxValue="100" IncrementValue="0.1"
+                                                      Value="{Binding DataContext.IvyData.StemThickness, ElementName=Root, Mode=TwoWay}"/>
                     </Grid>
                     
                     <Grid Grid.Row="3">
@@ -80,7 +84,7 @@
                         </Grid.RowDefinitions>
 
                         <ListBox x:Name="ControlPointListbox" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                                 ItemsSource="{Binding Path=ControlPoints}">
+                                 ItemsSource="{Binding IvyData.ControlPoints}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>

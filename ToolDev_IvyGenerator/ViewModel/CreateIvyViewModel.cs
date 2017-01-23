@@ -15,52 +15,6 @@ namespace ToolDev_IvyGenerator.ViewModel
 {
     public class CreateIvyViewModel : ViewModelBase
     {
-        public List<SplineControlPoint> ControlPoints
-        {
-            get
-            {
-                return CreatedIvy.Stem.ControlPoints;
-            }
-            set
-            {
-                CreatedIvy.Stem.ControlPoints = value;
-                RaisePropertyChanged("ControlPoints");
-            }
-        }
-
-        private int _sides = 2;
-        public int Sides
-        {
-            get { return _sides; }
-            set
-            {
-                _sides = value;
-                RaisePropertyChanged("Sides");
-            }
-        }
-
-        private int _interpSteps = 3;
-        public int InterpSteps
-        {
-            get { return _interpSteps; }
-            set
-            {
-                _interpSteps = value;
-                RaisePropertyChanged("InterpSteps");
-            }
-        }
-
-        private double _splineThickness = 1.0;
-        public double SplineThickness
-        {
-            get { return _splineThickness; }
-            set
-            {
-                _splineThickness = value;
-                RaisePropertyChanged("SplineThickness");
-            }
-        }
-
         private RelayCommand<Window> _createIvyCommand;
         public RelayCommand<Window> CreateIvyCommand
         {
@@ -72,15 +26,12 @@ namespace ToolDev_IvyGenerator.ViewModel
                         (
                             (window) =>
                             {
-                                if (CreatedIvy.Stem.ControlPoints.Count >= 2)
+                                if (IvyData.Stem.ControlPoints.Count >= 2)
                                 {
                                     var dataContext = window.DataContext as MainViewModel;
-                                    CreatedIvy.Stem.InterpolationSteps = InterpSteps;
-                                    CreatedIvy.Stem.Sides = Sides;
-                                    CreatedIvy.Stem.Thickness = (float)SplineThickness;
 
-                                    CreatedIvy.Initialize(dataContext.Device);
-                                    dataContext.Models.Add(CreatedIvy);
+                                    IvyData.Stem.Initialize(dataContext.Device);
+                                    dataContext.Models.Add(IvyData.Ivy);
                                     dataContext.SelectedModel = dataContext.Models[dataContext.Models.Count - 1];
                                     window.Close();
                                 }
@@ -88,28 +39,10 @@ namespace ToolDev_IvyGenerator.ViewModel
                                 {
                                     MessageBoxResult result = MessageBox.Show(
                                         "Cannot create a spline with less than 2 control points.\n Please add more control points.",
-                                        "Creating Spline Error!", 
-                                        MessageBoxButton.OK, 
+                                        "Creating Spline Error!",
+                                        MessageBoxButton.OK,
                                         MessageBoxImage.Exclamation);
                                 }
-                            }
-                        )
-                    );
-            }
-        }
-
-        private RelayCommand<ListBox> _refreshLBCommand;
-        public RelayCommand<ListBox> RefreshLBCommand
-        {
-            get
-            {
-                return _refreshLBCommand ??
-                    (
-                        _refreshLBCommand = new RelayCommand<ListBox>
-                        (
-                            (listBox) =>
-                            {
-                                listBox.Items.Refresh();
                             }
                         )
                     );
@@ -145,19 +78,17 @@ namespace ToolDev_IvyGenerator.ViewModel
                         (
                             (listbox) =>
                             {
-                                if (CreatedIvy.Stem.ControlPoints.Count == 0)
-                                    CreatedIvy.Stem.ControlPoints.Add(
-                                        new SplineControlPoint(CreatedIvy.Stem.ControlPoints.Count, 
+                                if (_ivyData.Stem.ControlPoints.Count == 0)
+                                    _ivyData.AddCp(
+                                        new SplineControlPoint(_ivyData.Stem.ControlPoints.Count, 
                                         Vector3.Zero, Vector3.Right * 10f));
                                 else
                                 {
-                                    var lastCp = CreatedIvy.Stem.ControlPoints[CreatedIvy.Stem.ControlPoints.Count - 1];
-                                    CreatedIvy.Stem.ControlPoints.Add(new SplineControlPoint(CreatedIvy.Stem.ControlPoints.Count, 
-                                        lastCp.Position.Value + (Vector3.Right * 50), 
+                                    var lastCp = _ivyData.Stem.ControlPoints[_ivyData.Stem.ControlPoints.Count - 1];
+                                    _ivyData.AddCp(new SplineControlPoint(_ivyData.Stem.ControlPoints.Count,
+                                        lastCp.Position.Value + (Vector3.Right * 50),
                                         lastCp.Position.Value + (Vector3.Right * 50) + (Vector3.Right * 10f)));
                                 }
-
-                                listbox.Items.Refresh();
                             }
                         )
                     );
@@ -175,36 +106,27 @@ namespace ToolDev_IvyGenerator.ViewModel
                         (
                             (listbox) =>
                             {
-                                if(CreatedIvy.Stem.ControlPoints.Count > 0)
-                                    CreatedIvy.Stem.ControlPoints.RemoveAt(CreatedIvy.Stem.ControlPoints.Count - 1);
-
-                                listbox.Items.Refresh();
+                                IvyData.DeleteCp();
                             }
                         )
                     );
             }
         }
 
-        private Ivy _createdIvy;
-        public Ivy CreatedIvy
+        private IvyViewModel _ivyData;
+        public IvyViewModel IvyData
         {
-            get
-            {
-                if (_createdIvy == null)
-                    _createdIvy = new Ivy();
-
-                return _createdIvy;
-            }
-
+            get { return _ivyData; }
             set
             {
-                _createdIvy = value;
-                RaisePropertyChanged("CreatedIvy");
+                _ivyData = value;
+                RaisePropertyChanged("IvyData");
             }
         }
 
         public CreateIvyViewModel()
         {
+            _ivyData = new IvyViewModel(new Ivy());
         }
     }
 }

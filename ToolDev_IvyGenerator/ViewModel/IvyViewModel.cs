@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using ToolDev_IvyGenerator.Models;
 using System.Collections.ObjectModel;
-using System.Windows.Data;
+using Device = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.ViewModel
 {
@@ -17,6 +17,8 @@ namespace ToolDev_IvyGenerator.ViewModel
         /// Initializes a new instance of the IvyViewModel class.
         /// </summary>
         private readonly Ivy _ivy;
+        public Ivy Ivy
+        { get { return _ivy; } }
 
         public Spline Stem
         {
@@ -27,7 +29,16 @@ namespace ToolDev_IvyGenerator.ViewModel
         public Model LeafModel
         {
             get { return _ivy.LeafModel; }
-            set { _ivy.LeafModel = value; _ivy.PopulateLeaves(); RaisePropertyChanged(() => LeafModel); }
+            set { _ivy.LeafModel = value; _ivy.PopulateLeaves();
+                RaisePropertyChanged(() => LeafModel);
+                RaisePropertyChanged(() =>LeafModelRotX);
+                RaisePropertyChanged(() => LeafModelRotY);
+                RaisePropertyChanged(() => LeafModelRotZ);
+                RaisePropertyChanged(() => LeafModelScaleX);
+                RaisePropertyChanged(() => LeafModelScaleY);
+                RaisePropertyChanged(() => LeafModelScaleZ);
+
+            }
         }
 
         public float LeafOffset
@@ -72,6 +83,42 @@ namespace ToolDev_IvyGenerator.ViewModel
             set { _ivy.LeafModel.Scale.Z = value; _ivy.PopulateLeaves(); RaisePropertyChanged(() => LeafModelScaleZ); }
         }
 
+        public float MaxLeafIntervalRange
+        {
+            get { return _ivy.MaxIntervalRange; }
+            set { _ivy.MaxIntervalRange = value; RaisePropertyChanged(() => MaxLeafIntervalRange); }
+        }
+
+        public float MinLeafIntervalRange
+        {
+            get { return _ivy.MinIntervalRange; }
+            set { _ivy.MinIntervalRange = value; RaisePropertyChanged(() => MinLeafIntervalRange); }
+        }
+
+        public float MaxRandomRotationRange
+        {
+            get { return _ivy.MaxRotationRange; }
+            set { _ivy.MaxRotationRange = value; RaisePropertyChanged(() => MaxRandomRotationRange); }
+        }
+
+        public float MinRandomRotationRange
+        {
+            get { return _ivy.MinRotationRange; }
+            set { _ivy.MinRotationRange = value;  RaisePropertyChanged(() => MinRandomRotationRange); }
+        }
+
+        public float MaxRangeScalingRange
+        {
+            get { return _ivy.MaxScalingRange; }
+            set { _ivy.MaxScalingRange = value;  RaisePropertyChanged(() => MaxRangeScalingRange); }
+        }
+
+        public float MinRangeScalingRange
+        {
+            get { return _ivy.MinScalingRange; }
+            set { _ivy.MinScalingRange = value; RaisePropertyChanged(() => MinRangeScalingRange); }
+        }
+
         public bool Render
         {
             get { return _ivy.Stem.Render; }
@@ -101,6 +148,14 @@ namespace ToolDev_IvyGenerator.ViewModel
             get { return _ivy.Stem.Thickness; }
             set { _ivy.Stem.Thickness = value; RaisePropertyChanged(() => StemThickness); }
         }
+
+        public float LeafSpreadInterval
+        {
+            get { return _ivy.LeafInterval; }
+            set { _ivy.LeafInterval = value;  RaisePropertyChanged(() => LeafSpreadInterval); }
+        }
+
+        
 
         public ObservableCollection<SplineControlPoint> ControlPoints
         {

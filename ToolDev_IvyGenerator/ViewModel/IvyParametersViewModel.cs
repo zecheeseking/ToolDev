@@ -2,34 +2,15 @@
 using GalaSoft.MvvmLight.CommandWpf;
 using ToolDev_IvyGenerator.Models;
 using SharpDX;
+using System;
 using System.Windows.Controls;
 using ToolDev_IvyGenerator.Utilities;
-
-using System.Diagnostics;
 
 namespace ToolDev_IvyGenerator.ViewModel
 {
 
     public class IvyParametersViewModel : ViewModelBase
     {
-        private RelayCommand<ListBox> _refreshLBCommand;
-        public RelayCommand<ListBox> RefreshLBCommand
-        {
-            get
-            {
-                return _refreshLBCommand ??
-                    (
-                        _refreshLBCommand = new RelayCommand<ListBox>
-                        (
-                            (listBox) =>
-                            {
-                                listBox.Items.Refresh();
-                            }
-                        )
-                    );
-            }
-        }
-
         private RelayCommand<UserControl> _addCPCommand;
         public RelayCommand<UserControl> AddCPCommand
         {
@@ -114,6 +95,28 @@ namespace ToolDev_IvyGenerator.ViewModel
                             () =>
                             {
                                 IvyData.LeafModel = null;
+                            }
+                        )
+                    );
+            }
+        }
+
+        private RelayCommand _generateRandomValuesCommand;
+        public RelayCommand GenerateRandomValuesCommand
+        {
+            get
+            {
+                return _generateRandomValuesCommand ??
+                    (
+                        _generateRandomValuesCommand = new RelayCommand
+                        (
+                            () =>
+                            {
+                                int frequency = Convert.ToInt32(1.0 / IvyData.LeafSpreadInterval);
+                                if (IvyData.Symmetrical)
+                                    frequency *= 2;
+
+                                IvyData.Ivy.RefreshRandomValues(frequency * (IvyData.ControlPoints.Count - 1));
                             }
                         )
                     );

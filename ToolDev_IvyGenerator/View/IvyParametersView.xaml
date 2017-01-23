@@ -13,7 +13,7 @@
              xmlns:viewModels="clr-namespace:ToolDev_IvyGenerator.ViewModel"
              xmlns:customcontrol="clr-namespace:ToolDev_IvyGenerator.CustomControls"
              mc:Ignorable="d" 
-             Width="240" Height="850" DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
+             Width="240" Height="930" DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
     <UserControl.Resources>
         <!--Put converters here-->
         <converters:IntToDoubleConverter x:Key="intToDoubleConverter"/>
@@ -33,7 +33,7 @@
                     <RowDefinition Height="28"/>
                     <RowDefinition Height="28"/>
                     <RowDefinition Height="28"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="150"/>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="150"/>
                     <RowDefinition Height="*"/>
@@ -159,31 +159,16 @@
                             </Grid.ColumnDefinitions>
 
                             <ContentControl IsEnabled="{Binding SelectedItem, ElementName=ControlPointListBox, Converter={StaticResource itemToBoolConverter}}" Grid.Column="1" KeyboardNavigation.IsTabStop="false">
-                                <customcontrol:NumberTextbox Value="{Binding Path=SelectedItem.Tangent.X,ElementName=ControlPointListBox, Mode=TwoWay}" MaxValue="10000" MinValue="-10000">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseMove">
-                                            <command:EventToCommand Command="{Binding DataContext.RefreshLBCommand, ElementName=Root}" CommandParameter="{Binding ElementName=ControlPointListBox}"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </customcontrol:NumberTextbox>
+                                <customcontrol:NumberTextbox Value="{Binding Path=SelectedItem.Tangent.X,ElementName=ControlPointListBox, 
+                                    Mode=TwoWay}" MaxValue="10000" MinValue="-10000"/>
                             </ContentControl >
                             <ContentControl IsEnabled="{Binding SelectedItem, ElementName=ControlPointListBox, Converter={StaticResource itemToBoolConverter}}" Grid.Column="2" KeyboardNavigation.IsTabStop="false">
-                                <customcontrol:NumberTextbox Value="{Binding Path=SelectedItem.Tangent.Y,ElementName=ControlPointListBox, Mode=TwoWay}" MaxValue="10000" MinValue="-10000">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseMove">
-                                            <command:EventToCommand Command="{Binding DataContext.RefreshLBCommand, ElementName=Root}" CommandParameter="{Binding ElementName=ControlPointListBox}"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </customcontrol:NumberTextbox>
+                                <customcontrol:NumberTextbox Value="{Binding Path=SelectedItem.Tangent.Y,ElementName=ControlPointListBox, 
+                                    Mode=TwoWay}" MaxValue="10000" MinValue="-10000"/>
                             </ContentControl>
                             <ContentControl IsEnabled="{Binding SelectedItem, ElementName=ControlPointListBox, Converter={StaticResource itemToBoolConverter}}" Grid.Column="3" KeyboardNavigation.IsTabStop="false">
-                                <customcontrol:NumberTextbox Value="{Binding Path=SelectedItem.Tangent.Z,ElementName=ControlPointListBox, Mode=TwoWay}" MaxValue="10000" MinValue="-10000">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseMove">
-                                            <command:EventToCommand Command="{Binding DataContext.RefreshLBCommand, ElementName=Root}" CommandParameter="{Binding ElementName=ControlPointListBox}"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </customcontrol:NumberTextbox>
+                                <customcontrol:NumberTextbox Value="{Binding Path=SelectedItem.Tangent.Z,ElementName=ControlPointListBox, 
+                                    Mode=TwoWay}" MaxValue="10000" MinValue="-10000"/>
                             </ContentControl>
                         </Grid>
                     </Grid>
@@ -194,7 +179,7 @@
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5"/>
-                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="120"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
@@ -207,8 +192,9 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="30"/>
+                                <RowDefinition Height="30"/>
                                 <RowDefinition Height="25"/>
-                                <RowDefinition Height="23"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
                             <Button Content="Load Leaf Mesh..." Margin="3"
@@ -226,56 +212,147 @@
                                             Grid.Row="2" Grid.Column="1" Margin="35,0,0,0"
                                             KeyboardNavigation.IsTabStop="false">
                                 <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafOffset, ElementName=Root, Mode=TwoWay}" 
-                                                         Width="50" IncrementValue="0.1" MaxValue="100" MinValue="0"/>
+                                                         Width="50" IncrementValue="0.1" MaxValue="100" MinValue="0.01"/>
+                            </ContentControl>
+                            <Label Grid.Row="3" Content="Leaf Interval"/>
+                            <ContentControl IsEnabled="{Binding IvyData.LeafSpreadInterval, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="3" Grid.Column="1" Margin="35,0,0,0"
+                                            KeyboardNavigation.IsTabStop="false">
+                                <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafSpreadInterval, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" IncrementValue="0.05" MaxValue="1" MinValue="0.01"/>
                             </ContentControl>
                         </Grid>
 
                         <Grid Grid.Row="2">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="26"/>
+                                <RowDefinition Height="26"/>
+                                <RowDefinition Height="26"/>
+                                <RowDefinition Height="26"/>
+                                <RowDefinition Height="26"/>
+                                <RowDefinition Height="26"/>
+                                <RowDefinition Height="26"/>
+                                <RowDefinition Height="26"/>
+                                <RowDefinition Height="26"/>
+                                <RowDefinition Height="26"/>
+                                <RowDefinition Height="5"/>
+                                <RowDefinition Height="26"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+
                             <Label Content="Rotation"/>
-                            <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
                                             Grid.Row="1" Grid.Column="0" KeyboardNavigation.IsTabStop="false">
-                                <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelRotX, ElementName=Root, Mode=TwoWay}" 
+                                    <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelRotX, ElementName=Root, Mode=TwoWay}" 
                                                          Width="50" MaxValue="360" MinValue="-360"/>
-                            </ContentControl>
-                            <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                </ContentControl>
+                                <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
                                             Grid.Row="1" Grid.Column="1" KeyboardNavigation.IsTabStop="false">
-                                <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelRotY, ElementName=Root, Mode=TwoWay}" 
+                                    <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelRotY, ElementName=Root, Mode=TwoWay}" 
                                                          Width="50" MaxValue="360" MinValue="-360"/>
-                            </ContentControl>
-                            <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                </ContentControl>
+                                <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
                                             Grid.Row="1" Grid.Column="2" KeyboardNavigation.IsTabStop="false">
-                                <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelRotZ, ElementName=Root, Mode=TwoWay}" 
+                                    <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelRotZ, ElementName=Root, Mode=TwoWay}" 
                                                          Width="50" MaxValue="360" MinValue="-360"/>
-                            </ContentControl>
+                                </ContentControl>
+                            </Grid>
 
                             <Label Content="Scale" Grid.Row="2"/>
-                            <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
-                                            Grid.Row="4" Grid.Column="0" KeyboardNavigation.IsTabStop="false">
-                                <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelScaleX, ElementName=Root, Mode=TwoWay}" 
-                                                         Width="50" MaxValue="360" MinValue="-360"/>
-                            </ContentControl>
-                            <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
-                                            Grid.Row="4" Grid.Column="1" KeyboardNavigation.IsTabStop="false">
-                                <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelScaleY, ElementName=Root, Mode=TwoWay}" 
-                                                         Width="50" MaxValue="360" MinValue="-360"/>
-                            </ContentControl>
-                            <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
-                                            Grid.Row="4" Grid.Column="2" KeyboardNavigation.IsTabStop="false">
-                                <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelScaleZ, ElementName=Root, Mode=TwoWay}" 
-                                                         Width="50" MaxValue="360" MinValue="-360"/>
-                            </ContentControl>
+                            <Grid Grid.Row="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="3" Grid.Column="0" KeyboardNavigation.IsTabStop="false">
+                                    <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelScaleX, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="100" MinValue="0"/>
+                                </ContentControl>
+                                <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="3" Grid.Column="1" KeyboardNavigation.IsTabStop="false">
+                                    <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelScaleY, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="100" MinValue="0"/>
+                                </ContentControl>
+                                <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="3" Grid.Column="2" KeyboardNavigation.IsTabStop="false">
+                                    <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.LeafModelScaleZ, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="100" MinValue="0"/>
+                                </ContentControl>
+                            </Grid>
+
+                            <Label Grid.Row="4" Content="Random Leaf Interval Range"/>
+                            <Grid Grid.Row="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="3" Grid.Column="0" KeyboardNavigation.IsTabStop="false">
+                                    <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.MinLeafIntervalRange, 
+                                        ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="100" MinValue="-100"/>
+                                </ContentControl>
+                                <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="3" Grid.Column="2" KeyboardNavigation.IsTabStop="false">
+                                    <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.MaxLeafIntervalRange, 
+                                        ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="100" MinValue="-100"/>
+                                </ContentControl>
+                            </Grid>
+
+                            <Label Grid.Row="6" Content="Random Rotation Range"/>
+                            <Grid Grid.Row="7">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="3" Grid.Column="0" KeyboardNavigation.IsTabStop="false">
+                                    <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.MinRandomRotationRange, 
+                                        ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="100" MinValue="-100"/>
+                                </ContentControl>
+                                <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="3" Grid.Column="2" KeyboardNavigation.IsTabStop="false">
+                                    <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.MaxRandomRotationRange, 
+                                        ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="100" MinValue="-100"/>
+                                </ContentControl>
+                            </Grid>
+
+                            <Label Grid.Row="8" Content="Random Scale Range"/>
+                            <Grid Grid.Row="9">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="3" Grid.Column="0" KeyboardNavigation.IsTabStop="false">
+                                    <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.MinRangeScalingRange, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="100" MinValue="-100"/>
+                                </ContentControl>
+                                <ContentControl IsEnabled="{Binding IvyData.LeafModel, Converter={StaticResource itemToBoolConverter}}" 
+                                            Grid.Row="3" Grid.Column="2" KeyboardNavigation.IsTabStop="false">
+                                    <customcontrol:NumberTextbox Value="{Binding DataContext.IvyData.MaxRangeScalingRange, ElementName=Root, Mode=TwoWay}" 
+                                                         Width="50" MaxValue="100" MinValue="-100"/>
+                                </ContentControl>
+
+                            </Grid>
+                            <Button Grid.Row="11" Content="Generate Random Values" Command="{Binding GenerateRandomValuesCommand}"/>
+
                         </Grid>
                     </Grid>
                 </GroupBox>

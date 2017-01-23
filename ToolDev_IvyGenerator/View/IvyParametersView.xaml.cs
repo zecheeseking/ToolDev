@@ -16,9 +16,7 @@ namespace ToolDev_IvyGenerator.View
         public Ivy IvySource
         {
             get { return (Ivy)GetValue(IvySourceProperty); }
-            set {
-                SetValue(IvySourceProperty, value);
-            }
+            set { SetValue(IvySourceProperty, value); }
         }
 
         private static void OnIvySourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
