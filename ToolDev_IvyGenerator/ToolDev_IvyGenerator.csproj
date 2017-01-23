@@ -134,6 +134,7 @@
     <Compile Include="Models\Spline.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Models\SplineControlPoint.cs" />
+    <Compile Include="Utilities\ModelExporter.cs" />
     <Compile Include="Utilities\ModelLoader.cs" />
     <Compile Include="Utilities\InputManager.cs" />
     <Compile Include="Utilities\Quat.cs" />

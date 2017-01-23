@@ -50,6 +50,24 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
 
+        private RelayCommand<Ivy> _exportIvyCommand;
+        public RelayCommand<Ivy> ExportIvyCOmmand
+        {
+            get
+            {
+                return _exportIvyCommand ??
+                    (
+                        _exportIvyCommand = new RelayCommand<Ivy>
+                        (
+                            (ivy) =>
+                            {
+                                
+                            }
+                        )
+                    );
+            }
+        }
+
         private Device _device;
         public Device Device
         {

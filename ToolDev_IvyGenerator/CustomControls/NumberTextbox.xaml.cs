@@ -1,8 +1,9 @@
 ﻿using System.Windows;
-using GalaSoft.MvvmLight;
 using System.Diagnostics;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.Windows.Controls;
+using System.Text.RegularExpressions;
+using System.Windows.Input;
 
 namespace ToolDev_IvyGenerator.CustomControls
 {
@@ -106,7 +107,32 @@ namespace ToolDev_IvyGenerator.CustomControls
             }
         }
 
-        public NumberTextbox()
+        private RelayCommand<TextBox> _textboxClearCommand;
+        public RelayCommand<TextBox> TextboxClearCommand
+        {
+            get
+            {
+                return _textboxClearCommand ??
+                    (
+                        _textboxClearCommand = new RelayCommand<TextBox>
+                        (
+                            (textbox) =>
+                            {
+                                Debug.WriteLine("Haha");
+                                textbox.Text = "";
+                            }
+                        )
+                    );
+            }
+        }
+
+    private void NumberValidationTextbox(object sender, TextCompositionEventArgs e)
+    {
+        Regex regex = new Regex("[^0-9]+");
+        e.Handled = regex.IsMatch(e.Text);
+    }
+
+    public NumberTextbox()
         {
             InitializeComponent();
         }
