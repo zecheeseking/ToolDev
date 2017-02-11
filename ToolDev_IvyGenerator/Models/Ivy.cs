@@ -36,10 +36,7 @@ namespace ToolDev_IvyGenerator.Models
             }
         }
         //Transform
-        public Matrix WorldMatrix { get; set; }
-        public Vec3 Position { get; set; }
-        public Vec3 Rotation { get; set; }
-        public Vec3 Scale { get; set; }
+        public TransformComponent Transform { get; set; }
         //Ivy params
         public Spline Stem { get; set; }
         private Model _leafModel;
@@ -68,17 +65,12 @@ namespace ToolDev_IvyGenerator.Models
         {
             Stem = new Spline();
 
-            Position = new Vec3();
-            Rotation = new Vec3();
-            Scale = new Vec3(new Vector3(1.0f));
+            Transform = new TransformComponent();
 
             LeafInterval = 0.2f;
 
             MinRotationRange = 0.0f;
             MaxRotationRange = 0.0f;
-
-
-            WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
         }
 
         public void Initialize(Device device)
@@ -90,7 +82,7 @@ namespace ToolDev_IvyGenerator.Models
         {
             PopulateLeaves();
 
-            WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
+            Transform.Update(deltaT);
             Stem.Update(deltaT);
             //foreach (Model leaf in _leaves)
             //    leaf.Update(deltaT);
@@ -194,7 +186,7 @@ namespace ToolDev_IvyGenerator.Models
             forward.Normalize();
             var posThicknessOffset = Vector3.Cross(forward, Vector3.Up);
 
-            leaf.Position.Value = new Vector3(0.0f);
+            leaf.Transform.Position.Value = new Vector3(0.0f);
 
             var q = Quaternion.LookAtRH(pos, pos + forward, Vector3.Up);
             q.Normalize();
@@ -203,26 +195,26 @@ namespace ToolDev_IvyGenerator.Models
             Matrix transform;
 
             if(flipSide)
-                transform = MathHelper.CalculateWorldMatrix(leaf.Scale, q,
+                transform = MathHelper.CalculateWorldMatrix(leaf.Transform.Scale, q,
                             new Vec3(pos + (-posThicknessOffset * (Stem.Thickness + Offset))));
             else
-                transform = MathHelper.CalculateWorldMatrix(leaf.Scale, q,
+                transform = MathHelper.CalculateWorldMatrix(leaf.Transform.Scale, q,
                             new Vec3(pos + (posThicknessOffset * (Stem.Thickness + Offset))));
 
-            leaf.Rotation = new Vec3(_leafModel.Rotation.Value +
+            leaf.Transform.Rotation = new Vec3(_leafModel.Transform.Rotation.Value +
                             new Vector3(_leafRandomIntervals[randIndex]._rotX,
                             _leafRandomIntervals[randIndex]._rotY,
                             _leafRandomIntervals[randIndex]._rotZ));
             if (flipSide)
-                leaf.Rotation.Value += new Vector3(0, 180, 0);
+                leaf.Transform.Rotation.Value += new Vector3(0, 180, 0);
 
-            leaf.Scale = new Vec3(_leafModel.Scale.Value +
+            leaf.Transform.Scale = new Vec3(_leafModel.Transform.Scale.Value +
                             new Vector3(_leafRandomIntervals[randIndex]._scaleX,
                             _leafRandomIntervals[randIndex]._scaleY,
                             _leafRandomIntervals[randIndex]._scaleZ));
 
-            leaf.WorldMatrix = MathHelper.CalculateWorldMatrix(leaf.Scale, leaf.Rotation, leaf.Position);
-            leaf.WorldMatrix *= transform;
+            leaf.Transform.WorldMatrix = MathHelper.CalculateWorldMatrix(leaf.Transform.Scale, leaf.Transform.Rotation, leaf.Transform.Position);
+            leaf.Transform.WorldMatrix *= transform;
 
             leaf.Material = _leafModel.Material;
 

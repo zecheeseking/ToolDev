@@ -15,10 +15,7 @@ namespace ToolDev_IvyGenerator.Utilities
 {
     public class SceneGrid : ISceneObject
     {
-        public Matrix WorldMatrix { get; set; }
-        public Vec3 Position { get; set; }
-        public Vec3 Rotation { get; set; }
-        public Vec3 Scale { get; set; }
+        public TransformComponent Transform { get; set; }
 
         public IEffect Material { get; set; }
         public Vector3 LightDirection { get; set; }
@@ -27,10 +24,12 @@ namespace ToolDev_IvyGenerator.Utilities
 
         public void Initialize(Device device)
         {
-            WorldMatrix = Matrix.Scaling(1.0f)*Matrix.RotationQuaternion(Quaternion.Identity)*Matrix.Translation(Vector3.Zero);
-
             Mesh = new MeshData<VertexPosColNorm>();
             Mesh.PrimitiveTopology = PrimitiveTopology.LineList;
+
+            Transform = new TransformComponent();
+            Transform.Initialize(device);
+            Transform.Update(0.0f);
 
             CreateGrid(20, Color.Black, 4.0f);
 
@@ -47,7 +46,7 @@ namespace ToolDev_IvyGenerator.Utilities
 
         public void Draw(Device device, ICamera camera)
         {
-            Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+            Material.SetWorldViewProjection(Transform.WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
 
             device.InputAssembler.InputLayout = Material.InputLayout;
             device.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;

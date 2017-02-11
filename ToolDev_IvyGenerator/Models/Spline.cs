@@ -17,11 +17,8 @@ namespace ToolDev_IvyGenerator.Models
 {
     public class Spline : ISceneObject, INotifyPropertyChanged, IIntersect
     {
-        private Matrix _worldMatrix;
-        public Matrix WorldMatrix { get { return _worldMatrix; } set { _worldMatrix = value; } }
-        public Vec3 Position { get; set; }
-        public Vec3 Rotation { get; set; }
-        public Vec3 Scale { get; set; }
+        public TransformComponent Transform { get; set; }
+
         public bool Selected { get; set; }
         public IEffect Material { get; set; }
         public IEffect WireMaterial { get; set; }
@@ -70,11 +67,7 @@ namespace ToolDev_IvyGenerator.Models
 
         public Spline()
         {
-            Position = new Vec3 { Value = Vector3.Zero };
-            Rotation = new Vec3 { Value = Vector3.Zero };
-            Scale = new Vec3 { Value = new Vector3(1.0f) };
-
-            WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
+            Transform = new TransformComponent();
 
             _controlPoints.Add(new SplineControlPoint(0, Vector3.Zero, new Vector3(10,0,0)));
             _controlPoints.Add(new SplineControlPoint(1, new Vector3(50,0,0), new Vector3(50,0,0) + new Vector3(10,0,0)));
@@ -263,8 +256,8 @@ namespace ToolDev_IvyGenerator.Models
 
             if (Render)
             {
-                Material.SetWorld(WorldMatrix);
-                Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+                Material.SetWorld(Transform.WorldMatrix);
+                Material.SetWorldViewProjection(Transform.WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
                 Material.SetLightDirection(LightDirection);
 
                 device.InputAssembler.InputLayout = Material.InputLayout;
@@ -281,7 +274,7 @@ namespace ToolDev_IvyGenerator.Models
             }
             else
             {
-                WireMaterial.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+                WireMaterial.SetWorldViewProjection(Transform.WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
 
                 device.InputAssembler.InputLayout = WireMaterial.InputLayout;
                 device.InputAssembler.PrimitiveTopology = WireMesh.PrimitiveTopology;
@@ -315,7 +308,7 @@ namespace ToolDev_IvyGenerator.Models
             float distance = float.MaxValue;
             intersectionPoint = Vector3.Zero;
             bool hit = false;
-            Matrix modelInverse = Matrix.Invert(WorldMatrix);
+            Matrix modelInverse = Matrix.Invert(Transform.WorldMatrix);
 
             Ray r = new Ray(ray.Position, ray.Direction);
             Vector3.Transform(r.Position, modelInverse);
@@ -331,9 +324,9 @@ namespace ToolDev_IvyGenerator.Models
                 var v = Vector3.Zero;
 
                 Vector3 p1; Vector3 p2; Vector3 p3;
-                Vector3.Transform(ref Mesh.Vertices[t1].Position, ref _worldMatrix, out p1);
-                Vector3.Transform(ref Mesh.Vertices[t2].Position, ref _worldMatrix, out p2);
-                Vector3.Transform(ref Mesh.Vertices[t3].Position, ref _worldMatrix, out p3);
+                Vector3.Transform(ref Mesh.Vertices[t1].Position, ref Transform.WorldMatrix, out p1);
+                Vector3.Transform(ref Mesh.Vertices[t2].Position, ref Transform.WorldMatrix, out p2);
+                Vector3.Transform(ref Mesh.Vertices[t3].Position, ref Transform.WorldMatrix, out p3);
 
                 if (ray.Intersects(ref p1, ref p2, ref p3, out v))
                 {

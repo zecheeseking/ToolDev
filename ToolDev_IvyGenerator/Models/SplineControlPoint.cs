@@ -17,32 +17,20 @@ namespace ToolDev_IvyGenerator.Models
 
         public bool Selected { get; set; }
 
-        public TransformHandle TransformHandlePosition;
+        public TransformComponent TransformHandlePosition;
         private Line _handleLine;
-        public TransformHandle TransformHandleTangent;
+        public TransformComponent TransformHandleTangent;
 
         public SplineControlPoint(int number, Vector3 pos, Vector3 tan)
         {
             this._id = number;
             Position = new Vec3(pos);
             Tangent = new Vec3(tan - pos);
-            TransformHandlePosition = new TransformHandle();
+            TransformHandlePosition = new TransformComponent();
             TransformHandlePosition.HandleLength = 5.0f;
-            TransformHandlePosition.Position = new Vec3();
-            TransformHandlePosition.Position.Value = Position.Value;
-            TransformHandlePosition.Rotation = new Vec3();
-            TransformHandlePosition.Rotation.Value = Vector3.Zero;
-            TransformHandlePosition.Scale = new Vec3();
-            TransformHandlePosition.Scale.Value = new Vector3(1.0f);
 
-            TransformHandleTangent = new TransformHandle();
+            TransformHandleTangent = new TransformComponent();
             TransformHandleTangent.HandleLength = 3.0f;
-            TransformHandleTangent.Position = new Vec3();
-            TransformHandleTangent.Position.Value = Tangent.Value;
-            TransformHandleTangent.Rotation = new Vec3();
-            TransformHandleTangent.Rotation.Value = Vector3.Zero;
-            TransformHandleTangent.Scale = new Vec3();
-            TransformHandleTangent.Scale.Value = new Vector3(1.0f);
 
             _handleLine = new Line();
             _handleLine.StartPosition = TransformHandlePosition.Position;

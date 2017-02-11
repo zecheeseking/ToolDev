@@ -21,21 +21,23 @@ namespace ToolDev_IvyGenerator.Interfaces
         MeshData<VertexPosColNorm> Mesh { get; set; }
     }
 
-    public interface ISceneObject : ITransform
+    public interface ISceneObject
     {
         void Initialize(Device device);
         void Update(float deltaT);
         void Draw(Device device, ICamera camera);
+
+        TransformComponent Transform { get; set; }
     }
 
-    public interface ITransform
-    {
-        Matrix WorldMatrix { get; set; }
+    //public interface ITransform
+    //{
+    //    Matrix WorldMatrix { get; set; }
 
-        Vec3 Position { get; set; }
-        Vec3 Rotation { get; set; }
-        Vec3 Scale { get; set; }
-    }
+    //    Vec3 Position { get; set; }
+    //    Vec3 Rotation { get; set; }
+    //    Vec3 Scale { get; set; }
+    //}
 
     public interface IEffect
     {

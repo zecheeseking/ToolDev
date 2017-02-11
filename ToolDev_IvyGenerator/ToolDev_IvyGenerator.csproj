@@ -139,6 +139,7 @@
     <Compile Include="Utilities\InputManager.cs" />
     <Compile Include="Utilities\Quat.cs" />
     <Compile Include="Utilities\SceneGrid.cs" />
+    <Compile Include="Utilities\TransformComponent.cs" />
     <Compile Include="Utilities\TransformHandle.cs" />
     <Compile Include="Utilities\Vec3.cs" />
     <Compile Include="Utilities\VertexData.cs" />

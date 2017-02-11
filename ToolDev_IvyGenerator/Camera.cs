@@ -7,7 +7,7 @@ using Key = SharpDX.DirectInput.Key;
 
 namespace ToolDev_IvyGenerator
 {
-    public class Camera : ICamera, ITransform
+    public class Camera : ICamera
     {
         private float _camMoveSpeed = 25.0f;
 

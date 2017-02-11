@@ -17,17 +17,12 @@ namespace ToolDev_IvyGenerator.Models
 {
     public class Model : ISceneObject, INotifyPropertyChanged, IIntersect
     {
-        private Matrix _worldMatrix;
-        public Matrix WorldMatrix { get {return _worldMatrix;} set{ _worldMatrix = value;}  }
         public SharpDX.Vector3 LightDirection { get; set; }
-        public Vec3 Position { get { return _tranformHandle.Position; } set { _tranformHandle.Position = value; } }
-        public Vec3 Rotation { get { return _tranformHandle.Rotation; } set { _tranformHandle.Rotation = value; } }
-        public Vec3 Scale { get { return _tranformHandle.Scale; } set { _tranformHandle.Scale = value; } }
+        public TransformComponent Transform { get; set; }
         public IEffect Material { get; set; }
         public MeshData<VertexPosColNorm> Mesh { get; set; }
         public bool Selected { get; set; }
         public Color Color { get; set; }
-        private TransformHandle _tranformHandle = new TransformHandle();
 
         public Model()
         {
@@ -35,22 +30,13 @@ namespace ToolDev_IvyGenerator.Models
 
             Color = Color.Gray;
 
-            Position = new Vec3 {Value = Vector3.Zero};
-            Rotation = new Vec3 {Value = Vector3.Zero};
-            Scale = new Vec3 {Value = new Vector3(1.0f)};
-
-            WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
             LightDirection = Vector3.Zero;
+            Transform = new TransformComponent();
         }
 
         public Model(Model model)
         {
             Material = model.Material;
-
-            Position = model.Position;
-            Rotation = model.Rotation;
-            Scale = model.Scale;
-
             Mesh = model.Mesh;
 
             LightDirection = model.LightDirection;
@@ -66,20 +52,18 @@ namespace ToolDev_IvyGenerator.Models
             Mesh.CreateVertexBuffer(device);
             Mesh.CreateIndexBuffer(device);
 
-            _tranformHandle.Initialize(device);
+            Transform.Initialize(device);
         }
 
         public void Update(float deltaT)
         {
-            _tranformHandle.Update(deltaT);
-            //WorldMatrix = MathHelper.CalculateWorldMatrix(Scale, Rotation, Position);
-            WorldMatrix = _tranformHandle.WorldMatrix;
+            Transform.Update(deltaT);
         }
 
         public void Draw(Device device, ICamera camera)
         {
-            Material.SetWorld(WorldMatrix);
-            Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+            Material.SetWorld(Transform.WorldMatrix);
+            Material.SetWorldViewProjection(Transform.WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
             Material.SetLightDirection(LightDirection);
 
             device.InputAssembler.InputLayout = Material.InputLayout;
@@ -94,7 +78,7 @@ namespace ToolDev_IvyGenerator.Models
             }
 
             if (Selected)
-                _tranformHandle.Draw(device, camera);
+                Transform.Draw(device, camera);
         }
 
         public bool Intersects(Ray ray, out Vector3 intersectionPoint)
@@ -104,9 +88,9 @@ namespace ToolDev_IvyGenerator.Models
             bool hit = false;
 
             if (Selected)
-                return _tranformHandle.Intersects(ray, out intersectionPoint);
+                return Transform.Intersects(ray, out intersectionPoint);
 
-            Matrix modelInverse = Matrix.Invert(WorldMatrix);
+            Matrix modelInverse = Matrix.Invert(Transform.WorldMatrix);
 
             Ray r = new Ray(ray.Position, ray.Direction);
             Vector3.Transform(r.Position, modelInverse);
@@ -122,9 +106,9 @@ namespace ToolDev_IvyGenerator.Models
                 var v = Vector3.Zero;
 
                 Vector3 p1;Vector3 p2;Vector3 p3;
-                Vector3.Transform(ref Mesh.Vertices[t1].Position, ref _worldMatrix, out p1);
-                Vector3.Transform(ref Mesh.Vertices[t2].Position, ref _worldMatrix, out p2);
-                Vector3.Transform(ref Mesh.Vertices[t3].Position, ref _worldMatrix, out p3);
+                Vector3.Transform(ref Mesh.Vertices[t1].Position, ref Transform.WorldMatrix, out p1);
+                Vector3.Transform(ref Mesh.Vertices[t2].Position, ref Transform.WorldMatrix, out p2);
+                Vector3.Transform(ref Mesh.Vertices[t3].Position, ref Transform.WorldMatrix, out p3);
 
                 if (ray.Intersects(ref p1, ref p2, ref p3, out v))
                 {
@@ -143,7 +127,7 @@ namespace ToolDev_IvyGenerator.Models
 
         public void ResetCollisionFlags()
         {
-            _tranformHandle.ResetCollisionFlags();
+            Transform.ResetCollisionFlags();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

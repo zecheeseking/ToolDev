@@ -13,18 +13,10 @@ namespace ToolDev_IvyGenerator.DirectX
     public class Line : ISceneObject
     {
         public Vector3 LightDirection { get; set; }
-
         public IEffect Material { get; set; }
-
         public MeshData<VertexPosColNorm> Mesh { get; set; }
 
-        public Vec3 Position { get; set; }
-
-        public Vec3 Rotation { get; set; }
-
-        public Vec3 Scale { get; set; }
-
-        public Matrix WorldMatrix { get; set; }
+        public TransformComponent Transform { get; set; }
 
         private Vec3[] _linePositions = new Vec3[2];
         public Vec3 StartPosition
@@ -51,7 +43,8 @@ namespace ToolDev_IvyGenerator.DirectX
 
         public void Initialize(Device device)
         {
-            WorldMatrix = Matrix.Scaling(1.0f) * Matrix.RotationQuaternion(Quaternion.Identity) * Matrix.Translation(Vector3.Zero);
+            Transform = new TransformComponent();
+            Transform.Initialize(device);
 
             Mesh = new MeshData<VertexPosColNorm>();
             Mesh.PrimitiveTopology = PrimitiveTopology.LineList;
@@ -89,7 +82,7 @@ namespace ToolDev_IvyGenerator.DirectX
                 _updateBuffers = false;
             }
 
-            Material.SetWorldViewProjection(WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+            Material.SetWorldViewProjection(Transform.WorldMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
 
             device.InputAssembler.InputLayout = Material.InputLayout;
             device.InputAssembler.PrimitiveTopology = Mesh.PrimitiveTopology;

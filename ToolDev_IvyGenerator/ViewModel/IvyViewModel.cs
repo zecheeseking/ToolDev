@@ -49,38 +49,38 @@ namespace ToolDev_IvyGenerator.ViewModel
 
         public float LeafModelRotX
         {
-            get { if(_ivy.LeafModel != null) return _ivy.LeafModel.Rotation.X; return 0.0f; }
-            set { _ivy.LeafModel.Rotation.X = value; _ivy.PopulateLeaves(); RaisePropertyChanged(() => LeafModelRotX); }
+            get { if(_ivy.LeafModel != null) return _ivy.LeafModel.Transform.Rotation.X; return 0.0f; }
+            set { _ivy.LeafModel.Transform.Rotation.X = value; _ivy.PopulateLeaves(); RaisePropertyChanged(() => LeafModelRotX); }
         }
 
         public float LeafModelRotY
         {
-            get { if (_ivy.LeafModel != null) return _ivy.LeafModel.Rotation.Y; return 0.0f; }
-            set { _ivy.LeafModel.Rotation.Y = value; _ivy.PopulateLeaves(); RaisePropertyChanged(() => LeafModelRotY); }
+            get { if (_ivy.LeafModel != null) return _ivy.LeafModel.Transform.Rotation.Y; return 0.0f; }
+            set { _ivy.LeafModel.Transform.Rotation.Y = value; _ivy.PopulateLeaves(); RaisePropertyChanged(() => LeafModelRotY); }
         }
 
         public float LeafModelRotZ
         {
-            get { if (_ivy.LeafModel != null) return _ivy.LeafModel.Rotation.Z; return 0.0f; }
-            set { _ivy.LeafModel.Rotation.Z = value; _ivy.PopulateLeaves(); RaisePropertyChanged(() => LeafModelRotZ); }
+            get { if (_ivy.LeafModel != null) return _ivy.LeafModel.Transform.Rotation.Z; return 0.0f; }
+            set { _ivy.LeafModel.Transform.Rotation.Z = value; _ivy.PopulateLeaves(); RaisePropertyChanged(() => LeafModelRotZ); }
         }
 
         public float LeafModelScaleX
         {
-            get { if (_ivy.LeafModel != null) return _ivy.LeafModel.Scale.X; return 0.0f; }
-            set { _ivy.LeafModel.Scale.X = value; _ivy.PopulateLeaves(); RaisePropertyChanged(() => LeafModelScaleX); }
+            get { if (_ivy.LeafModel != null) return _ivy.LeafModel.Transform.Scale.X; return 0.0f; }
+            set { _ivy.LeafModel.Transform.Scale.X = value; _ivy.PopulateLeaves(); RaisePropertyChanged(() => LeafModelScaleX); }
         }
 
         public float LeafModelScaleY
         {
-            get { if (_ivy.LeafModel != null) return _ivy.LeafModel.Scale.Y; return 0.0f; }
-            set { _ivy.LeafModel.Scale.Y = value; _ivy.PopulateLeaves(); RaisePropertyChanged(() => LeafModelScaleY); }
+            get { if (_ivy.LeafModel != null) return _ivy.LeafModel.Transform.Scale.Y; return 0.0f; }
+            set { _ivy.LeafModel.Transform.Scale.Y = value; _ivy.PopulateLeaves(); RaisePropertyChanged(() => LeafModelScaleY); }
         }
 
         public float LeafModelScaleZ
         {
-            get { if (_ivy.LeafModel != null) return _ivy.LeafModel.Scale.Z; return 0.0f; }
-            set { _ivy.LeafModel.Scale.Z = value; _ivy.PopulateLeaves(); RaisePropertyChanged(() => LeafModelScaleZ); }
+            get { if (_ivy.LeafModel != null) return _ivy.LeafModel.Transform.Scale.Z; return 0.0f; }
+            set { _ivy.LeafModel.Transform.Scale.Z = value; _ivy.PopulateLeaves(); RaisePropertyChanged(() => LeafModelScaleZ); }
         }
 
         public float MaxLeafIntervalRange
