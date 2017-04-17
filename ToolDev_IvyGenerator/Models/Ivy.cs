@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using SharpDX;
-using SharpDX.Direct3D11;
 using ToolDev_IvyGenerator.Interfaces;
 using ToolDev_IvyGenerator.Utilities;
 using ToolDev_IvyGenerator.DirectX;
@@ -9,8 +8,6 @@ using Device = SharpDX.Direct3D10.Device1;
 
 namespace ToolDev_IvyGenerator.Models
 {
-
-
     public class Ivy : ISceneObject, IIntersect
     {
         struct RandomIntervals
