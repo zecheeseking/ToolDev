@@ -128,12 +128,10 @@
     <Compile Include="DirectX\IDX10Viewport.cs" />
     <Compile Include="Interfaces\interfaces.cs" />
     <Compile Include="MathHelper.cs" />
-    <Compile Include="Models\Ivy.cs" />
+    <Compile Include="Utilities\LSystem.cs" />
     <Compile Include="Utilities\MeshData.cs" />
     <Compile Include="Models\Model.cs" />
-    <Compile Include="Models\Spline.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Models\SplineControlPoint.cs" />
     <Compile Include="Utilities\ModelExporter.cs" />
     <Compile Include="Utilities\ModelLoader.cs" />
     <Compile Include="Utilities\InputManager.cs" />
@@ -143,15 +141,9 @@
     <Compile Include="Utilities\TransformHandle.cs" />
     <Compile Include="Utilities\Vec3.cs" />
     <Compile Include="Utilities\VertexData.cs" />
-    <Compile Include="ViewModel\CreateIvyViewModel.cs" />
-    <Compile Include="ViewModel\IvyViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ModelViewModel.cs" />
-    <Compile Include="ViewModel\IvyParametersViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="View\CreateIvyView.xaml.cs">
-      <DependentUpon>CreateIvyView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\DefaultView.xaml.cs">
       <DependentUpon>DefaultView.xaml</DependentUpon>
     </Compile>
@@ -161,13 +153,6 @@
     <Compile Include="CustomControls\NumberTextbox.xaml.cs">
       <DependentUpon>NumberTextbox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\IvyParametersView.xaml.cs">
-      <DependentUpon>IvyParametersView.xaml</DependentUpon>
-    </Compile>
-    <Page Include="View\CreateIvyView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\DefaultView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -190,10 +175,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomControls\NumberTextbox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\IvyParametersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

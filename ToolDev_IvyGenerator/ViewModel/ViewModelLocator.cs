@@ -43,9 +43,7 @@ namespace ToolDev_IvyGenerator.ViewModel
             ////}
 
             SimpleIoc.Default.Register<MainViewModel>();
-            SimpleIoc.Default.Register<IvyParametersViewModel>();
             SimpleIoc.Default.Register<ModelViewModel>();
-            SimpleIoc.Default.Register<CreateIvyViewModel>();
         }
 
         public MainViewModel Main
@@ -56,27 +54,11 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
         
-        public IvyParametersViewModel Ivy
-        {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<IvyParametersViewModel>();
-            }
-        }
-
         public ModelViewModel Model
         {
             get
             {
                 return ServiceLocator.Current.GetInstance<ModelViewModel>();
-            }
-        }
-
-        public CreateIvyViewModel CreateSpline
-        {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<CreateIvyViewModel>();
             }
         }
 

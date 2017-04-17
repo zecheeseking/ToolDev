@@ -50,24 +50,6 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
 
-        private RelayCommand<Ivy> _exportIvyCommand;
-        public RelayCommand<Ivy> ExportIvyCOmmand
-        {
-            get
-            {
-                return _exportIvyCommand ??
-                    (
-                        _exportIvyCommand = new RelayCommand<Ivy>
-                        (
-                            (ivy) =>
-                            {
-                                
-                            }
-                        )
-                    );
-            }
-        }
-
         private Device _device;
         public Device Device
         {
@@ -264,20 +246,20 @@ namespace ToolDev_IvyGenerator.ViewModel
             }
         }
 
-        private RelayCommand<Window> _createSplineCommand;
-        public RelayCommand<Window> CreateSplineCommand
+        private RelayCommand<Window> _createIvyCommand;
+        public RelayCommand<Window> CreateIvyCommand
         {
             get
             {
-                return _createSplineCommand ??
+                return _createIvyCommand ??
                     (
-                        _createSplineCommand = new RelayCommand<Window>
+                        _createIvyCommand = new RelayCommand<Window>
                         (
                             (window) =>
                             {
-                                var createIvyView = new CreateIvyView();
-                                createIvyView.Owner = window;
-                                createIvyView.Show();
+                                //var createIvyView = new CreateIvyView();
+                                //createIvyView.Owner = window;
+                                //createIvyView.Show();
                             }
                         )
                     );

@@ -6,14 +6,14 @@ namespace ToolDev_IvyGenerator.Utilities
 {
     public class ModelExporter 
     {
-        public static void Export(Ivy ivy)
-        {
-            AssimpContext exporter = new AssimpContext();
-            //Build scene from models
-            Scene ivyModel = new Scene();
+        //public static void Export(Ivy ivy)
+        //{
+        //    AssimpContext exporter = new AssimpContext();
+        //    //Build scene from models
+        //    Scene ivyModel = new Scene();
 
 
-            exporter.ExportFile(ivyModel, "ivy", "obj");
-        }
+        //    exporter.ExportFile(ivyModel, "ivy", "obj");
+        //}
     }
 }
