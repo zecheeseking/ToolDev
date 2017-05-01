@@ -1,0 +1,95 @@
+﻿<Window x:Class="IvyGenerator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hx="http://helix-toolkit.org/wpf/SharpDX"
+        xmlns:local="clr-namespace:IvyGenerator"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="720" Width="1280" MinWidth="800" MinHeight="600" 
+        DataContext="{Binding MainViewModel, Source={StaticResource Locator}}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="File" Width="60">
+                    <MenuItem Header="Load model..." Command="{Binding LoadModelCommand}" CommandParameter="{Binding ElementName=Viewport}"/>
+                    <MenuItem Header="Export Selected Ivy"/>
+                </MenuItem>
+                <MenuItem Header="Add" Width="60">
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="250"/>
+            </Grid.ColumnDefinitions>
+
+            <Button/>
+            <Border Grid.Column="1" Margin="5">
+                <hx:Viewport3DX
+                    x:Name="Viewport"
+                    Camera="{Binding Camera}"
+                    ShowCoordinateSystem="false"
+                    RenderTechnique="{Binding RenderTechnique}"
+                    >
+                    <hx:AmbientLight3D />
+                    <hx:DirectionalLight3D Direction = "-2,-5,-2"/>
+                    <hx:LineGeometryModel3D x:Name="Grid"   Geometry="{Binding Grid}"  Transform = "{Binding GridTransform}"   Color="{Binding GridColor}"/>
+                    <hx:GroupModel3D x:Name="group" Children="{Binding ModelGeometry}"   Transform = "{Binding ModelTransform}" />
+
+                    <hx:Viewport3DX.InputBindings>
+                        <KeyBinding Key="B" Command="hx:ViewportCommands.BackView" />
+                        <KeyBinding Key="F" Command="hx:ViewportCommands.FrontView" />
+                        <KeyBinding Key="U" Command="hx:ViewportCommands.TopView" />
+                        <KeyBinding Key="D" Command="hx:ViewportCommands.BottomView" />
+                        <KeyBinding Key="L" Command="hx:ViewportCommands.LeftView" />
+                        <KeyBinding Key="R" Command="hx:ViewportCommands.RightView" />
+                        <KeyBinding Command="hx:ViewportCommands.ZoomExtents" Gesture="Control+E" />
+                        <MouseBinding Command="hx:ViewportCommands.Rotate" Gesture="RightClick" />
+                        <MouseBinding Command="hx:ViewportCommands.Zoom" Gesture="MiddleClick" />
+                        <MouseBinding Command="hx:ViewportCommands.Pan" Gesture="Shift+RightClick" />
+                    </hx:Viewport3DX.InputBindings>
+                </hx:Viewport3DX>
+                <!--<Viewport3D x:Name="ViewportScene" Margin="0">
+                    <Viewport3D.Camera>
+                        <PerspectiveCamera x:Name="MyCamera" Position="15,14,15" LookDirection="-1, -1, -1 " UpDirection="0,1,0" 
+			    					FieldOfView="60" NearPlaneDistance="0.1" FarPlaneDistance="1000">
+                            <PerspectiveCamera.Transform>
+                                <MatrixTransform3D/>
+                            </PerspectiveCamera.Transform>
+                        </PerspectiveCamera>
+                    </Viewport3D.Camera>
+
+                    <ModelVisual3D x:Name="Models">
+                        <ModelVisual3D.Content>
+                            <Model3DGroup x:Name="Model3DGroup">
+                                <AmbientLight x:Name="_3DAmbientLight" Color="#888888"/>
+                                <DirectionalLight x:Name="_3DDirectionalLight" Color="#FFFFFF" Direction="-3,-5,-7" />
+                            </Model3DGroup>
+                        </ModelVisual3D.Content>
+                    </ModelVisual3D>
+                </Viewport3D>-->
+            </Border>
+
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock Text="{Binding LSys.Current}"/>
+                <Button Grid.Row="1" Content="Generate!" Command="{Binding AdvanceLSystemCommand}"/>
+            </Grid>
+            
+        </Grid>
+    </Grid>
+</Window>
