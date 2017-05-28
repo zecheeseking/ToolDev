@@ -43,6 +43,7 @@ namespace IvyGenerator.ViewModel
             ////}
 
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<CreateRuleSetViewModel>();
         }
 
         public MainViewModel MainViewModel
@@ -52,7 +53,15 @@ namespace IvyGenerator.ViewModel
                 return ServiceLocator.Current.GetInstance<MainViewModel>();
             }
         }
-        
+
+        public CreateRuleSetViewModel CreateRuleSetViewModelViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<CreateRuleSetViewModel>();
+            }
+        }
+
         public static void Cleanup()
         {
             // TODO Clear the ViewModels

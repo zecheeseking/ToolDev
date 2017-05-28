@@ -11,6 +11,7 @@ using SharpDX;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using IvyGenerator.Model;
+using IvyGenerator.View;
 
 namespace IvyGenerator.ViewModel
 {
@@ -124,14 +125,14 @@ namespace IvyGenerator.ViewModel
             return d.FileName;
         }
 
-        private Tree ivy;
-        public Tree Ivy
+        private Tree tree;
+        public Tree Tree
         {
-            get { return ivy; }
+            get { return tree; }
             set
             {
-                ivy = value;
-                RaisePropertyChanged("Ivy");
+                tree = value;
+                RaisePropertyChanged("Tree");
             }
         }
 
@@ -146,8 +147,27 @@ namespace IvyGenerator.ViewModel
                            (
                                () =>
                                {
-                                   Ivy.Generate();
-                                   RaisePropertyChanged("Ivy");
+                                   Tree.Generate();
+                                   RaisePropertyChanged("Tree");
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand openRulesetWizardCommand;
+        public RelayCommand OpenRulesetWizardCommand
+        {
+            get
+            {
+                return openRulesetWizardCommand ??
+                       (
+                           openRulesetWizardCommand = new RelayCommand
+                           (
+                               () =>
+                               {
+                                    CreateRuleSetWindow window = new CreateRuleSetWindow();
+                                   window.Show();
                                }
                            )
                        );
@@ -182,9 +202,7 @@ namespace IvyGenerator.ViewModel
             this.ModelGeometry = new Element3DCollection();
             this.ModelTransform = new TranslateTransform3D(0, 0, 0);
 
-            ivy = new Tree();
-
-            
+            tree = new Tree();
         }
     }
 }

@@ -1,22 +1,63 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Markup.Localizer;
+using GalaSoft.MvvmLight;
 using IvyGenerator.Utilities;
 using HelixToolkit.Wpf.SharpDX;
 using HelixToolkit.Wpf.SharpDX.Core;
+using System.Diagnostics;
 using SharpDX;
 
 namespace IvyGenerator.Model
 {
-    public class Tree
+    public class Tree : ObservableObject
     {
         private LSystem lSys = new LSystem();
 
-        private float len = 5.0f;
+        private float length = 5.0f;
+        public float Length
+        {
+            get { return length; }
+            set
+            {
+                length = value;
+                Generate();
+                RaisePropertyChanged("Length");
+            }
+        }
         private float radius = 0.1f;
+        public float Radius
+        {
+            get { return radius; }
+            set
+            {
+                radius = value;
+                Generate();
+                RaisePropertyChanged("Radius");
+            }
+        }
         private float radiusReduction = 0.1f;
+        public float RadiusReduction
+        {
+            get { return radiusReduction; }
+            set
+            {
+                radiusReduction = value;
+                Generate();
+                RaisePropertyChanged("RadiusReduction");
+            }
+        }
         private float angle = 25;
-        
+        public float Angle
+        {
+            get { return angle; }
+            set
+            {
+                angle = value;
+                RaisePropertyChanged("Angle");
+            }
+        }
+
         private Stack<Matrix> matrices = new Stack<Matrix>();
         LineBuilder lineBuilder = new LineBuilder();
         public LineGeometry3D TreeGeometry { get { return lineBuilder.ToLineGeometry3D(); } }
@@ -27,7 +68,7 @@ namespace IvyGenerator.Model
         {
             //Rotate by 90 to face up
             currentMatrix *= Matrix.RotationAxis(Vector3.Right, (float)(90 * Math.PI / 180));
-            lineBuilder.AddLine(currentMatrix.TranslationVector, currentMatrix.TranslationVector + currentMatrix.Forward * len);
+            lineBuilder.AddLine(currentMatrix.TranslationVector, currentMatrix.TranslationVector + currentMatrix.Forward * length);
         }
 
         public void Generate()
@@ -42,11 +83,11 @@ namespace IvyGenerator.Model
                 switch(c)
                 {
                     case 'f'://Create branch
-                        Line(len);
-                        Translate(len);
+                        Line(length);
+                        Translate(length);
                         break;
                     case 'g'://Move forward
-                        Translate(len);
+                        Translate(length);
                         break;
                     case '+': //rotate X Axis
                         RotateX(-angle);
