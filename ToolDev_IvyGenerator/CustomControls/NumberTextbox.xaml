@@ -20,14 +20,7 @@
         </Grid.RowDefinitions>
 
         <TextBox x:Name="NumberTextboxTarget" Text="{Binding Value, Mode=TwoWay}" 
-                 PreviewTextInput="NumberValidationTextbox"
-                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Click">
-                    <i:InvokeCommandAction Command="{Binding TextboxClearCommand}" CommandParameter="{Binding ElementName=NumberTextboxTarget}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </TextBox>
+                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
