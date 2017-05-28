@@ -42,8 +42,9 @@
                     >
                     <hx:AmbientLight3D />
                     <hx:DirectionalLight3D Direction = "-2,-5,-2"/>
-                    <hx:LineGeometryModel3D x:Name="Grid"   Geometry="{Binding Grid}"  Transform = "{Binding GridTransform}"   Color="{Binding GridColor}"/>
-                    <hx:GroupModel3D x:Name="group" Children="{Binding ModelGeometry}"   Transform = "{Binding ModelTransform}" />
+                    <!--<hx:LineGeometryModel3D x:Name="Grid"   Geometry="{Binding Grid}"  Transform = "{Binding GridTransform}"   Color="{Binding GridColor}"/>-->
+                    <hx:LineGeometryModel3D Geometry="{Binding Ivy.TreeGeometry}" Transform="{Binding ModelTransform}" Color="{Binding GridColor}"/>
+                    <!--<hx:GroupModel3D x:Name="group" Children="{Binding ModelGeometry}"   Transform = "{Binding ModelTransform}" />-->
 
                     <hx:Viewport3DX.InputBindings>
                         <KeyBinding Key="B" Command="hx:ViewportCommands.BackView" />
@@ -83,11 +84,18 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="30"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="5"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 
                 <TextBlock Text="{Binding LSys.Current}"/>
-                <Button Grid.Row="1" Content="Generate!" Command="{Binding AdvanceLSystemCommand}"/>
+                <Button Grid.Row="7" Content="Generate!" Command="{Binding AdvanceLSystemCommand}"/>
             </Grid>
             
         </Grid>

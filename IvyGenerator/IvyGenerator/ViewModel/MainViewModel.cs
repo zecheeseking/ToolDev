@@ -8,13 +8,9 @@ using Point3D = System.Windows.Media.Media3D.Point3D;
 using Vector3D = System.Windows.Media.Media3D.Vector3D;
 using SharpDX;
 
-using System.IO;
-using System.Windows.Input;
 using Microsoft.Win32;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using IvyGenerator.Utilities;
+using IvyGenerator.Model;
 
 namespace IvyGenerator.ViewModel
 {
@@ -123,26 +119,23 @@ namespace IvyGenerator.ViewModel
             d.Filter = filter;
 
             if (!d.ShowDialog().Value)
-            {
                 return null;
-            }
 
             return d.FileName;
         }
 
-        private LSystem lSys = new LSystem();
-        public LSystem LSys
+        private Tree ivy;
+        public Tree Ivy
         {
-            get { return lSys; }
+            get { return ivy; }
             set
             {
-                lSys = value;
-                RaisePropertyChanged("LSys");
+                ivy = value;
+                RaisePropertyChanged("Ivy");
             }
         }
 
         private RelayCommand advanceLSystemCommand;
-
         public RelayCommand AdvanceLSystemCommand
         {
             get
@@ -153,8 +146,8 @@ namespace IvyGenerator.ViewModel
                            (
                                () =>
                                {
-                                   LSys.Generate();
-                                   RaisePropertyChanged("LSys");
+                                   Ivy.Generate();
+                                   RaisePropertyChanged("Ivy");
                                }
                            )
                        );
@@ -189,11 +182,9 @@ namespace IvyGenerator.ViewModel
             this.ModelGeometry = new Element3DCollection();
             this.ModelTransform = new TranslateTransform3D(0, 0, 0);
 
-            var l1  = new LineBuilder();
-            l1.AddLine(new Vector3(0,0,0), new Vector3(0,10,0));
-            LineGeometryModel3D line = new LineGeometryModel3D();
-            line.Geometry = l1.ToLineGeometry3D();
-            ModelGeometry.Add(line);
+            ivy = new Tree();
+
+            
         }
     }
 }
