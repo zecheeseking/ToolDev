@@ -165,12 +165,18 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="bin\Debug\Resources\KochCurve.LRules" />
+    <None Include="bin\Debug\Resources\Tree1.LRules" />
+    <None Include="bin\Debug\Resources\Tree2.LRules" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="Resources\Basic.LRules" />
+    <None Include="Resources\Tree1.LRules" />
+    <None Include="Resources\Tree2.LRules" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

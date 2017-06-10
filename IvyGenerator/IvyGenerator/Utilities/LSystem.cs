@@ -1,16 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
-
 
 namespace IvyGenerator.Utilities
 {
-    public class Rule : ObservableObject
+    [Serializable]
+    public class RuleSet
+    {
+        private string axiom;
+
+        public string Axiom
+        {
+            get { return axiom; }
+            set { axiom = value; }
+        }
+
+        public List<Rule> Rules = new List<Rule>();
+    }
+
+    [Serializable]
+    public class Rule 
     {
         private char predecessor = 'A';
 
@@ -20,7 +30,7 @@ namespace IvyGenerator.Utilities
             set
             {
                 predecessor = value;
-                RaisePropertyChanged("Predecessor");
+                //RaisePropertyChanged("Predecessor");
             }
         }
         private string successor = "FF+[+F-F-F]-[-F+F+F]";
@@ -31,7 +41,7 @@ namespace IvyGenerator.Utilities
             set
             {
                 successor = value;
-                RaisePropertyChanged("Successor");
+                //RaisePropertyChanged("Successor");
             }
         }
 
@@ -53,29 +63,13 @@ namespace IvyGenerator.Utilities
 
         private List<Rule> ruleSet = new List<Rule>();
 
-        public LSystem()
+        public LSystem(RuleSet rs)
         {
-            //ruleSet.Add(new Rule('F', "FF+[+F-F-F]-[-F+F+F]"));
-            //ruleSet.Add(new Rule('F', "FF+[+F-F-F]-[-F+F+F]"));
-            //ruleSet.Add(new Rule('F', "F+F-F+F-"));
-            //ruleSet.Add(new Rule('A', "f[++Al][--Al]>>>A"));
-            //ruleSet.Add(new Rule('A', "^fB>>B>>>>>B"));
-            //ruleSet.Add(new Rule('B', "[^^f>>>>>>A]"));
-
-            //A =^ fB >> B >>>>> B
-            //B =[^^ f >>>>>> A]
-
+            Axiom = rs.Axiom;
             current = Axiom;
-        }
 
-        public void LoadRuleSet()
-        {
-            
-        }
-
-        public void SaveRuleSet()
-        {
-            
+            foreach(var r in rs.Rules)
+                ruleSet.Add(r);
         }
 
         public void Generate()

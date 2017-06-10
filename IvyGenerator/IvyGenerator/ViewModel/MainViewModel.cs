@@ -10,6 +10,8 @@ using SharpDX;
 
 using Microsoft.Win32;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows.Controls;
 using IvyGenerator.Model;
 using IvyGenerator.View;
 
@@ -173,6 +175,8 @@ namespace IvyGenerator.ViewModel
                        );
             }
         }
+
+        
 
         public MainViewModel()
         {

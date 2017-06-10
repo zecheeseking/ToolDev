@@ -7,12 +7,13 @@ using HelixToolkit.Wpf.SharpDX;
 using HelixToolkit.Wpf.SharpDX.Core;
 using System.Diagnostics;
 using SharpDX;
+using SharpDX.Toolkit.Graphics;
 
 namespace IvyGenerator.Model
 {
     public class Tree : ObservableObject
     {
-        private LSystem lSys = new LSystem();
+        private LSystem lSys = null;
 
         private float length = 5.0f;
         public float Length
@@ -58,9 +59,15 @@ namespace IvyGenerator.Model
             }
         }
 
+        public void SetRuleSet(RuleSet ruleSet)
+        {
+            lSys = new LSystem(ruleSet);
+        }
+
         private Stack<Matrix> matrices = new Stack<Matrix>();
         LineBuilder lineBuilder = new LineBuilder();
-        public LineGeometry3D TreeGeometry { get { return lineBuilder.ToLineGeometry3D(); } }
+        private MeshGeometry3D treeGeom = new MeshGeometry3D();
+        public MeshGeometry3D TreeGeometry { get { return treeGeom; } }
 
         private Matrix currentMatrix = Matrix.Identity;
 
@@ -69,6 +76,11 @@ namespace IvyGenerator.Model
             //Rotate by 90 to face up
             currentMatrix *= Matrix.RotationAxis(Vector3.Right, (float)(90 * Math.PI / 180));
             lineBuilder.AddLine(currentMatrix.TranslationVector, currentMatrix.TranslationVector + currentMatrix.Forward * length);
+            treeGeom = new MeshGeometry3D();
+            for (int i = 0; i < 6; i++)
+            {
+                Vector3 pos = Quaternion.RotationAxis(currentMatrix.Forward, 60) * currentMatrix.Right;
+            }
         }
 
         public void Generate()
