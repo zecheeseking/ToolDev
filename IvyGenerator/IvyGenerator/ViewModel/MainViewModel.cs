@@ -130,6 +130,7 @@ namespace IvyGenerator.ViewModel
                            (
                                () =>
                                {
+                                   History.Do(new SaveTreeMemento(Tree));
                                    Tree.Generate();
                                    RaisePropertyChanged("Tree");
                                }
@@ -171,9 +172,78 @@ namespace IvyGenerator.ViewModel
                                     float newValue = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
                                     if (Tree.Angle != newValue)
                                     {
-                                        DoCommand.Execute(this);
-                                        Tree.Angle = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
+                                       History.Do(new SaveTreeMemento(Tree));
+                                       Tree.Angle = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
                                     }
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand<string> changeRadiusCommand;
+        public RelayCommand<string> ChangeRadiusCommand
+        {
+            get
+            {
+                return changeRadiusCommand ??
+                       (
+                           changeRadiusCommand = new RelayCommand<string>
+                           (
+                               (s) =>
+                               {
+                                   float newValue = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
+                                   if (Tree.Radius != newValue)
+                                   {
+                                       History.Do(new SaveTreeMemento(Tree));
+                                       Tree.Radius = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
+                                   }
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand<string> changeRadiusReductionCommand;
+        public RelayCommand<string> ChangeRadiusReductionCommand
+        {
+            get
+            {
+                return changeRadiusReductionCommand ??
+                       (
+                           changeRadiusReductionCommand = new RelayCommand<string>
+                           (
+                               (s) =>
+                               {
+                                   float newValue = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
+                                   if (Tree.RadiusReduction != newValue)
+                                   {
+                                       History.Do(new SaveTreeMemento(Tree));
+                                       Tree.RadiusReduction = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
+                                   }
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand<string> changeLengthCommand;
+        public RelayCommand<string> ChangeLengthCommand
+        {
+            get
+            {
+                return changeLengthCommand ??
+                       (
+                           changeLengthCommand = new RelayCommand<string>
+                           (
+                               (s) =>
+                               {
+                                   float newValue = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
+                                   if (Tree.Length != newValue)
+                                   {
+                                       History.Do(new SaveTreeMemento(Tree));
+                                       Tree.Length = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
+                                   }
                                }
                            )
                        );
