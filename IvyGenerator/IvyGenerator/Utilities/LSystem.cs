@@ -56,20 +56,24 @@ namespace IvyGenerator.Utilities
 
     public class LSystem
     {
-        
         private string Axiom = "fA";
         private string current = "";
         public string Current { get { return current; } }
 
-        private List<Rule> ruleSet = new List<Rule>();
+        private RuleSet ruleSet = null;
+        public RuleSet RuleSet { get { return ruleSet; } }
 
         public LSystem(RuleSet rs)
         {
+            ruleSet = rs;
+
             Axiom = rs.Axiom;
             current = Axiom;
+        }
 
-            foreach(var r in rs.Rules)
-                ruleSet.Add(r);
+        public void SetCurrent(string s)
+        {
+            current = s;
         }
 
         public void Generate()
@@ -80,7 +84,7 @@ namespace IvyGenerator.Utilities
             foreach (char c in current)
             {
                 replaced = false;
-                foreach (Rule r in ruleSet)
+                foreach (Rule r in ruleSet.Rules)
                 {
                     if (c == r.Predecessor)
                     {
@@ -95,6 +99,12 @@ namespace IvyGenerator.Utilities
             }
 
             current = next.ToString();
+        }
+
+        public void Reset()
+        {
+            Axiom = ruleSet.Axiom;
+            current = Axiom;
         }
     }
 }

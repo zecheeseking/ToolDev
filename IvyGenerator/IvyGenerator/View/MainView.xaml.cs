@@ -22,10 +22,9 @@ namespace IvyGenerator
         {
             InitializeComponent();
 
-
             ResourceSet resourceSet = Properties.Resources.ResourceManager.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
             var formatter = new BinaryFormatter();
-
+            bool initializedTree = false;
             foreach (DictionaryEntry resource in resourceSet)
             {
                 var byteStream = resource.Value as byte[];
@@ -37,33 +36,18 @@ namespace IvyGenerator
                     item.Header = "Create " + resource.Key + "...";
                     item.Click += (sender, e) =>
                     {
+                        (PrimaryWindow.DataContext as MainViewModel).DoCommand.Execute(item);
                         (PrimaryWindow.DataContext as MainViewModel).Tree.SetRuleSet(ruleSet);
                     };
 
+                    if (!initializedTree)
+                    {
+                        (PrimaryWindow.DataContext as MainViewModel).Tree.SetRuleSet(ruleSet);
+                    }
+                    initializedTree = true;
                     AddMenu.Items.Add(item);
                 }
             }
-
-            //var files = Directory.GetFiles(System.AppDomain.CurrentDomain.BaseDirectory + "/Resources/");
-            //foreach (var file in files)
-            //{
-            //    using (var fs = new MemoryStream(Properties.Resources.Basic))
-            //    {
-            //        string s = file.Substring(file.LastIndexOf('/') + 1, file.LastIndexOf('.') - file.LastIndexOf('/') - 1);
-
-            //        var formatter = new BinaryFormatter();
-            //        var ruleSet = (RuleSet)formatter.Deserialize(fs);
-
-            //        MenuItem item = new MenuItem();
-            //        item.Header = "Create " + s + "...";
-            //        item.Click += (sender, e) =>
-            //        {
-            //            (PrimaryWindow.DataContext as MainViewModel).Tree.SetRuleSet(ruleSet);
-            //        };
-
-            //        AddMenu.Items.Add(item);
-            //    }
-            //}
         }
     }
 }

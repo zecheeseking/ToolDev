@@ -123,7 +123,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\Tree.cs" />
+    <Compile Include="Utilities\IMemento.cs" />
     <Compile Include="Utilities\LSystem.cs" />
+    <Compile Include="Utilities\ObjExporter.cs" />
+    <Compile Include="Utilities\RoundStack.cs" />
+    <Compile Include="Utilities\UndoRedoManager.cs" />
     <Compile Include="ViewModel\CreateRuleSetViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
@@ -174,9 +178,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="Resources\Basic.LRules" />
-    <None Include="Resources\Tree1.LRules" />
-    <None Include="Resources\Tree2.LRules" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

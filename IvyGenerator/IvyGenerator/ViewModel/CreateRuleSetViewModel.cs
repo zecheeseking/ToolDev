@@ -19,7 +19,6 @@ namespace IvyGenerator.ViewModel
     /// </summary>
     public class CreateRuleSetViewModel : ViewModelBase
     {
-
         /// <summary>
         /// Initializes a new instance of the CreateRuleSetViewModel class.
         /// </summary>

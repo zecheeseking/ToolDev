@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Markup.Localizer;
+using System.Linq;
 using GalaSoft.MvvmLight;
 using IvyGenerator.Utilities;
 using HelixToolkit.Wpf.SharpDX;
 using HelixToolkit.Wpf.SharpDX.Core;
-using System.Diagnostics;
 using SharpDX;
-using SharpDX.Toolkit.Graphics;
+using MeshBuilder = HelixToolkit.Wpf.SharpDX.MeshBuilder;
 
 namespace IvyGenerator.Model
 {
     public class Tree : ObservableObject
     {
         private LSystem lSys = null;
+
+        public PhongMaterial RedMaterial { get; private set; }
 
         private float length = 5.0f;
         public float Length
@@ -22,7 +23,7 @@ namespace IvyGenerator.Model
             set
             {
                 length = value;
-                Generate();
+                Generate(false);
                 RaisePropertyChanged("Length");
             }
         }
@@ -33,7 +34,7 @@ namespace IvyGenerator.Model
             set
             {
                 radius = value;
-                Generate();
+                Generate(false);
                 RaisePropertyChanged("Radius");
             }
         }
@@ -44,30 +45,62 @@ namespace IvyGenerator.Model
             set
             {
                 radiusReduction = value;
-                Generate();
+                Generate(false);
                 RaisePropertyChanged("RadiusReduction");
             }
         }
-        private float angle = 25;
+        private float angle = 25.0f;
         public float Angle
         {
             get { return angle; }
             set
             {
                 angle = value;
+                Generate(false);
                 RaisePropertyChanged("Angle");
             }
+        }
+
+        public void LoadProject(SaveTreeMemento loadedData)
+        {
+            Angle = loadedData.Angle;
+            Radius = loadedData.Radius;
+            RadiusReduction = loadedData.RadiusReduction;
+            Length = loadedData.Length;
+            lSys = new LSystem(loadedData.RuleSet);
+            lSys.SetCurrent(loadedData.Current);
         }
 
         public void SetRuleSet(RuleSet ruleSet)
         {
             lSys = new LSystem(ruleSet);
+            Reset();
+            Generate(false);
+        }
+
+        public string GetCurrent()
+        {
+            return lSys.Current;
+        }
+
+        public RuleSet GetRuleSet()
+        {
+            return lSys.RuleSet;
         }
 
         private Stack<Matrix> matrices = new Stack<Matrix>();
-        LineBuilder lineBuilder = new LineBuilder();
-        private MeshGeometry3D treeGeom = new MeshGeometry3D();
-        public MeshGeometry3D TreeGeometry { get { return treeGeom; } }
+        private MeshBuilder treeGeom = new MeshBuilder();
+
+        private MeshGeometry3D treeGeometry;
+        public MeshGeometry3D TreeGeometry
+        {
+            get { return treeGeometry; }
+            set
+            {
+                treeGeometry = value;
+                RaisePropertyChanged("TreeGeometry");
+            }
+        }
 
         private Matrix currentMatrix = Matrix.Identity;
 
@@ -75,21 +108,17 @@ namespace IvyGenerator.Model
         {
             //Rotate by 90 to face up
             currentMatrix *= Matrix.RotationAxis(Vector3.Right, (float)(90 * Math.PI / 180));
-            lineBuilder.AddLine(currentMatrix.TranslationVector, currentMatrix.TranslationVector + currentMatrix.Forward * length);
-            treeGeom = new MeshGeometry3D();
-            for (int i = 0; i < 6; i++)
-            {
-                Vector3 pos = Quaternion.RotationAxis(currentMatrix.Forward, 60) * currentMatrix.Right;
-            }
+            TreeGeometry = null;
+            RedMaterial = PhongMaterials.Red;
         }
 
-        public void Generate()
+        public void Generate(bool advanceGeneration = true)
         {
-            lSys.Generate();
-            lineBuilder = new LineBuilder();
+            if(advanceGeneration)
+                lSys.Generate();
             currentMatrix = Matrix.RotationAxis(Vector3.Right, (float)(90 * Math.PI / 180));
             string curr = lSys.Current;
-
+            treeGeom = new MeshBuilder();
             foreach (char c in curr)
             {
                 switch(c)
@@ -127,11 +156,23 @@ namespace IvyGenerator.Model
                         break;
                 }
             }
+
+            var TreeMesh = treeGeom.ToMeshGeometry3D();
+            TreeMesh.Colors = new Color4Collection(treeGeom.TextureCoordinates.Select(x => x.ToColor4()));
+            TreeGeometry = TreeMesh;
+        }
+
+        public void Reset()
+        {
+            lSys.Reset();
+            treeGeom = new MeshBuilder();
+            TreeGeometry = null;
         }
 
         private void Line(float len)
         {
-            lineBuilder.AddLine(currentMatrix.TranslationVector, currentMatrix.TranslationVector + currentMatrix.Forward * len );
+            treeGeom.AddCylinder(currentMatrix.TranslationVector, currentMatrix.TranslationVector + currentMatrix.Forward * length, radius, 12, true, true);
+            //treeGeom.AddQuad(new Vector3(1, 1, 1), new Vector3(1, 1, -1), new Vector3(-1, 1, -1), new Vector3(-1, 1, 1));
         }
 
         private void Translate(float len)
@@ -141,51 +182,72 @@ namespace IvyGenerator.Model
 
         private void RotateZ(float angle)
         {
-            //Translate to origin
             Vector3 translationVector = currentMatrix.TranslationVector;
             currentMatrix *= (Matrix.Identity * Matrix.Translation(-translationVector));
-            //Rotate
             var a = angle * Math.PI / 180;
             currentMatrix *= Matrix.RotationAxis(currentMatrix.Forward, (float)a);
-            //Translate back
             currentMatrix *= Matrix.Translation(translationVector);
         }
 
         private void RotateY(float angle)
         {
-            //Translate to origin
             Vector3 translationVector = currentMatrix.TranslationVector;
             currentMatrix *= (Matrix.Identity * Matrix.Translation(-translationVector));
-            //Rotate
             var a = angle * Math.PI / 180;
             currentMatrix *= Matrix.RotationAxis(currentMatrix.Up, (float)a);
-            //Translate back
             currentMatrix *= Matrix.Translation(translationVector);
         }
 
         private void RotateX(float angle)
         {
-            //Translate to origin
             Vector3 translationVector = currentMatrix.TranslationVector;
             currentMatrix *= (Matrix.Identity * Matrix.Translation(-translationVector));
-            //Rotate
             var a = angle * Math.PI / 180;
             currentMatrix *= Matrix.RotationAxis(currentMatrix.Right, (float)a);
-            //Translate back
             currentMatrix *= Matrix.Translation(translationVector);
         }
 
         private void PushMatrix()
         {
-            //Create Matrix from current position, add to list.
             var matrix = currentMatrix;
+            radius -= RadiusReduction;
+            if (radius < 0.1f) radius = 0.1f;
             matrices.Push(matrix);
         }
 
         private void PopMatrix()
         {
-            //Pop off last matrix, reset current position to this.
             currentMatrix = matrices.Pop();
+            radius += RadiusReduction;
+        }
+    }
+
+    [Serializable]
+    public class SaveTreeMemento : IMemento<Tree>
+    {
+        public string Current = "";
+        public float Angle = 1.0f;
+        public float Radius = 1.0f;
+        public float RadiusReduction = 1.0f;
+        public float Length = 1.0f;
+        public RuleSet RuleSet;
+
+        public SaveTreeMemento(Tree target)
+        {
+            Current = target.GetCurrent();
+            Angle = target.Angle;
+            Length = target.Length;
+            Radius = target.Radius;
+            RadiusReduction = target.RadiusReduction;
+            RuleSet = target.GetRuleSet();
+        }
+
+        public IMemento<Tree> Restore(Tree target)
+        {
+            IMemento<Tree> inverse = new SaveTreeMemento(target);
+            target.LoadProject(this);
+            target.Generate(false);
+            return inverse;
         }
     }
 }

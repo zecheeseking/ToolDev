@@ -1,3 +1,4 @@
+using System;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using HelixToolkit.Wpf.SharpDX;
@@ -7,13 +8,18 @@ using PerspectiveCamera = HelixToolkit.Wpf.SharpDX.PerspectiveCamera;
 using Point3D = System.Windows.Media.Media3D.Point3D;
 using Vector3D = System.Windows.Media.Media3D.Vector3D;
 using SharpDX;
-
-using Microsoft.Win32;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows.Controls;
+using System.IO;
 using IvyGenerator.Model;
 using IvyGenerator.View;
+using ObjExporter = IvyGenerator.Utilities.ObjExporter;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
+using System.Runtime.Serialization.Formatters.Binary;
+
+using System.Diagnostics;
+using System.Windows.Forms;
+using IvyGenerator.Utilities;
 
 namespace IvyGenerator.ViewModel
 {
@@ -31,7 +37,6 @@ namespace IvyGenerator.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        private const string OpenFileFilter = "3D model files (*.obj;*.3ds)|*.obj;*.3ds";
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -71,31 +76,7 @@ namespace IvyGenerator.ViewModel
         public Element3DCollection ModelGeometry { get; private set; }
         public Transform3D ModelTransform { get; private set; }
 
-        private RelayCommand<Viewport3DX> loadModelCommand;
-        public RelayCommand<Viewport3DX> LoadModelCommand
-        {
-            get
-            {
-                return loadModelCommand ??
-                       (
-                           loadModelCommand = new RelayCommand<Viewport3DX>
-                           (
-                               (viewport) =>
-                               {
-                                   string path = OpenFileDialog(OpenFileFilter);
-                                   if (path == null)
-                                   {
-                                       return;
-                                   }
-
-                                   var reader = new ObjReader();
-                                   var objCol = reader.Read(path);
-                                   AttachModelList(objCol, viewport);
-                               }
-                           )
-                       );
-            }
-        }
+        public UndoRedoManager<Tree> History { get; private set; }
 
         public void AttachModelList(List<Object3D> objs, Viewport3DX viewport)
         {
@@ -127,7 +108,7 @@ namespace IvyGenerator.ViewModel
             return d.FileName;
         }
 
-        private Tree tree;
+        private Tree tree = new Tree();
         public Tree Tree
         {
             get { return tree; }
@@ -157,6 +138,48 @@ namespace IvyGenerator.ViewModel
             }
         }
 
+        private RelayCommand resetLSystemCommand;
+        public RelayCommand ResetLSystemCommand
+        {
+            get
+            {
+                return resetLSystemCommand ??
+                       (
+                           resetLSystemCommand = new RelayCommand
+                           (
+                               () =>
+                               {
+                                   Tree.Reset();
+                                   RaisePropertyChanged("Tree");
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand<string> changeAngleCommand;
+        public RelayCommand<string> ChangeAngleCommand
+        {
+            get
+            {
+                return changeAngleCommand ??
+                       (
+                           changeAngleCommand = new RelayCommand<string>
+                           (
+                               (s) =>
+                               {
+                                    float newValue = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
+                                    if (Tree.Angle != newValue)
+                                    {
+                                        DoCommand.Execute(this);
+                                        Tree.Angle = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
+                                    }
+                               }
+                           )
+                       );
+            }
+        }
+
         private RelayCommand openRulesetWizardCommand;
         public RelayCommand OpenRulesetWizardCommand
         {
@@ -176,7 +199,163 @@ namespace IvyGenerator.ViewModel
             }
         }
 
-        
+        private RelayCommand<string> testCommand;
+        public RelayCommand<string> TestCommand
+        {
+            get
+            {
+                return testCommand ??
+                       (
+                           testCommand = new RelayCommand<string>
+                           (
+                               (s) =>
+                               {
+                                   Debug.WriteLine(s);
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand loadProjectCommand;
+        public RelayCommand LoadProjectCommand
+        {
+            get
+            {
+                return loadProjectCommand ??
+                       (
+                           loadProjectCommand = new RelayCommand
+                           (
+                               () =>
+                               {
+                                   OpenFileDialog openFile = new OpenFileDialog();
+                                   openFile.Filter = "Branch Generator Project Files (*.LSysTree)|*.LSysTree|All files (*.*)|*.*";
+
+                                   if (openFile.ShowDialog() == true)
+                                   {
+                                       using (FileStream fs = new FileStream(openFile.FileName, FileMode.Open))
+                                       {
+                                           BinaryFormatter bs = new BinaryFormatter();
+                                           SaveTreeMemento obj = (SaveTreeMemento) bs.Deserialize(fs);
+                                           Tree.LoadProject(obj);
+                                           Tree.Generate(false);
+                                       }
+                                   }
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand saveProjectCommand;
+        public RelayCommand SaveProjectCommand
+        {
+            get
+            {
+                return saveProjectCommand ??
+                       (
+                           saveProjectCommand = new RelayCommand
+                           (
+                               () =>
+                               {
+                                   SaveFileDialog saveFile = new SaveFileDialog();
+                                   saveFile.FileName = "tree.LSysTree";
+                                   saveFile.Filter = "Branch Generator Project Files (*.LSysTree)|*.LSysTree|All files (*.*)|*.*";
+
+                                   if (saveFile.ShowDialog() == true)
+                                   {
+                                       SaveTreeMemento obj = new SaveTreeMemento(tree);
+
+                                       using (var stream = File.Create(saveFile.FileName))
+                                       {
+                                           var formatter = new BinaryFormatter();
+                                           formatter.Serialize(stream, obj);
+                                       }
+                                   }
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand exportModelCommand;
+        public RelayCommand ExportModelCommand
+        {
+            get
+            {
+                return exportModelCommand ??
+                       (
+                           exportModelCommand = new RelayCommand
+                           (
+                               () =>
+                               {
+                                   SaveFileDialog saveFileDialog = new SaveFileDialog();
+                                   saveFileDialog.FileName = "Tree.obj";
+                                   saveFileDialog.Filter = "OBJ files (*.obj)|*.obj|All files (*.*)|*.*";
+                                   saveFileDialog.FilterIndex = 0;
+
+                                   if (saveFileDialog.ShowDialog() == true)
+                                   {
+                                        string s = ObjExporter.MeshToString("Tree", tree.TreeGeometry, ModelTransform);
+                                        File.WriteAllText(saveFileDialog.FileName, s);
+                                   }
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand doCommand;
+        public RelayCommand DoCommand
+        {
+            get
+            {
+                return doCommand ??
+                       (
+                           doCommand = new RelayCommand(
+                               () =>
+                               {
+                                   History.Do(new SaveTreeMemento(tree));
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand undoCommand;
+        public RelayCommand UndoCommand
+        {
+            get
+            {
+                return undoCommand ??
+                    (
+                        undoCommand = new RelayCommand(
+                            () =>
+                            {
+                                if(History.CanUndo)
+                                    History.Undo();
+                            }
+                        )
+                    );
+            }
+        }
+
+        private RelayCommand redoCommand;
+        public RelayCommand RedoCommand
+        {
+            get
+            {
+                return redoCommand ??
+                       (
+                           redoCommand = new RelayCommand(
+                               () =>
+                               {
+                                   History.Redo();
+                               }
+                           )
+                       );
+            }
+        }
 
         public MainViewModel()
         {
@@ -201,12 +380,13 @@ namespace IvyGenerator.ViewModel
             // floor plane grid
             Grid = LineBuilder.GenerateGrid();
             GridColor = SharpDX.Color.Black;
-            GridTransform = new TranslateTransform3D(-5, -1, -5);
+            GridTransform = new TranslateTransform3D(-5, 0, -5);
 
             this.ModelGeometry = new Element3DCollection();
             this.ModelTransform = new TranslateTransform3D(0, 0, 0);
 
             tree = new Tree();
+            History = new UndoRedoManager<Tree>(tree);
         }
     }
 }

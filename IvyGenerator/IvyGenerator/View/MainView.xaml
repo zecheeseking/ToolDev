@@ -5,10 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:hx="http://helix-toolkit.org/wpf/SharpDX"
         xmlns:local="clr-namespace:IvyGenerator"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:command="http://www.galasoft.ch/mvvmlight"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280" MinWidth="800" MinHeight="600" 
         Name="PrimaryWindow"
         DataContext="{Binding MainViewModel, Source={StaticResource Locator}}">
+    
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Control" Key="Z" Command="{Binding UndoCommand}"/>
+        <KeyBinding Modifiers="Control" Key="Y" Command="{Binding RedoCommand}"/>
+    </Window.InputBindings>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
@@ -18,9 +26,16 @@
         <DockPanel>
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="File" Width="60">
-                    <MenuItem Header="Load model..." Command="{Binding LoadModelCommand}" CommandParameter="{Binding ElementName=Viewport}"/>
-                    <MenuItem Header="Export Selected Ivy"/>
+                    <MenuItem Header="Load project..." Command="{Binding LoadProjectCommand}"/>
+                    <MenuItem Header="Save project..." Command="{Binding SaveProjectCommand}"/>
+                    <MenuItem Header="Export..." Command="{Binding ExportModelCommand}"/>
                 </MenuItem>
+                <MenuItem Header="Edit" Width="60">
+                    <MenuItem Header="Undo" Command="{Binding UndoCommand}" InputGestureText="Ctrl+Z" IsEnabled="{Binding History.CanUndo}">
+                    </MenuItem>
+                    <MenuItem Header="Redo" Command="{Binding RedoCommand}" InputGestureText="Ctrl+Y" IsEnabled="{Binding History.CanRedo}">
+                    </MenuItem>
+                    </MenuItem>
                 <MenuItem Name="AddMenu" Header="Add" Width="60">
                     <MenuItem Header="Create L-System Ruleset..." Command="{Binding OpenRulesetWizardCommand}"/>
                 </MenuItem>
@@ -29,26 +44,24 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="250"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="250"/>
             </Grid.ColumnDefinitions>
 
-            <Button/>
-            <Border Grid.Column="1" Margin="5">
+            <Border Grid.Column="0" Margin="5">
                 <hx:Viewport3DX
                     x:Name="Viewport"
                     Camera="{Binding Camera}"
                     ShowCoordinateSystem="false"
-                    RenderTechnique="{Binding RenderTechnique}"
-                    >
+                    RenderTechnique="{Binding RenderTechnique}">
                     <hx:AmbientLight3D />
                     <hx:DirectionalLight3D Direction = "-2,-5,-2"/>
                     <hx:LineGeometryModel3D x:Name="Grid"   Geometry="{Binding Grid}"  Transform = "{Binding GridTransform}"   Color="{Binding GridColor}"/>
-                    <hx:LineGeometryModel3D Geometry="{Binding Tree.TreeGeometry}" Transform="{Binding ModelTransform}" Color="{Binding GridColor}"/>
+                    <hx:MeshGeometryModel3D Geometry="{Binding Tree.TreeGeometry}" Material="{Binding Tree.RedMaterial}" Transform="{Binding ModelTransform}"/>
 
                     <hx:Viewport3DX.InputBindings>
                         <KeyBinding Key="B" Command="hx:ViewportCommands.BackView" />
+                        
                         <KeyBinding Key="F" Command="hx:ViewportCommands.FrontView" />
                         <KeyBinding Key="U" Command="hx:ViewportCommands.TopView" />
                         <KeyBinding Key="D" Command="hx:ViewportCommands.BottomView" />
@@ -60,30 +73,14 @@
                         <MouseBinding Command="hx:ViewportCommands.Pan" Gesture="Shift+RightClick" />
                     </hx:Viewport3DX.InputBindings>
                 </hx:Viewport3DX>
-                <!--<Viewport3D x:Name="ViewportScene" Margin="0">
-                    <Viewport3D.Camera>
-                        <PerspectiveCamera x:Name="MyCamera" Position="15,14,15" LookDirection="-1, -1, -1 " UpDirection="0,1,0" 
-			    					FieldOfView="60" NearPlaneDistance="0.1" FarPlaneDistance="1000">
-                            <PerspectiveCamera.Transform>
-                                <MatrixTransform3D/>
-                            </PerspectiveCamera.Transform>
-                        </PerspectiveCamera>
-                    </Viewport3D.Camera>
-
-                    <ModelVisual3D x:Name="Models">
-                        <ModelVisual3D.Content>
-                            <Model3DGroup x:Name="Model3DGroup">
-                                <AmbientLight x:Name="_3DAmbientLight" Color="#888888"/>
-                                <DirectionalLight x:Name="_3DDirectionalLight" Color="#FFFFFF" Direction="-3,-5,-7" />
-                            </Model3DGroup>
-                        </ModelVisual3D.Content>
-                    </ModelVisual3D>
-                </Viewport3D>-->
+   
             </Border>
 
-            <Grid Grid.Column="2">
+            <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="5"/>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="5"/>
                     <RowDefinition Height="30"/>
@@ -97,7 +94,6 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 
-                <TextBlock Text="{Binding LSys.Current}"/>
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="120"/>
@@ -105,7 +101,13 @@
                     </Grid.ColumnDefinitions>
                     
                     <Label Content="Angle"></Label>
-                    <TextBox Grid.Column="1" Margin="5,5,5,5" Text="{Binding Tree.Angle, Mode=TwoWay}"></TextBox>
+                    <TextBox Name="Textbox_Angle" Grid.Column="1" Margin="5,5,5,5" Text="{Binding Tree.Angle, Mode=OneWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="LostFocus">
+                                <command:EventToCommand Command="{Binding ChangeAngleCommand}" CommandParameter="{Binding ElementName=Textbox_Angle, Path=Text}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
                 </Grid>
 
                 <Grid Grid.Row="3">
@@ -139,6 +141,7 @@
                 </Grid>
 
                 <Button Grid.Row="9" Content="Generate!" Command="{Binding AdvanceLSystemCommand}"/>
+                <Button Grid.Row="11" Content="Reset" Command="{Binding ResetLSystemCommand}"/>
             </Grid>
             
         </Grid>
