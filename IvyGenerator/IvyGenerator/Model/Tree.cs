@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.IsolatedStorage;
 using System.Linq;
+using System.Windows.Forms;
 using GalaSoft.MvvmLight;
 using IvyGenerator.Utilities;
 using HelixToolkit.Wpf.SharpDX;
@@ -38,6 +40,8 @@ namespace IvyGenerator.Model
                 RaisePropertyChanged("Radius");
             }
         }
+
+        private float internalRadius;
         private float radiusReduction = 0.1f;
         public float RadiusReduction
         {
@@ -117,6 +121,7 @@ namespace IvyGenerator.Model
             if(advanceGeneration)
                 lSys.Generate();
             currentMatrix = Matrix.RotationAxis(Vector3.Right, (float)(90 * Math.PI / 180));
+            internalRadius = radius;
             string curr = lSys.Current;
             treeGeom = new MeshBuilder();
             foreach (char c in curr)
@@ -171,8 +176,57 @@ namespace IvyGenerator.Model
 
         private void Line(float len)
         {
-            treeGeom.AddCylinder(currentMatrix.TranslationVector, currentMatrix.TranslationVector + currentMatrix.Forward * length, radius, 12, true, true);
-            //treeGeom.AddQuad(new Vector3(1, 1, 1), new Vector3(1, 1, -1), new Vector3(-1, 1, -1), new Vector3(-1, 1, 1));
+            //treeGeom.AddCylinder(currentMatrix.TranslationVector, currentMatrix.TranslationVector + currentMatrix.Forward * length, radius, 12, true, true);
+            SharpDX.Vector3 p1 = currentMatrix.TranslationVector;
+            SharpDX.Vector3 p2 = currentMatrix.TranslationVector + currentMatrix.Forward * length;
+
+            List<Vector3> positions = new List<Vector3>();
+            List<Vector3> norms = new List<Vector3>();
+            List<Vector2> uvs = new List<Vector2>();
+            List<int> indices = new List<int>();
+            int sides = 6;
+
+            float shapeAngle = 360.0f / sides;
+
+            for (int i = 0; i < sides; i++)
+            {
+                Vector3 dir = currentMatrix.Up;
+                Matrix rot = Matrix.RotationAxis(currentMatrix.Forward, MathUtil.DegreesToRadians(shapeAngle * i));
+                dir = Vector3.TransformNormal(dir, rot);
+                Vector3 v = p1 + dir * internalRadius;
+                positions.Add(v);
+                norms.Add((v - p1).Normalized());
+                uvs.Add(Vector2.Zero);
+            }
+
+            internalRadius = (internalRadius - radiusReduction > 0.1) ? internalRadius - radiusReduction : 0.1f;
+            for (int i = 0; i < sides; i++)
+            {
+                Vector3 dir = currentMatrix.Up;
+                Matrix rot = Matrix.RotationAxis(currentMatrix.Forward, MathUtil.DegreesToRadians(shapeAngle * i));
+                dir = Vector3.TransformNormal(dir, rot);
+                Vector3 v = p2 + dir * internalRadius;
+                positions.Add(v);
+                norms.Add((v - p2).Normalized());
+                uvs.Add(Vector2.Zero);
+            }
+
+            for (int i = 0; i < sides; i++)
+            {
+                int a = i;
+                int b = i == sides - 1 ? 0 : i + 1;
+                int c = i + sides;
+                int d = (i == sides - 1) ? sides : i + sides + 1;
+
+                indices.Add(a);
+                indices.Add(c);
+                indices.Add(b);
+                indices.Add(b);
+                indices.Add(c);
+                indices.Add(d);
+            }
+
+            treeGeom.Append(positions, indices, norms, uvs);
         }
 
         private void Translate(float len)
