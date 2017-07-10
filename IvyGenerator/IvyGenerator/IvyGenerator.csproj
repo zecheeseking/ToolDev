@@ -170,6 +170,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="bin\Debug\Resources\KochCurve.LRules" />
+    <None Include="bin\Debug\Resources\Tree Leaves.LRules" />
     <None Include="bin\Debug\Resources\Tree1.LRules" />
     <None Include="bin\Debug\Resources\Tree2.LRules" />
     <None Include="packages.config" />

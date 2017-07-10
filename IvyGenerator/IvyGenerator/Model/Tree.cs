@@ -135,6 +135,9 @@ namespace IvyGenerator.Model
                     case 'g'://Move forward
                         Translate(length);
                         break;
+                    case 'l':
+                        CreateLeaf();
+                        break;
                     case '+': //rotate X Axis
                         RotateX(-angle);
                         break;
@@ -176,7 +179,6 @@ namespace IvyGenerator.Model
 
         private void Line(float len)
         {
-            //treeGeom.AddCylinder(currentMatrix.TranslationVector, currentMatrix.TranslationVector + currentMatrix.Forward * length, radius, 12, true, true);
             SharpDX.Vector3 p1 = currentMatrix.TranslationVector;
             SharpDX.Vector3 p2 = currentMatrix.TranslationVector + currentMatrix.Forward * length;
 
@@ -234,6 +236,38 @@ namespace IvyGenerator.Model
             currentMatrix *= Matrix.Translation(currentMatrix.Forward * len);
         }
 
+        private void CreateLeaf()
+        {
+            List<Vector3> positions = new List<Vector3>();
+            List<Vector3> norms = new List<Vector3>();
+            List<Vector2> uvs = new List<Vector2>();
+            List<int> indices = new List<int>();
+
+            positions.Add(currentMatrix.TranslationVector + currentMatrix.Right * 0.5f);
+            positions.Add(currentMatrix.TranslationVector + currentMatrix.Right * -0.5f);
+            positions.Add(currentMatrix.TranslationVector + currentMatrix.Right * 0.5f + currentMatrix.Up * 1.0f);
+            positions.Add(currentMatrix.TranslationVector + currentMatrix.Right * -0.5f + currentMatrix.Up * 1.0f);
+
+            norms.Add(currentMatrix.Forward);
+            norms.Add(currentMatrix.Forward);
+            norms.Add(currentMatrix.Forward);
+            norms.Add(currentMatrix.Forward);
+
+            uvs.Add(new Vector2(0,0));
+            uvs.Add(new Vector2(1,0));
+            uvs.Add(new Vector2(0,1));
+            uvs.Add(new Vector2(1,1));
+
+            indices.Add(0);
+            indices.Add(1);
+            indices.Add(2);
+            indices.Add(1);
+            indices.Add(3);
+            indices.Add(2);
+
+            treeGeom.Append(positions, indices, norms, uvs);
+        }
+
         private void RotateZ(float angle)
         {
             Vector3 translationVector = currentMatrix.TranslationVector;
@@ -266,6 +300,7 @@ namespace IvyGenerator.Model
             var matrix = currentMatrix;
             radius -= RadiusReduction;
             if (radius < 0.1f) radius = 0.1f;
+            internalRadius = radius;
             matrices.Push(matrix);
         }
 
@@ -273,6 +308,7 @@ namespace IvyGenerator.Model
         {
             currentMatrix = matrices.Pop();
             radius += RadiusReduction;
+            internalRadius = radius;
         }
     }
 
