@@ -63,16 +63,6 @@ namespace IvyGenerator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] KochCurve {
-            get {
-                object obj = ResourceManager.GetObject("KochCurve", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] Tree_Leaves {
             get {
                 object obj = ResourceManager.GetObject("Tree_Leaves", resourceCulture);

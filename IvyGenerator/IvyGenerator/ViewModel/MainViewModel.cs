@@ -16,9 +16,11 @@ using ObjExporter = IvyGenerator.Utilities.ObjExporter;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows.Media.Imaging;
 
 using System.Diagnostics;
-using System.Windows.Forms;
+using System.Windows;
+using System.Windows.Controls;
 using IvyGenerator.Utilities;
 
 namespace IvyGenerator.ViewModel
@@ -158,45 +160,65 @@ namespace IvyGenerator.ViewModel
             }
         }
 
-        private RelayCommand<string> changeAngleCommand;
-        public RelayCommand<string> ChangeAngleCommand
+        private RelayCommand<TextBox>changeAngleCommand;
+        public RelayCommand<TextBox> ChangeAngleCommand
         {
             get
             {
                 return changeAngleCommand ??
                        (
-                           changeAngleCommand = new RelayCommand<string>
+                           changeAngleCommand = new RelayCommand<TextBox>
                            (
-                               (s) =>
+                               (tb) =>
                                {
-                                    float newValue = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
-                                    if (Tree.Angle != newValue)
-                                    {
-                                       History.Do(new SaveTreeMemento(Tree));
-                                       Tree.Angle = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
-                                    }
+                                   try
+                                   {
+                                       float newValue =
+                                           float.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       if (Tree.Angle != newValue)
+                                       {
+                                           History.Do(new SaveTreeMemento(Tree));
+                                           Tree.Angle =
+                                               float.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       }
+                                   }
+                                   catch (FormatException ex)
+                                   {
+                                       MessageBox.Show("Please enter a valid value!");
+                                       tb.Text = Tree.Angle.ToString();
+                                   }
                                }
                            )
                        );
             }
         }
 
-        private RelayCommand<string> changeRadiusCommand;
-        public RelayCommand<string> ChangeRadiusCommand
+        private RelayCommand<TextBox> changeRadiusCommand;
+        public RelayCommand<TextBox> ChangeRadiusCommand
         {
             get
             {
                 return changeRadiusCommand ??
                        (
-                           changeRadiusCommand = new RelayCommand<string>
+                           changeRadiusCommand = new RelayCommand<TextBox>
                            (
-                               (s) =>
+                               (tb) =>
                                {
-                                   float newValue = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
-                                   if (Tree.Radius != newValue)
+                                   try
                                    {
-                                       History.Do(new SaveTreeMemento(Tree));
-                                       Tree.Radius = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
+                                       float newValue =
+                                           float.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       if (Tree.Radius != newValue)
+                                       {
+                                           History.Do(new SaveTreeMemento(Tree));
+                                           Tree.Radius =
+                                               float.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       }
+                                   }
+                                   catch (FormatException ex)
+                                   {
+                                       MessageBox.Show("Please enter a valid value!");
+                                       tb.Text = Tree.Radius.ToString();
                                    }
                                }
                            )
@@ -204,22 +226,32 @@ namespace IvyGenerator.ViewModel
             }
         }
 
-        private RelayCommand<string> changeRadiusReductionCommand;
-        public RelayCommand<string> ChangeRadiusReductionCommand
+        private RelayCommand<TextBox> changeRadiusReductionCommand;
+        public RelayCommand<TextBox> ChangeRadiusReductionCommand
         {
             get
             {
                 return changeRadiusReductionCommand ??
                        (
-                           changeRadiusReductionCommand = new RelayCommand<string>
+                           changeRadiusReductionCommand = new RelayCommand<TextBox>
                            (
-                               (s) =>
+                               (tb) =>
                                {
-                                   float newValue = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
-                                   if (Tree.RadiusReduction != newValue)
+                                   try
                                    {
-                                       History.Do(new SaveTreeMemento(Tree));
-                                       Tree.RadiusReduction = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
+                                       float newValue =
+                                           float.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       if (Tree.RadiusReduction != newValue)
+                                       {
+                                           History.Do(new SaveTreeMemento(Tree));
+                                           Tree.RadiusReduction =
+                                               float.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       }
+                                   }
+                                   catch (FormatException ex)
+                                   {
+                                       MessageBox.Show("Please enter a valid value!");
+                                       tb.Text = Tree.RadiusReduction.ToString();
                                    }
                                }
                            )
@@ -227,22 +259,224 @@ namespace IvyGenerator.ViewModel
             }
         }
 
-        private RelayCommand<string> changeLengthCommand;
-        public RelayCommand<string> ChangeLengthCommand
+        private RelayCommand<TextBox> changeLengthCommand;
+        public RelayCommand<TextBox> ChangeLengthCommand
         {
             get
             {
                 return changeLengthCommand ??
                        (
-                           changeLengthCommand = new RelayCommand<string>
+                           changeLengthCommand = new RelayCommand<TextBox>
                            (
-                               (s) =>
+                               (tb) =>
                                {
-                                   float newValue = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
-                                   if (Tree.Length != newValue)
+                                   try
                                    {
-                                       History.Do(new SaveTreeMemento(Tree));
-                                       Tree.Length = float.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
+                                       float newValue =
+                                           float.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       if (Tree.Length != newValue)
+                                       {
+                                           History.Do(new SaveTreeMemento(Tree));
+                                           Tree.Length =
+                                               float.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       }
+                                   }
+                                   catch (FormatException ex)
+                                   {
+                                       MessageBox.Show("Please enter a valid value!");
+                                       tb.Text = Tree.Length.ToString();
+                                   }
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand<TextBox> changeTreeLimbSidesCommand;
+        public RelayCommand<TextBox> ChangeTreeLimbSidesCommand
+        {
+            get
+            {
+                return changeTreeLimbSidesCommand ??
+                       (
+                           changeTreeLimbSidesCommand = new RelayCommand<TextBox>
+                           (
+                               (tb) =>
+                               {
+                                   try
+                                   {
+                                       float newValue =
+                                           float.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       if (Tree.TreeLimbSides != newValue)
+                                       {
+                                           History.Do(new SaveTreeMemento(Tree));
+                                           Tree.TreeLimbSides =
+                                               Int32.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       }
+                                   }
+                                   catch (FormatException ex)
+                                   {
+                                       MessageBox.Show("Please enter a valid value!");
+                                       tb.Text = Tree.TreeLimbSides.ToString();
+                                   }
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand<TextBox> changeBranchInterpolationPointsCommand;
+        public RelayCommand<TextBox> ChangeBranchInterpolationPointsCommand
+        {
+            get
+            {
+                return changeBranchInterpolationPointsCommand ??
+                       (
+                           changeBranchInterpolationPointsCommand = new RelayCommand<TextBox>
+                           (
+                               (tb) =>
+                               {
+                                   try
+                                   {
+                                       float newValue =
+                                           float.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       if (Tree.BranchInterpolationPoints != newValue)
+                                       {
+                                           History.Do(new SaveTreeMemento(Tree));
+                                           Tree.BranchInterpolationPoints =
+                                               Int32.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       }
+                                   }
+                                   catch (FormatException ex)
+                                   {
+                                       MessageBox.Show("Please enter a valid value!");
+                                       tb.Text = Tree.BranchInterpolationPoints.ToString();
+                                   }
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand<TextBox> changeMinLeavesCommand;
+        public RelayCommand<TextBox> ChangeMinLeavesCommand
+        {
+            get
+            {
+                return changeMinLeavesCommand ??
+                       (
+                           changeMinLeavesCommand = new RelayCommand<TextBox>
+                           (
+                               (tb) =>
+                               {
+                                   try
+                                   {
+                                       float newValue =
+                                           float.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       if (Tree.MinLeaves != newValue)
+                                       {
+                                           History.Do(new SaveTreeMemento(Tree));
+                                           Tree.MinLeaves =
+                                               Int32.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       }
+                                   }
+                                   catch (FormatException ex)
+                                   {
+                                       MessageBox.Show("Please enter a valid value!");
+                                       tb.Text = Tree.MinLeaves.ToString();
+                                   }
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand<TextBox> changeMaxLeavesCommand;
+        public RelayCommand<TextBox> ChangeMaxLeavesCommand
+        {
+            get
+            {
+                return changeMaxLeavesCommand ??
+                       (
+                           changeMaxLeavesCommand = new RelayCommand<TextBox>
+                           (
+                               (tb) =>
+                               {
+                                   try
+                                   {
+                                       float newValue = float.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       if (Tree.MaxLeaves != newValue)
+                                       {
+                                           History.Do(new SaveTreeMemento(Tree));
+                                           Tree.MaxLeaves = Int32.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       }
+                                   }
+                                   catch (FormatException ex)
+                                   {
+                                       MessageBox.Show("Please enter a valid value!");
+                                       tb.Text = Tree.MaxLeaves.ToString();
+                                   }
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand<TextBox> changeMinLeafScaleCommand;
+        public RelayCommand<TextBox> ChangeMinLeafScaleCommand
+        {
+            get
+            {
+                return changeMinLeafScaleCommand ??
+                       (
+                           changeMinLeafScaleCommand = new RelayCommand<TextBox>
+                           (
+                               (tb) =>
+                               {
+                                   try
+                                   {
+                                       float newValue = float.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       if (Tree.MinLeafScale != newValue)
+                                       {
+                                           History.Do(new SaveTreeMemento(Tree));
+                                           Tree.MinLeafScale = Single.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       }
+                                   }
+                                   catch (FormatException ex)
+                                   {
+                                       MessageBox.Show("Please enter a valid value!");
+                                       tb.Text = Tree.MinLeafScale.ToString();
+                                   }
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand<TextBox> changeMaxLeafScaleCommand;
+        public RelayCommand<TextBox> ChangeMaxLeafScaleCommand
+        {
+            get
+            {
+                return changeMaxLeafScaleCommand ??
+                       (
+                           changeMaxLeafScaleCommand = new RelayCommand<TextBox>
+                           (
+                               (tb) =>
+                               {
+                                   try
+                                   {
+                                       float newValue = float.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       if (Tree.MaxLeafScale != newValue)
+                                       {
+                                           History.Do(new SaveTreeMemento(Tree));
+                                           Tree.MaxLeafScale = Single.Parse(tb.Text, System.Globalization.CultureInfo.InvariantCulture);
+                                       }
+                                   }
+                                   catch (FormatException ex)
+                                   {
+                                       MessageBox.Show("Please enter a valid value!");
+                                       tb.Text = Tree.MaxLeafScale.ToString();
                                    }
                                }
                            )
@@ -366,7 +600,7 @@ namespace IvyGenerator.ViewModel
 
                                    if (saveFileDialog.ShowDialog() == true)
                                    {
-                                        string s = ObjExporter.MeshToString("Tree", tree.TreeGeometry, ModelTransform);
+                                        string s = ObjExporter.MeshesToString("Tree", new [] { tree.TreeGeometry, tree.LeavesGeometry}, ModelTransform);
                                         File.WriteAllText(saveFileDialog.FileName, s);
                                    }
                                }
@@ -421,6 +655,91 @@ namespace IvyGenerator.ViewModel
                                () =>
                                {
                                    History.Redo();
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand loadLeafTextureCommand;
+        public RelayCommand LoadLeafTextureCommand
+        {
+            get
+            {
+                return loadLeafTextureCommand ??
+                       (
+                           loadLeafTextureCommand = new RelayCommand(
+                               () =>
+                               {
+                                   var d = new OpenFileDialog()
+                                   {
+                                       Filter = "image files|*.jpg; *.png; *.bmp; *.gif",
+                                   };
+                                   if (d.ShowDialog().Value)
+                                   {
+                                       if (File.Exists(d.FileName))
+                                       {
+                                           var img = new BitmapImage(new Uri(d.FileName, UriKind.RelativeOrAbsolute));
+                                           //this.TryGetExif(d.FileName);
+                                           //this.SetImages(img);
+                                           //this.Title = d.FileName;
+
+                                           var mat = new PhongMaterial()
+                                           {
+                                               AmbientColor = Color.Gray,
+                                               DiffuseColor = Color.White,
+                                               SpecularColor = Color.White,
+                                               DiffuseAlphaMap = new MemoryStream(img.ToByteArray()),
+                                               DiffuseMap = new MemoryStream(img.ToByteArray())
+                                           };
+
+                                           Tree.LeafMaterial = mat;
+                                       }
+                                   }
+                               }
+                           )
+                       );
+            }
+        }
+
+        private RelayCommand<MenuItem> refreshLocalLSystemsCommand;
+
+        public RelayCommand<MenuItem> RefreshLocalLSystemsCommand
+        {
+            get
+            {
+                return refreshLocalLSystemsCommand ??
+                       (
+                           refreshLocalLSystemsCommand = new RelayCommand<MenuItem>(
+                               (menu) =>
+                               {
+                                   menu.Items.Clear();
+                                   if (!Directory.Exists(System.AppDomain.CurrentDomain.BaseDirectory + "Resources/"))
+                                       Directory.CreateDirectory(System.AppDomain.CurrentDomain.BaseDirectory + "Resources/");
+
+                                   var files = Directory.GetFiles(System.AppDomain.CurrentDomain.BaseDirectory + "Resources/");
+                                   var formatter = new BinaryFormatter();
+                                   foreach (var s in files)
+                                   {
+                                       if(!s.EndsWith(".LRules"))
+                                           continue;
+                                       
+                                       var byteStream = File.ReadAllBytes(s);
+                                       if (byteStream == null) continue;
+                                       using (var ms = new MemoryStream(byteStream))
+                                       {
+                                           var ruleSet = (RuleSet)formatter.Deserialize(ms);
+                                           MenuItem item = new MenuItem();
+                                           item.Header = "Create " + s.Substring(s.LastIndexOf("/") + 1, s.LastIndexOf(".") - s.LastIndexOf("/") - 1);
+                                           item.Click += (sender, e) =>
+                                           {
+                                               DoCommand.Execute(item);
+                                               Tree.SetRuleSet(ruleSet);
+                                           };
+
+                                           menu.Items.Add(item);
+                                       }
+                                   }
                                }
                            )
                        );

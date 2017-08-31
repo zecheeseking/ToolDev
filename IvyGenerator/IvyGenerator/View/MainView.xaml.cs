@@ -45,7 +45,7 @@ namespace IvyGenerator
                         (PrimaryWindow.DataContext as MainViewModel).Tree.SetRuleSet(ruleSet);
                     }
                     initializedTree = true;
-                    AddMenu.Items.Add(item);
+                    LSystems.Items.Add(item);
                 }
             }
         }

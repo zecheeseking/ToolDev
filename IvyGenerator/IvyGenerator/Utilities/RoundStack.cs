@@ -53,7 +53,7 @@ namespace IvyGenerator.Utilities
                 return removed;
             }
             else
-                throw new InvalidOperationException("Cannot pop from emtpy stack");
+                throw new InvalidOperationException("Cannot pop from empty stack");
         }
 
         public void Push(T item)

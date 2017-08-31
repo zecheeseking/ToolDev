@@ -11,7 +11,13 @@
         Title="MainWindow" Height="720" Width="1280" MinWidth="800" MinHeight="600" 
         Name="PrimaryWindow"
         DataContext="{Binding MainViewModel, Source={StaticResource Locator}}">
-    
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="GotFocus">
+            <command:EventToCommand Command="{Binding OnMainWindowRefocusCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
     <Window.InputBindings>
         <KeyBinding Modifiers="Control" Key="Z" Command="{Binding UndoCommand}"/>
         <KeyBinding Modifiers="Control" Key="Y" Command="{Binding RedoCommand}"/>
@@ -37,6 +43,13 @@
                     </MenuItem>
                     </MenuItem>
                 <MenuItem Name="AddMenu" Header="Add" Width="60">
+                    <MenuItem Name="LSystems" Header="L-Systems">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SubmenuOpened">
+                                <command:EventToCommand Command="{Binding RefreshLocalLSystemsCommand}" CommandParameter="{Binding ElementName=LSystems}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </MenuItem>
                     <MenuItem Header="Create L-System Ruleset..." Command="{Binding OpenRulesetWizardCommand}"/>
                 </MenuItem>
             </Menu>
@@ -57,7 +70,8 @@
                     <hx:AmbientLight3D />
                     <hx:DirectionalLight3D Direction = "-2,-5,-2"/>
                     <hx:LineGeometryModel3D x:Name="Grid"   Geometry="{Binding Grid}"  Transform = "{Binding GridTransform}"   Color="{Binding GridColor}"/>
-                    <hx:MeshGeometryModel3D Geometry="{Binding Tree.TreeGeometry}" Material="{Binding Tree.RedMaterial}" Transform="{Binding ModelTransform}"/>
+                    <hx:MeshGeometryModel3D Geometry="{Binding Tree.TreeGeometry}" FillMode="Solid" Material="{Binding Tree.BarkMaterial}" Transform="{Binding ModelTransform}"/>
+                    <hx:MeshGeometryModel3D CullMode="None" FillMode="Solid" Geometry="{Binding Tree.LeavesGeometry}" Material="{Binding Tree.LeafMaterial}" Transform="{Binding ModelTransform}"/>
 
                     <hx:Viewport3DX.InputBindings>
                         <KeyBinding Key="B" Command="hx:ViewportCommands.BackView" />
@@ -91,7 +105,18 @@
                     <RowDefinition Height="5"/>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="5"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="5"/><RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 
                 <Grid Grid.Row="1">
@@ -136,7 +161,7 @@
                     <TextBox Name="Textbox_RadiusReduction" Grid.Column="1" Margin="5,5,5,5" Text="{Binding Tree.RadiusReduction, Mode=OneWay}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="LostFocus">
-                                <command:EventToCommand Command="{Binding ChangeRadiusReductionCommand}" CommandParameter="{Binding ElementName=Textbox_RadiusReduction, Path=Text}"/>
+                                <command:EventToCommand Command="{Binding ChangeRadiusReductionCommand}" CommandParameter="{Binding ElementName=Textbox_RadiusReduction}"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </TextBox>
@@ -158,10 +183,103 @@
                     </TextBox>
                 </Grid>
 
-                <Button Grid.Row="9" Content="Generate!" Command="{Binding AdvanceLSystemCommand}"/>
-                <Button Grid.Row="11" Content="Reset" Command="{Binding ResetLSystemCommand}"/>
+                <Grid Grid.Row="9">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Tree Limb Sides"></Label>
+                    <TextBox Name="TextBox_Sides" Grid.Column="1" Margin="5,5,5,5" Text="{Binding Tree.TreeLimbSides, Mode=OneWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="LostFocus">
+                                <command:EventToCommand Command="{Binding ChangeTreeLimbSidesCommand}" CommandParameter="{Binding ElementName=TextBox_Sides, Path=Text}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                </Grid>
+
+                <Grid Grid.Row="11">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Tree Interpolation Points"></Label>
+                    <TextBox Name="TextBox_InterpolationSides" Grid.Column="1" Margin="5,5,5,5" Text="{Binding Tree.BranchInterpolationPoints, Mode=OneWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="LostFocus">
+                                <command:EventToCommand Command="{Binding ChangeBranchInterpolationPointsCommand}" CommandParameter="{Binding ElementName=TextBox_InterpolationSides, Path=Text}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                </Grid>
+                
+                <Button Grid.Row="13" Content="Generate!" Command="{Binding AdvanceLSystemCommand}"/>
+                <Button Grid.Row="15" Content="Reset" Command="{Binding ResetLSystemCommand}"/>
+
+                <Grid Grid.Row="17">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Button Grid.Column="1" Margin="5,5,5,5" Content="Load new Leaf texture..." Command="{Binding LoadLeafTextureCommand}"/>
+                </Grid>
+                
+                <Label Grid.Row="19" Content="Amount of Leaves in Cluster"/>
+                <Grid Grid.Row="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Label Content="Min:" HorizontalAlignment="Right"/>
+                    <TextBox Name="TextBox_MinLeaves" Grid.Column="1" Margin="3" Text="{Binding Tree.MinLeaves, Mode=OneWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="LostFocus">
+                                <command:EventToCommand Command="{Binding ChangeMinLeavesCommand}" CommandParameter="{Binding ElementName=TextBox_MinLeaves, Path=Text}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                    <Label Grid.Column="2" Content="Max:" HorizontalAlignment="Right"/>
+                    <TextBox Name="TextBox_MaxLeaves" Grid.Column="3" Margin="3" Text="{Binding Tree.MaxLeaves, Mode=OneWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="LostFocus">
+                                <command:EventToCommand Command="{Binding ChangeMaxLeavesCommand}" CommandParameter="{Binding ElementName=TextBox_MaxLeaves, Path=Text}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                </Grid>
+
+                <Label Grid.Row="22" Content="Leaf Scale Boundaries"/>
+                <Grid Grid.Row="23">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Min:" HorizontalAlignment="Right"/>
+                    <TextBox Name="TextBox_MinLeafScale" Grid.Column="1" Margin="3" Text="{Binding Tree.MinLeafScale, Mode=OneWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="LostFocus">
+                                <command:EventToCommand Command="{Binding ChangeMinLeafScaleCommand}" CommandParameter="{Binding ElementName=TextBox_MinLeafScale, Path=Text}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                    <Label Grid.Column="2" Content="Max:" HorizontalAlignment="Right"/>
+                    <TextBox Name="TextBox_MaxLeafScale" Grid.Column="3" Margin="3" Text="{Binding Tree.MaxLeafScale, Mode=OneWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="LostFocus">
+                                <command:EventToCommand Command="{Binding ChangeMaxLeafScaleCommand}" CommandParameter="{Binding ElementName=TextBox_MaxLeafScale, Path=Text}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                </Grid>
             </Grid>
-            
         </Grid>
     </Grid>
 </Window>
